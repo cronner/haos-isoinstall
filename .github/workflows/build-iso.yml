@@ -19,14 +19,14 @@ jobs:
     # So we build INSIDE a Debian container (same live-build and same debootstrap
     # as the dev environment), on an Ubuntu host.
     # --privileged is required: live-build needs the loop devices and chroot.
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     container:
       image: debian:trixie
       options: --privileged
     permissions:
       contents: write          # required to create the release on tag
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Syntax check
         run: |
@@ -109,7 +109,7 @@ jobs:
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish as an artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.iso.outputs.name }}
           path: |
