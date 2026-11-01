@@ -100,7 +100,8 @@ Plug in the stick, boot. The wizard starts on its own:
 3. Network connection — automatic over Ethernet, otherwise Wi-Fi selection
 4. **Disk selection** — check the size and model; the current contents are
    displayed before confirmation
-5. Download and writing (progress bar) — **do not power off the PC**
+5. Download, then writing — two progress bars with percentage, rate and ETA.
+   **Do not power off the PC**
 6. **Remove the USB stick**, then confirm: the PC reboots straight into Home
    Assistant. The installer runs from memory, so the stick is no longer needed
    at this point.

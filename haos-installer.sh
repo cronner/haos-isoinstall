@@ -73,7 +73,8 @@ fr)
   S_GOON="Continuer quand même"
   S_STOPPED="Arrêté avant toute modification."
   S_PREP="Préparation du disque %s..."
-  S_WRITING="Téléchargement et écriture de HAOS %s.\nNe pas éteindre le PC."
+  S_WRITING="Téléchargement de HAOS %s.\nNe pas éteindre le PC."
+  S_WRITE_HEAD="Écriture de l'image sur %s.\nN'éteignez pas le PC."
   S_FAIL="Échec de l'installation (code %s).\n\nCause la plus fréquente : une coupure de la connexion Internet\npendant le téléchargement. Le disque a déjà été effacé ;\nrelancer l'installation depuis le début est sans danger.\n\nDétail :\n%s\n\nJournal complet : %s"
   S_VFY_ASK="Vérifier que le disque a été écrit correctement ?\n\nRelecture de %s depuis %s.\nDurée : 1 à 3 minutes selon le disque.\n\nRecommandé, surtout sur un disque ancien."
   S_VFY_RUN="Relecture et vérification du disque..."
@@ -152,7 +153,8 @@ de)
   S_GOON="Trotzdem weitermachen"
   S_STOPPED="Vor jeder Änderung abgebrochen."
   S_PREP="Platte %s wird vorbereitet..."
-  S_WRITING="HAOS %s wird heruntergeladen und geschrieben.\nSchalte den PC nicht aus."
+  S_WRITING="HAOS %s wird heruntergeladen.\nSchalte den PC nicht aus."
+  S_WRITE_HEAD="Image wird auf %s geschrieben.\nSchalte den PC nicht aus."
   S_FAIL="Installation fehlgeschlagen (Code %s).\n\nHäufigste Ursache: die Internetverbindung ist beim\nHerunterladen abgebrochen. Die Platte ist bereits\ngelöscht; die Installation von vorne zu starten ist\nunbedenklich.\n\nDetails:\n%s\n\nVollständiges Protokoll: %s"
   S_VFY_ASK="Prüfen, ob die Platte korrekt geschrieben wurde?\n\n%s werden von %s zurückgelesen.\nDauer: 1 bis 3 Minuten je nach Platte.\n\nEmpfohlen, besonders bei einer älteren Platte."
   S_VFY_RUN="Platte wird zurückgelesen und geprüft..."
@@ -231,7 +233,8 @@ da)
   S_GOON="Fortsæt alligevel"
   S_STOPPED="Stoppet før nogen ændring."
   S_PREP="Forbereder disken %s..."
-  S_WRITING="Henter og skriver HAOS %s.\nSluk ikke PC'en."
+  S_WRITING="Henter HAOS %s.\nSluk ikke PC'en."
+  S_WRITE_HEAD="Skriver imaget til %s.\nSluk ikke PC'en."
   S_FAIL="Installationen mislykkedes (kode %s).\n\nHyppigste årsag: internetforbindelsen faldt ud under\nhentningen. Disken er allerede slettet; at starte\ninstallationen forfra er sikkert.\n\nDetaljer:\n%s\n\nFuld log: %s"
   S_VFY_ASK="Kontroller, at disken blev skrevet korrekt?\n\nLæser %s tilbage fra %s.\nTager 1 til 3 minutter afhængigt af disken.\n\nAnbefales, især på en ældre disk."
   S_VFY_RUN="Læser disken tilbage og kontrollerer..."
@@ -310,7 +313,8 @@ da)
   S_GOON="Continue anyway"
   S_STOPPED="Stopped before any change."
   S_PREP="Preparing disk %s..."
-  S_WRITING="Downloading and writing HAOS %s.\nDo not power off the PC."
+  S_WRITING="Downloading HAOS %s.\nDo not power off the PC."
+  S_WRITE_HEAD="Writing the image to %s.\nDo not power off the PC."
   S_FAIL="Installation failed (code %s).\n\nMost common cause: the Internet connection dropped during the\ndownload. The disk has already been erased; starting the\ninstallation over from scratch is safe.\n\nDetails:\n%s\n\nFull log: %s"
   S_VFY_ASK="Verify that the disk was written correctly?\n\nReads back %s from %s.\nTakes 1 to 3 minutes depending on the disk.\n\nRecommended, especially on an older disk."
   S_VFY_RUN="Reading back and verifying the disk..."
@@ -1200,13 +1204,52 @@ flash(){
   local dl
   dl=$(curl -fsSLI "$IMG_URL" 2>>"$LOG" \
        | awk 'BEGIN{IGNORECASE=1}/^content-length/{v=$2}END{gsub(/\r/,"",v);print v}')
-  [[ "$dl" =~ ^[0-9]+$ ]] && (( dl > 1000000 )) || dl=560000000     # fallback if the header is missing
+  [[ "$dl" =~ ^[0-9]+$ ]] && (( dl > 1000000 )) || dl=0     # 0 = size unknown
 
   # whiptail's stdout is forced onto /dev/tty: otherwise the process substitution
   # inherits the pipe to xz and injects the terminal codes into it.
   set -o pipefail
-  local rc
-  {
+  local rc=0 avail_kb need_kb usize
+  local -a st pvargs
+
+  # Two separate phases give each one its own progress bar -- percent, rate and
+  # ETA -- which a single pipeline cannot: it can only ever show one number.
+  # That needs the compressed image in RAM (~450 MB), so on a machine with too
+  # little free memory we keep the streaming pipeline and its single gauge.
+  avail_kb=$(awk '/^MemAvailable:/{print $2}' /proc/meminfo 2>/dev/null)
+  [[ "$avail_kb" =~ ^[0-9]+$ ]] || avail_kb=0
+  need_kb=$(( dl / 1024 * 2 ))            # image + headroom for the write phase
+
+  if [ "$dl" -gt 0 ] && [ "$avail_kb" -gt "$need_kb" ]; then
+    # ---- Phase 1/2: download. pv draws percent, rate and ETA itself. ----
+    clear
+    printf '\n  %s\n\n' "$(printf "$S_WRITING" "$HAOS_VERSION")"
+    rm -f /tmp/haos.img.xz
+    curl -fSL --speed-limit 1024 --speed-time 30 "$IMG_URL" 2>>"$LOG" \
+      | pv -s "$dl" > /tmp/haos.img.xz
+    st=("${PIPESTATUS[@]}"); rc=${st[0]}
+
+    if [ "$rc" -eq 0 ] && [ -s /tmp/haos.img.xz ]; then
+      # ---- Phase 2/2: write. The uncompressed size comes from the .xz index,
+      #      so pv can show a real percentage and an ETA here too. ----
+      usize=$(xz --robot -l /tmp/haos.img.xz 2>/dev/null \
+              | awk -F'\t' '$1=="totals"{print $5}')
+      [[ "$usize" =~ ^[0-9]+$ ]] && (( usize > 0 )) || usize=""
+      pvargs=()
+      [ -n "$usize" ] && pvargs=(-s "$usize")
+      printf '\n  %s\n\n' "$(printf "$S_WRITE_HEAD" "$TARGET")"
+      xz -dc /tmp/haos.img.xz 2>>"$LOG" \
+        | pv "${pvargs[@]}" 2>/dev/tty \
+        | tee >(sha256sum | cut -d' ' -f1 > /tmp/haos-img.sha256) \
+              >(wc -c > /tmp/haos-img.size) \
+        | dd of="$TARGET" bs=4M conv=fsync 2>>"$LOG"
+      rc=$?
+    else
+      rc=1
+    fi
+    rm -f /tmp/haos.img.xz
+  else
+    # ---- Streaming fallback: download and write interleaved, one gauge. ----
     # --speed-limit/--speed-time: without them, a network drop left curl waiting
     # on the TCP timers, 'pv -n' re-emitting the last percentage, and the gauge
     # frozen indefinitely -- the user could not tell "slow" from "dead". Below
@@ -1214,15 +1257,17 @@ flash(){
     # No --retry here: without -C - the resume starts from zero and re-injects
     # the bytes into the xz stream, which corrupts it; and -C - is unusable on a
     # pipe, curl being unable to seek in it.
-    curl -fSL --speed-limit 1024 --speed-time 30 "$IMG_URL" 2>>"$LOG" \
-      | pv -n -s "$dl" 2> >(whiptail --title "$S_TITLE" --gauge \
-            "$(printf "$S_WRITING" "$HAOS_VERSION")" 9 72 0 >/dev/tty) \
-      | xz -dc 2>>"$LOG" \
-      | tee >(sha256sum | cut -d' ' -f1 > /tmp/haos-img.sha256) \
-            >(wc -c > /tmp/haos-img.size) \
-      | dd of="$TARGET" bs=4M conv=fsync 2>>"$LOG"
-  }
-  rc=$?
+    {
+      curl -fSL --speed-limit 1024 --speed-time 30 "$IMG_URL" 2>>"$LOG" \
+        | pv -n -s "${dl:-560000000}" 2> >(whiptail --title "$S_TITLE" --gauge \
+              "$(printf "$S_WRITING" "$HAOS_VERSION")" 9 72 0 >/dev/tty) \
+        | xz -dc 2>>"$LOG" \
+        | tee >(sha256sum | cut -d' ' -f1 > /tmp/haos-img.sha256) \
+              >(wc -c > /tmp/haos-img.size) \
+        | dd of="$TARGET" bs=4M conv=fsync 2>>"$LOG"
+    }
+    rc=$?
+  fi
   sync; wait 2>/dev/null || true
   logx "writing finished on $TARGET (code $rc)"
 
