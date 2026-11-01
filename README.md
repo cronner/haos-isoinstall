@@ -88,8 +88,19 @@ This is **the step everybody trips over**. Power on the PC and immediately press
 
 1. **Boot mode: UEFI** — not "Legacy", not "CSM"
 2. **Secure Boot: DISABLED** ← *mandatory, Home Assistant will not boot otherwise*
-3. **USB stick first** in the boot order
-4. Save and exit (`F10`)
+3. **SATA mode: AHCI** — not "RAID", not "Intel RST". With RST the disk is
+   hidden from the installer, and Home Assistant will not find it afterwards
+4. **Fast Boot: OFF** — recommended: it makes the first boot from the stick
+   unreliable on some firmware
+5. **USB stick first** in the boot order
+6. **"Power on after power loss" / "AC recovery": ON** — recommended: a Home
+   Assistant box that stays off after a power cut is a box you have to go and
+   switch on by hand, every time
+7. Save and exit (`F10`)
+
+Once Home Assistant boots on its own, put the **internal disk first** in the boot
+order again. The wizard does recreate a `HAOS` UEFI entry, but the stick would
+otherwise keep priority and start the installer again.
 
 ## Step 4 — Install
 
@@ -131,6 +142,7 @@ If that address does not answer, use the IP address shown on the PC's screen:
 
 | Symptom | Likely cause |
 |---|---|
+| No disk appears in the wizard | SATA mode set to RAID / Intel RST, which hides the disk from the installer. Set **AHCI** (step 3) |
 | The stick does not boot | Secure Boot still enabled, or Legacy/CSM mode instead of UEFI |
 | Home Assistant does not boot after installation | Secure Boot still enabled; on a physical PC, SATA mode set to RAID/Intel RST instead of **AHCI** |
 | Wi-Fi works during the install but HA is offline afterwards | The Wi-Fi card is not included in Home Assistant OS (narrower firmware coverage than the installer). Use Ethernet. |
