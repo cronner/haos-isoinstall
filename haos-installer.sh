@@ -67,7 +67,7 @@ fr)
   S_DISK_NONE="Aucun disque interne détecté."
   S_DISK_PICK="Sur quel disque installer Home Assistant OS ?\nTOUT son contenu sera définitivement effacé.\n\nLes disques marqués [!! USB / EXTERNE !!] sont amovibles :\nc'est probablement un disque de sauvegarde, pas la cible."
   S_DISK_SMALL="Le disque %s fait %s Go.\n\nHome Assistant demande 32 Go minimum. L'écriture risque\nd'échouer, ou de laisser trop peu de place à l'usage.\n\nRien n'a encore été effacé."
-  S_DISK_CONFIRM="Le disque %s va être ENTIÈREMENT EFFACÉ.\n\nContenu actuel détecté :\n%s\n\nConfirmer l'effacement et l'installation ?"
+  S_DISK_CONFIRM="Le disque %s va être ENTIÈREMENT EFFACÉ.\n\nContenu actuel détecté :\n%s\n\nTapez YES (en majuscules) pour l'effacer et installer\nHome Assistant OS.\nToute autre réponse arrête tout, sans rien effacer."
   S_CONFIRM_T="⚠  DERNIÈRE CONFIRMATION"
   S_STOP="Arrêter (recommandé)"
   S_GOON="Continuer quand même"
@@ -147,7 +147,7 @@ de)
   S_DISK_NONE="Keine interne Festplatte gefunden."
   S_DISK_PICK="Auf welche Platte soll Home Assistant OS installiert werden?\nIHR GESAMTER Inhalt wird endgültig gelöscht.\n\nPlatten mit [!! USB / EXTERN !!] sind wechselbar: das ist\nwahrscheinlich eine Sicherungsplatte, nicht das Ziel."
   S_DISK_SMALL="Die Platte %s hat %s GB.\n\nHome Assistant braucht mindestens 32 GB. Das Schreiben\nkann fehlschlagen oder zu wenig Platz übrig lassen.\n\nBisher wurde nichts gelöscht."
-  S_DISK_CONFIRM="Die Platte %s wird KOMPLETT GELÖSCHT.\n\nErkannter aktueller Inhalt:\n%s\n\nLöschen und Installation bestätigen?"
+  S_DISK_CONFIRM="Die Platte %s wird KOMPLETT GELÖSCHT.\n\nErkannter aktueller Inhalt:\n%s\n\nTippe YES (in Großbuchstaben), um sie zu löschen und\nHome Assistant OS zu installieren.\nJede andere Antwort bricht hier ab, ohne etwas zu löschen."
   S_CONFIRM_T="⚠  LETZTE BESTÄTIGUNG"
   S_STOP="Abbrechen (empfohlen)"
   S_GOON="Trotzdem weitermachen"
@@ -227,7 +227,7 @@ da)
   S_DISK_NONE="Ingen intern disk fundet."
   S_DISK_PICK="Hvilken disk skal Home Assistant OS installeres på?\nHELE indholdet bliver slettet permanent.\n\nDiske markeret [!! USB / EKSTERN !!] er flytbare: det er\nsandsynligvis en backupdisk, ikke målet."
   S_DISK_SMALL="Disken %s er %s GB.\n\nHome Assistant kræver mindst 32 GB. Skrivningen kan\nmislykkes eller efterlade for lidt plads.\n\nIntet er slettet endnu."
-  S_DISK_CONFIRM="Disken %s bliver HELT SLETTET.\n\nNuværende indhold fundet:\n%s\n\nBekræft sletning og installation?"
+  S_DISK_CONFIRM="Disken %s bliver HELT SLETTET.\n\nNuværende indhold fundet:\n%s\n\nSkriv YES (med stort) for at slette den og installere\nHome Assistant OS.\nAlt andet stopper her, uden at noget slettes."
   S_CONFIRM_T="⚠  SIDSTE BEKRÆFTELSE"
   S_STOP="Stop (anbefales)"
   S_GOON="Fortsæt alligevel"
@@ -307,7 +307,7 @@ da)
   S_DISK_NONE="No internal disk detected."
   S_DISK_PICK="Which disk should Home Assistant OS be installed on?\nALL of its contents will be permanently erased.\n\nDisks marked [!! USB / EXTERNAL !!] are removable: that is\nprobably a backup drive, not your target."
   S_DISK_SMALL="Disk %s is %s GB.\n\nHome Assistant needs 32 GB minimum. Writing may fail, or\nleave too little room to be usable.\n\nNothing has been erased yet."
-  S_DISK_CONFIRM="Disk %s will be COMPLETELY ERASED.\n\nCurrent contents detected:\n%s\n\nConfirm erase and install?"
+  S_DISK_CONFIRM="Disk %s will be COMPLETELY ERASED.\n\nCurrent contents detected:\n%s\n\nType YES (in capitals) to erase it and install\nHome Assistant OS.\nAny other answer stops here, with nothing erased."
   S_CONFIRM_T="⚠  FINAL CONFIRMATION"
   S_STOP="Stop (recommended)"
   S_GOON="Continue anyway"
@@ -1186,9 +1186,18 @@ pick_disk(){
 
   local content
   content=$(lsblk -no NAME,SIZE,FSTYPE,LABEL "$TARGET" 2>/dev/null | sed 's/^/   /')
-  # --defaultno: the button that wins on a stray Enter must not erase the disk.
-  wt_yesno "$S_CONFIRM_T" "$(printf "$S_DISK_CONFIRM" "$TARGET" "$content")" \
-    --defaultno || die "$S_CANCELLED"
+
+  # Typed confirmation, not a button: on this single step a stray Enter or arrow
+  # key must not be able to erase a disk. The word YES is deliberately the same
+  # in every language, so the check never depends on the UI language; the
+  # comparison ignores case and surrounding spaces, but an empty answer stops.
+  local ans msg
+  msg=$(printf "$S_DISK_CONFIRM" "$TARGET" "$content")
+  wt_dims "$msg"
+  ans=$(whiptail --title "$S_CONFIRM_T${STEP:+  [$STEP]}" $WT_SCROLL \
+        --inputbox "$msg" "$WT_H" "$WT_W" 3>&1 1>&2 2>&3) || die "$S_CANCELLED"
+  ans=$(printf '%s' "$ans" | tr -d '[:space:]' | tr '[:lower:]' '[:upper:]')
+  [ "$ans" = "YES" ] || die "$S_STOPPED"
   logx "target confirmed: $(describe_part "$TARGET"), ${gb} GB"
   logx "live medium excluded: ${live_dev:-<not identified>}"
 }

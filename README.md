@@ -99,7 +99,7 @@ Plug in the stick, boot. The wizard starts on its own:
 2. Language and keyboard layout — English, Danish, German or French
 3. Network connection — automatic over Ethernet, otherwise Wi-Fi selection
 4. **Disk selection** — check the size and model; the current contents are
-   displayed before confirmation
+   displayed, and you must type `YES` to confirm (anything else stops)
 5. Download, then writing — two progress bars with percentage, rate and ETA.
    **Do not power off the PC**
 6. **Remove the USB stick**, then confirm: the PC reboots straight into Home
