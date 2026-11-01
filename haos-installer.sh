@@ -75,6 +75,13 @@ fr)
   S_PREP="Préparation du disque %s..."
   S_WRITING="Téléchargement de HAOS %s.\nNe pas éteindre le PC."
   S_WRITE_HEAD="Écriture de l'image sur %s.\nN'éteignez pas le PC."
+  S_DL_CHECK="Vérification de l'image téléchargée..."
+  S_DL_RESUME="Reprise du téléchargement : %s sur %s déjà sur le disque."
+  S_DL_RETRY="Le téléchargement s'est arrêté (code curl %s).\n\nDernières lignes du journal :\n%s\n\nReprendre là où il s'est arrêté ?"
+  S_DL_ABORT="Le téléchargement n'a pas abouti.\n\nRIEN N'A ÉTÉ ÉCRIT : le disque est exactement dans\nson état d'origine, son contenu est toujours là.\n\nDétail :\n%s\n\nJournal complet : %s"
+  S_DL_BAD="L'image téléchargée est corrompue (ses sommes de\ncontrôle .xz ne correspondent pas) — deux fois de suite.\n\nRIEN N'A ÉTÉ ÉCRIT : le disque est intact.\nCela désigne le réseau ou un proxy de cache, pas le disque.\n\nDétail :\n%s\n\nJournal complet : %s"
+  S_DISK_HA="⚠  Ce disque contient déjà une installation de Home\n   Assistant (hassos-boot / hassos-data détectés).\n   L'effacer détruit ta configuration, tes add-ons\n   et ton historique."
+  S_FMT_TYPE="Tapez YES pour reformater la clé.\nToute autre réponse la laisse telle quelle."
   S_FAIL="Échec de l'installation (code %s).\n\nCause la plus fréquente : une coupure de la connexion Internet\npendant le téléchargement. Le disque a déjà été effacé ;\nrelancer l'installation depuis le début est sans danger.\n\nDétail :\n%s\n\nJournal complet : %s"
   S_VFY_ASK="Vérifier que le disque a été écrit correctement ?\n\nRelecture de %s depuis %s.\nDurée : 1 à 3 minutes selon le disque.\n\nRecommandé, surtout sur un disque ancien."
   S_VFY_RUN="Relecture et vérification du disque..."
@@ -103,8 +110,6 @@ fr)
   S_WIFI_PUSH_SKIP="Ce réseau Wi-Fi ne peut pas être pré-configuré.\n\nIl s'appuie sur des certificats ou un mode que Home\nAssistant ne pourra pas reprendre tel quel. Rien n'a été\nécrit : mieux vaut cela qu'un réseau qui ne monte jamais.\n\nÀ FAIRE APRÈS L'INSTALLATION :\n • branche un câble Ethernet (le plus simple), ou\n • configure le Wi-Fi depuis la console de Home Assistant\n   (clavier + écran sur le PC).\n\nLe détail figure dans le journal d'installation."
   S_DONE_LOG="\n\nLa clé a été reformatée : elle redevient une clé USB normale,\net le journal d'installation y a été copié."
   S_FMT_ASK="Reformater la clé USB d'installation ?\n\n%s\n\nElle redeviendrait une clé ordinaire (FAT32), utilisable\npartout, et le journal d'installation y serait copié.\n\n⚠  L'INSTALLATEUR SERA EFFACÉ : pour réinstaller, il faudra\nregraver la clé depuis un autre ordinateur.\n\nL'installation de Home Assistant déjà écrite sur le disque\nn'est pas concernée."
-  S_FMT_YES="Reformater la clé"
-  S_FMT_NO="Garder l'installateur"
   S_FMT_FAIL="La clé n'a pas pu être reformatée.\n\nRien n'a été touché : elle reste utilisable comme\ninstallateur. Le détail figure dans le journal."
   S_FMT_BROKEN="Le reformatage de la clé a échoué en cours de route.\n\n⚠  La clé n'est plus amorçable : il faudra la regraver pour\ns'en resservir comme installateur.\n\nL'installation de Home Assistant sur le disque n'est pas\nconcernée, elle est terminée."
   S_DONE="Installation terminée.\n\nHome Assistant OS est installé sur %s.\n\n➜ RETIRE LA CLÉ USB MAINTENANT, avant de valider.\n  (l'installateur tourne en mémoire : la clé ne sert plus)\n\nÀ SUIVRE :\n 1. Valide ci-dessous : le PC redémarre sur Home Assistant.\n 2. Garde le câble réseau branché.\n 3. Patiente 2 à 5 minutes (premier démarrage).\n 4. Depuis un autre appareil :  http://homeassistant.local"
@@ -155,6 +160,13 @@ de)
   S_PREP="Platte %s wird vorbereitet..."
   S_WRITING="HAOS %s wird heruntergeladen.\nSchalte den PC nicht aus."
   S_WRITE_HEAD="Image wird auf %s geschrieben.\nSchalte den PC nicht aus."
+  S_DL_CHECK="Heruntergeladenes Image wird geprüft..."
+  S_DL_RESUME="Download wird fortgesetzt: %s von %s bereits auf der Platte."
+  S_DL_RETRY="Der Download wurde unterbrochen (curl-Code %s).\n\nLetzte Protokollzeilen:\n%s\n\nDort fortsetzen, wo er abgebrochen ist?"
+  S_DL_ABORT="Der Download wurde nicht abgeschlossen.\n\nES WURDE NICHTS GESCHRIEBEN: die Platte ist genau\nwie vorher, ihr Inhalt ist noch da.\n\nDetails:\n%s\n\nVollständiges Protokoll: %s"
+  S_DL_BAD="Das heruntergeladene Image ist beschädigt (die\n.xz-Prüfsummen passen nicht) — zweimal hintereinander.\n\nES WURDE NICHTS GESCHRIEBEN: die Platte ist unberührt.\nDas deutet auf das Netzwerk oder einen Cache-Proxy hin,\nnicht auf die Platte.\n\nDetails:\n%s\n\nVollständiges Protokoll: %s"
+  S_DISK_HA="⚠  Auf dieser Platte liegt bereits eine Home-Assistant-\n   Installation (hassos-boot / hassos-data gefunden).\n   Löschen vernichtet Konfiguration, Add-ons und Verlauf."
+  S_FMT_TYPE="Tippe YES, um den Stick neu zu formatieren.\nJede andere Antwort lässt ihn unverändert."
   S_FAIL="Installation fehlgeschlagen (Code %s).\n\nHäufigste Ursache: die Internetverbindung ist beim\nHerunterladen abgebrochen. Die Platte ist bereits\ngelöscht; die Installation von vorne zu starten ist\nunbedenklich.\n\nDetails:\n%s\n\nVollständiges Protokoll: %s"
   S_VFY_ASK="Prüfen, ob die Platte korrekt geschrieben wurde?\n\n%s werden von %s zurückgelesen.\nDauer: 1 bis 3 Minuten je nach Platte.\n\nEmpfohlen, besonders bei einer älteren Platte."
   S_VFY_RUN="Platte wird zurückgelesen und geprüft..."
@@ -183,8 +195,6 @@ de)
   S_WIFI_PUSH_SKIP="Dieses WLAN-Netz lässt sich nicht vorkonfigurieren.\n\nEs beruht auf Zertifikaten oder einem Modus, den Home\nAssistant nicht unverändert übernehmen kann. Es wurde\nnichts geschrieben: besser so als ein Netz, das nie\nhochkommt.\n\nNACH DER INSTALLATION ZU TUN:\n • Ethernet-Kabel anstecken (am einfachsten), oder\n • WLAN in der Konsole von Home Assistant einrichten\n   (Tastatur + Bildschirm am PC).\n\nDetails stehen im Installationsprotokoll."
   S_DONE_LOG="\n\nDer Stick wurde neu formatiert: er ist wieder ein normaler\nUSB-Stick, und das Installationsprotokoll wurde darauf\nkopiert."
   S_FMT_ASK="Den Installations-USB-Stick neu formatieren?\n\n%s\n\nEr würde wieder ein gewöhnlicher FAT32-Stick, überall\nnutzbar, und das Installationsprotokoll würde darauf\nkopiert.\n\n⚠  DER INSTALLER WIRD GELÖSCHT: zum Neuinstallieren\nmüsstest du den Stick an einem anderen Rechner neu\nschreiben.\n\nDie bereits auf die Platte geschriebene Home-Assistant-\nInstallation ist nicht betroffen."
-  S_FMT_YES="Stick neu formatieren"
-  S_FMT_NO="Installer behalten"
   S_FMT_FAIL="Der Stick konnte nicht neu formatiert werden.\n\nNichts wurde verändert: er bleibt als Installer nutzbar.\nDetails stehen im Protokoll."
   S_FMT_BROKEN="Das Neuformatieren des Sticks ist unterwegs fehlgeschlagen.\n\n⚠  Der Stick ist nicht mehr bootfähig: du müsstest ihn neu\nschreiben, um ihn wieder als Installer zu nutzen.\n\nDie Installation von Home Assistant auf der Platte ist\nnicht betroffen, sie ist fertig."
   S_DONE="Installation abgeschlossen.\n\nHome Assistant OS ist auf %s installiert.\n\n➜ ZIEHE JETZT DEN USB-STICK AB, bevor du bestätigst.\n  (der Installer läuft im Speicher: der Stick wird nicht mehr gebraucht)\n\nWEITER:\n 1. Bestätige unten: der PC startet in Home Assistant.\n 2. Lass das Netzwerkkabel angesteckt.\n 3. Warte 2 bis 5 Minuten (erster Start).\n 4. Von einem anderen Gerät:  http://homeassistant.local"
@@ -235,6 +245,13 @@ da)
   S_PREP="Forbereder disken %s..."
   S_WRITING="Henter HAOS %s.\nSluk ikke PC'en."
   S_WRITE_HEAD="Skriver imaget til %s.\nSluk ikke PC'en."
+  S_DL_CHECK="Tjekker det hentede image..."
+  S_DL_RESUME="Fortsætter hentningen: %s af %s ligger allerede på disken."
+  S_DL_RETRY="Hentningen stoppede (curl-kode %s).\n\nSidste linjer i loggen:\n%s\n\nFortsæt hvor den stoppede?"
+  S_DL_ABORT="Hentningen blev ikke gennemført.\n\nDER BLEV INTET SKREVET: disken er præcis som før,\nog dens indhold er der stadig.\n\nDetalje:\n%s\n\nFuld log: %s"
+  S_DL_BAD="Det hentede image er beskadiget (dets .xz-kontrolsummer\npasser ikke) — to gange i træk.\n\nDER BLEV INTET SKREVET: disken er urørt.\nDet peger på netværket eller en cache-proxy, ikke disken.\n\nDetalje:\n%s\n\nFuld log: %s"
+  S_DISK_HA="⚠  Denne disk indeholder allerede en Home Assistant-\n   installation (hassos-boot / hassos-data fundet).\n   Sletning ødelægger din konfiguration, dine add-ons\n   og din historik."
+  S_FMT_TYPE="Skriv YES for at formatere stikket igen.\nAlt andet lader det være, som det er."
   S_FAIL="Installationen mislykkedes (kode %s).\n\nHyppigste årsag: internetforbindelsen faldt ud under\nhentningen. Disken er allerede slettet; at starte\ninstallationen forfra er sikkert.\n\nDetaljer:\n%s\n\nFuld log: %s"
   S_VFY_ASK="Kontroller, at disken blev skrevet korrekt?\n\nLæser %s tilbage fra %s.\nTager 1 til 3 minutter afhængigt af disken.\n\nAnbefales, især på en ældre disk."
   S_VFY_RUN="Læser disken tilbage og kontrollerer..."
@@ -263,8 +280,6 @@ da)
   S_WIFI_PUSH_SKIP="Dette Wi-Fi-netværk kan ikke forkonfigureres.\n\nDet bygger på certifikater eller en tilstand, som Home\nAssistant ikke kan overtage som den er. Intet blev skrevet:\ndet er bedre end et netværk, der aldrig kommer op.\n\nGØR DETTE EFTER INSTALLATIONEN:\n • sæt et Ethernet-kabel i (nemmest), eller\n • konfigurér Wi-Fi fra Home Assistant-konsollen\n   (tastatur + skærm på PC'en).\n\nDetaljerne står i installationsloggen."
   S_DONE_LOG="\n\nStikket blev formateret: det er et normalt USB-stik igen,\nog installationsloggen blev kopieret over på det."
   S_FMT_ASK="Formatér installations-USB-stikket?\n\n%s\n\nDet bliver et almindeligt FAT32-stik, brugbart overalt,\nog installationsloggen kopieres over på det.\n\n⚠  INSTALLATIONSPROGRAMMET SLETTES: for at installere igen\nskal du skrive stikket på ny fra en anden computer.\n\nDen Home Assistant-installation, der allerede er skrevet\ntil disken, er ikke berørt."
-  S_FMT_YES="Formatér stikket"
-  S_FMT_NO="Behold installationsprogrammet"
   S_FMT_FAIL="Stikket kunne ikke formateres.\n\nIntet blev rørt: det kan stadig bruges som\ninstallationsprogram. Detaljerne står i loggen."
   S_FMT_BROKEN="Formateringen af stikket mislykkedes undervejs.\n\n⚠  Stikket kan ikke længere starte: du skal skrive det igen\nfor at bruge det som installationsprogram.\n\nHome Assistant-installationen på disken er ikke berørt,\nden er færdig."
   S_DONE="Installationen er færdig.\n\nHome Assistant OS er installeret på %s.\n\n➜ TAG USB-STIKKET UD NU, før du bekræfter.\n  (installationsprogrammet kører i hukommelsen: stikket bruges ikke mere)\n\nNÆSTE:\n 1. Bekræft nedenfor: PC'en genstarter i Home Assistant.\n 2. Lad netværkskablet sidde i.\n 3. Vent 2 til 5 minutter (første opstart).\n 4. Fra en anden enhed:  http://homeassistant.local"
@@ -315,6 +330,13 @@ da)
   S_PREP="Preparing disk %s..."
   S_WRITING="Downloading HAOS %s.\nDo not power off the PC."
   S_WRITE_HEAD="Writing the image to %s.\nDo not power off the PC."
+  S_DL_CHECK="Checking the downloaded image..."
+  S_DL_RESUME="Resuming the download: %s of %s already on disk."
+  S_DL_RETRY="The download stopped (curl code %s).\n\nLast log lines:\n%s\n\nContinue from where it stopped?"
+  S_DL_ABORT="The download did not complete.\n\nNOTHING WAS WRITTEN: the disk is exactly as it was,\nand its contents are still there.\n\nDetail:\n%s\n\nFull log: %s"
+  S_DL_BAD="The downloaded image is corrupt (its .xz checksums do\nnot match) -- twice in a row.\n\nNOTHING WAS WRITTEN: the disk is untouched.\nThat points at the network or a caching proxy, not\nat the disk.\n\nDetail:\n%s\n\nFull log: %s"
+  S_DISK_HA="⚠  This disk already holds a Home Assistant installation\n   (hassos-boot / hassos-data found). Erasing it destroys\n   your configuration, add-ons and history."
+  S_FMT_TYPE="Type YES to reformat the stick.\nAnything else leaves it exactly as it is."
   S_FAIL="Installation failed (code %s).\n\nMost common cause: the Internet connection dropped during the\ndownload. The disk has already been erased; starting the\ninstallation over from scratch is safe.\n\nDetails:\n%s\n\nFull log: %s"
   S_VFY_ASK="Verify that the disk was written correctly?\n\nReads back %s from %s.\nTakes 1 to 3 minutes depending on the disk.\n\nRecommended, especially on an older disk."
   S_VFY_RUN="Reading back and verifying the disk..."
@@ -343,8 +365,6 @@ da)
   S_WIFI_PUSH_SKIP="This Wi-Fi network cannot be pre-configured.\n\nIt relies on certificates or a mode Home Assistant could not\npick up as-is. Nothing was written: better that than a\nnetwork that never comes up.\n\nTO DO AFTER THE INSTALL:\n • plug in an Ethernet cable (simplest), or\n • configure Wi-Fi from the Home Assistant console\n   (keyboard + screen on the PC).\n\nDetails are in the installation log."
   S_DONE_LOG="\n\nThe stick was reformatted: it is a normal USB stick again,\nand the installation log was copied onto it."
   S_FMT_ASK="Reformat the installer USB stick?\n\n%s\n\nIt would become an ordinary FAT32 stick, usable anywhere,\nand the installation log would be copied onto it.\n\n⚠  THE INSTALLER WILL BE ERASED: to reinstall, you would\nhave to write the stick again from another computer.\n\nThe Home Assistant installation already written to the disk\nis not affected."
-  S_FMT_YES="Reformat the stick"
-  S_FMT_NO="Keep the installer"
   S_FMT_FAIL="The stick could not be reformatted.\n\nNothing was touched: it is still usable as an installer.\nDetails are in the log."
   S_FMT_BROKEN="Reformatting the stick failed partway through.\n\n⚠  The stick is no longer bootable: you will have to write it\nagain to reuse it as an installer.\n\nThe Home Assistant installation on the disk is not affected,\nit is complete."
   S_DONE="Installation complete.\n\nHome Assistant OS is installed on %s.\n\n➜ REMOVE THE USB STICK NOW, before confirming.\n  (the installer runs from memory: the stick is no longer used)\n\nNEXT:\n 1. Confirm below: the PC reboots into Home Assistant.\n 2. Keep the network cable plugged in.\n 3. Wait 2 to 5 minutes (first boot).\n 4. From another device:  http://homeassistant.local"
@@ -544,7 +564,13 @@ choose_lang_keyboard(){
   set_strings
 }
 
-have_net(){ curl -fsI --max-time 5 https://github.com >/dev/null 2>&1; }
+# Two targets, success on either: a network that filters github.com used to be
+# read as "no internet" while the image itself was perfectly reachable -- and a
+# captive portal that answers for github.com would give the opposite lie.
+have_net(){
+  curl -fsI --max-time 5 https://github.com >/dev/null 2>&1 && return 0
+  curl -fsI --max-time 5 https://version.home-assistant.io/stable.json >/dev/null 2>&1
+}
 
 # UUID of the ACTIVE Wi-Fi connection, whatever way it was created (guided
 # walkthrough or nmtui). Empty when there is none.
@@ -913,11 +939,19 @@ reformat_stick(){
     fi
   done
 
-  # --defaultno: the action ERASES the stick, so the default button must be
-  # "keep the installer". Confirming without reading must not destroy anything.
-  wt_yesno "$S_WARN" "$(printf "$S_FMT_ASK" "$(describe_part "/dev/$dev")")" \
-    --defaultno --yes-button "$S_FMT_YES" --no-button "$S_FMT_NO" \
+  # Typed confirmation, exactly like the disk step: the stick is the only way
+  # back into the installer, so a stray keypress must not be able to destroy it.
+  local ans msg
+  msg="$(printf "$S_FMT_ASK" "$(describe_part "/dev/$dev")")$'\n\n'$S_FMT_TYPE"
+  wt_dims "$msg"
+  ans=$(whiptail --title "$S_WARN${STEP:+  [$STEP]}" $WT_SCROLL \
+        --inputbox "$msg" "$WT_H" "$WT_W" 3>&1 1>&2 2>&3) \
     || { logx "reformat refused by the user"; return 1; }
+  ans=$(printf '%s' "$ans" | tr -d '[:space:]' | tr '[:lower:]' '[:upper:]')
+  if [ "$ans" != "YES" ]; then
+    logx "reformat refused: YES not typed"
+    return 1
+  fi
 
   # ---- FROM HERE ON THE STICK IS MODIFIED: any failure returns 3, not 2. ----
   # 0x0c = FAT32 LBA, boot set, start at 1 MiB (alignment).
@@ -1056,8 +1090,13 @@ setup_network(){
     while IFS=$'\t' read -r ssid sig sec; do
       [ -n "$ssid" ] || continue
       menu+=("$ssid" "$(printf 'signal %3s%%   %s' "$sig" "${sec:-open}")")
-    done < <(nmcli -t -f SSID,SIGNAL,SECURITY dev wifi list 2>/dev/null \
-             | awk -F: 'length($1) && !seen[$1]++ {print $1"\t"$2"\t"$3}')
+    # --escape no + a tab separator: the default terse output separates fields
+    # with ': ' and escapes a ':' INSIDE an SSID as '\:', so awk -F: split the
+    # name and 'nmcli dev wifi connect' was handed the escaped form -- the
+    # connection then failed on a network that was plainly visible.
+    done < <(nmcli -t --escape no --separator $'\t' -f SSID,SIGNAL,SECURITY \
+               dev wifi list 2>/dev/null \
+             | awk -F'\t' 'length($1) && !seen[$1]++ {print $1"\t"$2"\t"$3}')
 
     menu+=("$S_NET_RESCAN" "$S_NET_RESCAN_D")
     menu+=("$S_NET_MANUAL" "$S_NET_MANUAL_D")
@@ -1133,7 +1172,7 @@ resolve_version(){
 
 # ---------------------------------------------------------------------------
 pick_disk(){
-  local menu=() name size model tran vendor rm_ hp tag
+  local menu=() name size model tran vendor rm_ hp tag kind
   # whiptail cannot colour a menu item -> textual marking at the front.
   # No eval on lsblk output: a MODEL field containing a quote would break the
   # parsing. One column at a time, otherwise an empty field shifts the following
@@ -1156,6 +1195,10 @@ pick_disk(){
     tran=$(lsblk -dno TRAN    "/dev/$name" 2>/dev/null | xargs)
     rm_=$(lsblk -dno RM       "/dev/$name" 2>/dev/null | xargs)
     hp=$(lsblk -dno HOTPLUG   "/dev/$name" 2>/dev/null | xargs)
+    # ROTA=1 is a spinning disk: worth knowing before choosing, since an old
+    # 3.5" drive is not what anyone wants under Home Assistant.
+    kind=$(lsblk -dno ROTA    "/dev/$name" 2>/dev/null | xargs)
+    case "${kind:-}" in 0) kind="SSD" ;; 1) kind="HDD" ;; *) kind="-" ;; esac
 
     tag=""
     if [ "${rm_:-0}" = "1" ] || [ "${hp:-0}" = "1" ] || [ "$tran" = "usb" ]; then
@@ -1166,8 +1209,8 @@ pick_disk(){
         *)  tag="[!! USB / EXTERNAL !!] " ;;
       esac
     fi
-    menu+=("/dev/$name" "$(printf '%s%-9s %-5s %s' "$tag" "${size:-?}" "${tran:-?}" \
-           "$(echo "$vendor ${model:-?}" | xargs)")")
+    menu+=("/dev/$name" "$(printf '%s%-9s %-5s %-4s %s' "$tag" "${size:-?}" "${tran:-?}" \
+           "$kind" "$(echo "$vendor ${model:-?}" | xargs)")")
   done < <(lsblk -dno NAME,TYPE 2>/dev/null | awk '$2=="disk"{print $1}')
 
   [ ${#menu[@]} -gt 0 ] || die "$S_DISK_NONE"
@@ -1187,12 +1230,23 @@ pick_disk(){
   local content
   content=$(lsblk -no NAME,SIZE,FSTYPE,LABEL "$TARGET" 2>/dev/null | sed 's/^/   /')
 
+  # A disk that already carries a Home Assistant installation: the user is about
+  # to erase a WORKING system, configuration, add-ons and history included. Say
+  # it in the confirmation itself, above the partition list.
+  local ha="" labels
+  labels=$(lsblk -no LABEL "$TARGET" 2>/dev/null)
+  if printf '%s\n' "$labels" | grep -qix 'hassos-boot' \
+  || printf '%s\n' "$labels" | grep -qix 'hassos-data'; then
+    ha="$(printf '%s\n\n' "$S_DISK_HA")"
+    logx "target $TARGET already carries a Home Assistant installation"
+  fi
+
   # Typed confirmation, not a button: on this single step a stray Enter or arrow
   # key must not be able to erase a disk. The word YES is deliberately the same
   # in every language, so the check never depends on the UI language; the
   # comparison ignores case and surrounding spaces, but an empty answer stops.
   local ans msg
-  msg=$(printf "$S_DISK_CONFIRM" "$TARGET" "$content")
+  msg=$(printf "$S_DISK_CONFIRM" "$TARGET" "$ha$content")
   wt_dims "$msg"
   ans=$(whiptail --title "$S_CONFIRM_T${STEP:+  [$STEP]}" $WT_SCROLL \
         --inputbox "$msg" "$WT_H" "$WT_W" 3>&1 1>&2 2>&3) || die "$S_CANCELLED"
@@ -1203,13 +1257,84 @@ pick_disk(){
 }
 
 # ---------------------------------------------------------------------------
-flash(){
+# ---- helpers used by flash() -------------------------------------------------
+
+# Average throughput for the log: "0.2 MiB/s" in a bug report is worth far more
+# than "it was slow".
+rate_mib(){ awk -v b="${1:-0}" -v t="${2:-0}" 'BEGIN{ if (t > 0) printf "%.1f", b/1048576/t; else printf "0.0" }'; }
+
+# Erases the target. Its own function so that the order inside flash() --
+# download, check, ERASE, write -- is visible at a glance.
+prepare_disk(){
   whiptail --title "$S_TITLE" --infobox "$(printf "$S_PREP" "$TARGET")" 7 62
+  logx "erasing $TARGET: $(lsblk -dno MODEL,SIZE "$TARGET" 2>/dev/null | xargs)"
   wipefs -af "$TARGET" 2>>"$LOG" || true
   dd if=/dev/zero of="$TARGET" bs=1M count=16 conv=fsync 2>>"$LOG" || true
-  local bytes seek; bytes=$(blockdev --getsize64 "$TARGET" 2>/dev/null || echo 0); seek=$(( bytes/1048576 - 16 ))
+  local bytes seek
+  bytes=$(blockdev --getsize64 "$TARGET" 2>/dev/null || echo 0)
+  seek=$(( bytes/1048576 - 16 ))
   (( seek > 0 )) && dd if=/dev/zero of="$TARGET" bs=1M seek="$seek" count=16 conv=fsync 2>>"$LOG" || true
+  logx "target erased: signatures removed, first and last 16 MiB zeroed"
+}
 
+# Downloads the image with resume and an integrity check; returns 0 only when the
+# file is complete AND its .xz checksums validate, so the caller can then erase a
+# disk knowing the image is already in hand.
+# Resume is only possible because the file is on the disk: curl cannot seek in a
+# pipe, and a resume there re-injects bytes into the xz stream and corrupts it.
+download_image(){
+  local dst="$1" size="$2" have rc detail bad=0
+  local -a st
+  while :; do
+    have=0
+    [ -f "$dst" ] && have=$(stat -c%s "$dst" 2>/dev/null || echo 0)
+    [[ "$have" =~ ^[0-9]+$ ]] || have=0
+
+    clear
+    if (( have > 0 )) && (( have < size )); then
+      printf '\n  %s\n\n' "$(printf "$S_DL_RESUME" \
+        "$(numfmt --to=iec "$have" 2>/dev/null || echo "$have")" \
+        "$(numfmt --to=iec "$size" 2>/dev/null || echo "$size")")"
+      # pv only knows the REMAINING bytes, so its bar covers this attempt; the
+      # line above already says how much is on disk.
+      curl -fSL -C - --speed-limit 1024 --speed-time 30 "$IMG_URL" 2>>"$LOG" \
+        | pv -s "$(( size - have ))" >> "$dst"
+      st=("${PIPESTATUS[@]}"); rc=${st[0]}
+    elif (( have >= size )) && [ -s "$dst" ]; then
+      rc=0                                   # nothing left to fetch
+    else
+      printf '\n  %s\n\n' "$(printf "$S_WRITING" "$HAOS_VERSION")"
+      rm -f "$dst"
+      curl -fSL --speed-limit 1024 --speed-time 30 "$IMG_URL" 2>>"$LOG" \
+        | pv -s "$size" > "$dst"
+      st=("${PIPESTATUS[@]}"); rc=${st[0]}
+    fi
+
+    if [ "$rc" -ne 0 ] || [ ! -s "$dst" ]; then
+      detail=$(tail -n 6 "$LOG" 2>/dev/null | cut -c1-64)
+      logx "download interrupted (curl code $rc, $(stat -c%s "$dst" 2>/dev/null || echo 0) bytes on disk)"
+      # The partial file is KEPT: that is exactly what makes the resume useful.
+      wt_yesno "$S_WARN" "$(printf "$S_DL_RETRY" "$rc" "$detail")" \
+        || die "$(printf "$S_DL_ABORT" "$detail" "$LOG")"
+      continue
+    fi
+
+    # Integrity of the DOWNLOAD: xz's own checksums. A truncated or corrupted
+    # file is caught here, while the disk is still untouched.
+    whiptail --title "$S_TITLE" --infobox "$S_DL_CHECK" 7 62
+    if ! xz -t "$dst" 2>>"$LOG"; then
+      bad=$(( bad + 1 ))
+      logx "downloaded image FAILED the .xz check (attempt $bad of 2)"
+      rm -f "$dst"                         # resuming would resume over bad bytes
+      (( bad < 2 )) && continue
+      die "$(printf "$S_DL_BAD" "$(tail -n 6 "$LOG" 2>/dev/null | cut -c1-64)" "$LOG")"
+    fi
+    logx "downloaded image passed the .xz integrity check"
+    return 0
+  done
+}
+
+flash(){
   local dl
   dl=$(curl -fsSLI "$IMG_URL" 2>>"$LOG" \
        | awk 'BEGIN{IGNORECASE=1}/^content-length/{v=$2}END{gsub(/\r/,"",v);print v}')
@@ -1218,8 +1343,8 @@ flash(){
   # whiptail's stdout is forced onto /dev/tty: otherwise the process substitution
   # inherits the pipe to xz and injects the terminal codes into it.
   set -o pipefail
-  local rc=0 avail_kb need_kb usize
-  local -a st pvargs
+  local rc=0 avail_kb need_kb usize t0 secs d_file=/tmp/haos.img.xz
+  local -a pvargs
 
   # Two separate phases give each one its own progress bar -- percent, rate and
   # ETA -- which a single pipeline cannot: it can only ever show one number.
@@ -1230,35 +1355,45 @@ flash(){
   need_kb=$(( dl / 1024 * 2 ))            # image + headroom for the write phase
 
   if [ "$dl" -gt 0 ] && [ "$avail_kb" -gt "$need_kb" ]; then
-    # ---- Phase 1/2: download. pv draws percent, rate and ETA itself. ----
-    clear
-    printf '\n  %s\n\n' "$(printf "$S_WRITING" "$HAOS_VERSION")"
-    rm -f /tmp/haos.img.xz
-    curl -fSL --speed-limit 1024 --speed-time 30 "$IMG_URL" 2>>"$LOG" \
-      | pv -s "$dl" > /tmp/haos.img.xz
-    st=("${PIPESTATUS[@]}"); rc=${st[0]}
+    # ---- 1/3: fetch. A failure offers a resume; declining stops with the disk
+    #      untouched, which is the whole point of doing this first. ----
+    t0=$SECONDS
+    download_image "$d_file" "$dl"
+    secs=$(( SECONDS - t0 ))
+    logx "download complete: $(( dl / 1048576 )) MiB in ${secs}s, average $(rate_mib "$dl" "$secs") MiB/s"
 
-    if [ "$rc" -eq 0 ] && [ -s /tmp/haos.img.xz ]; then
-      # ---- Phase 2/2: write. The uncompressed size comes from the .xz index,
-      #      so pv can show a real percentage and an ETA here too. ----
-      usize=$(xz --robot -l /tmp/haos.img.xz 2>/dev/null \
-              | awk -F'\t' '$1=="totals"{print $5}')
-      [[ "$usize" =~ ^[0-9]+$ ]] && (( usize > 0 )) || usize=""
-      pvargs=()
-      [ -n "$usize" ] && pvargs=(-s "$usize")
-      printf '\n  %s\n\n' "$(printf "$S_WRITE_HEAD" "$TARGET")"
-      xz -dc /tmp/haos.img.xz 2>>"$LOG" \
-        | pv "${pvargs[@]}" 2>/dev/tty \
-        | tee >(sha256sum | cut -d' ' -f1 > /tmp/haos-img.sha256) \
-              >(wc -c > /tmp/haos-img.size) \
-        | dd of="$TARGET" bs=4M conv=fsync 2>>"$LOG"
-      rc=$?
+    # ---- 2/3: erase. Only reached with a complete, checksummed image in RAM. ----
+    prepare_disk
+
+    # ---- 3/3: write. The uncompressed size comes from the .xz index, so pv can
+    #      show a real percentage and an ETA here too. ----
+    usize=$(xz --robot -l "$d_file" 2>/dev/null \
+            | awk -F'\t' '$1=="totals"{print $5}')
+    [[ "$usize" =~ ^[0-9]+$ ]] && (( usize > 0 )) || usize=""
+    pvargs=()
+    if [ -n "$usize" ]; then pvargs=(-s "$usize"); fi
+    clear
+    printf '\n  %s\n\n' "$(printf "$S_WRITE_HEAD" "$TARGET")"
+    t0=$SECONDS
+    xz -dc "$d_file" 2>>"$LOG" \
+      | pv "${pvargs[@]}" 2>/dev/tty \
+      | tee >(sha256sum | cut -d' ' -f1 > /tmp/haos-img.sha256) \
+            >(wc -c > /tmp/haos-img.size) \
+      | dd of="$TARGET" bs=4M conv=fsync 2>>"$LOG"
+    rc=$?
+    secs=$(( SECONDS - t0 ))
+    rm -f "$d_file"
+    if [ -n "$usize" ]; then
+      logx "write complete: $(( usize / 1048576 )) MiB in ${secs}s, average $(rate_mib "$usize" "$secs") MiB/s"
     else
-      rc=1
+      logx "write complete in ${secs}s (uncompressed size unknown, no rate)"
     fi
-    rm -f /tmp/haos.img.xz
   else
     # ---- Streaming fallback: download and write interleaved, one gauge. ----
+    # Small-RAM machines cannot hold the image in memory, so the old worst case
+    # is back: the disk is erased before the download is known to work.
+    prepare_disk
+    t0=$SECONDS
     # --speed-limit/--speed-time: without them, a network drop left curl waiting
     # on the TCP timers, 'pv -n' re-emitting the last percentage, and the gauge
     # frozen indefinitely -- the user could not tell "slow" from "dead". Below
@@ -1276,6 +1411,7 @@ flash(){
         | dd of="$TARGET" bs=4M conv=fsync 2>>"$LOG"
     }
     rc=$?
+    logx "streaming write finished in $(( SECONDS - t0 ))s (no rate: nothing is staged)"
   fi
   sync; wait 2>/dev/null || true
   logx "writing finished on $TARGET (code $rc)"
@@ -1596,9 +1732,19 @@ choose_lang_keyboard
 # not boot after an otherwise successful installation.
 logx "installer started -- language $UI_LANG, board $HAOS_BOARD"
 logx "boot: $(boot_status) | Secure Boot: $(secureboot_status)"
+# Build stamp written by build-iso.sh: without it, a bug report cannot say which
+# ISO it came from, and every "it fails" starts with guessing.
+BUILD_STAMP=""
+if [ -r /etc/haos-installer-build ]; then
+  BUILD_STAMP=$(head -1 /etc/haos-installer-build 2>/dev/null | tr -d '\r' | cut -c1-40)
+fi
 STEP="1/6"                  # progress marker shown in every window title
-wt_msg "$S_TITLE" \
-  "$(printf "$S_WELCOME" "$(boot_status)" "$(secureboot_status)")"
+WELCOME_TEXT=$(printf "$S_WELCOME" "$(boot_status)" "$(secureboot_status)")
+if [ -n "$BUILD_STAMP" ]; then
+  logx "installer build: $BUILD_STAMP"
+  WELCOME_TEXT="$WELCOME_TEXT"$'\n\n'"$BUILD_STAMP"
+fi
+wt_msg "$S_TITLE" "$WELCOME_TEXT"
 STEP="2/6"
 setup_network
 log_active_net              # after setup_network: covers all of its exit points

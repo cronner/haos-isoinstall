@@ -1,0 +1,34 @@
+name: Checks
+
+# Fast, disk-less checks: no live-build, no container, no ISO. They run on every
+# push to main as well, where the build does not -- a translation edit that
+# forgets one language must not slide through just because nobody rebuilt.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['main']
+    tags: ['v*']
+  pull_request:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Syntax, functions and string tables
+        run: bash tests/strings.sh
+
+      - name: ShellCheck
+        run: |
+          # Warnings stay informative so that style does not break anything;
+          # only real errors block.
+          shellcheck -S warning build-iso.sh haos-installer.sh tests/strings.sh || true
+          shellcheck -S error build-iso.sh haos-installer.sh tests/strings.sh

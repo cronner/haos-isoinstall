@@ -85,6 +85,15 @@ EOF
 mkdir -p config/includes.chroot/usr/local/bin
 cp "$SRC" config/includes.chroot/usr/local/bin/haos-installer.sh
 
+# --- Build stamp: the ISO carries no version string of its own. The
+# installer shows it on the welcome screen and logs it, so that a bug
+# report says WHICH build produced it.
+REF=$(echo "${GITHUB_SHA:-}" | cut -c1-7)
+[ -n "$REF" ] || REF=$(git rev-parse --short=7 HEAD 2>/dev/null || echo local)
+mkdir -p config/includes.chroot/etc
+printf 'build %s %s
+' "$(date -u +%Y-%m-%d)" "$REF" > config/includes.chroot/etc/haos-installer-build
+
 # --- NetworkManager manages every interface (otherwise it conflicts with live-config) ---
 mkdir -p config/includes.chroot/etc/NetworkManager/conf.d
 cat > config/includes.chroot/etc/NetworkManager/conf.d/10-live.conf <<'EOF'
