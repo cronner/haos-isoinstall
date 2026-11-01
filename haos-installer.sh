@@ -37,6 +37,7 @@ fr)
   S_HALT_OFF="Éteindre le PC"
   S_HALT_SHELL="Ouvrir un terminal"
   S_CANCELLED="Installation annulée."
+  S_VFY_ABORT="Le disque ne correspond pas à l'image : ne démarrez pas dessus."
   S_OK_UEFI="OK (UEFI)"
   S_BAD_UEFI="À VÉRIFIER (mode Legacy/CSM détecté)"
   S_SB_OFF="OK (désactivé)"
@@ -112,6 +113,7 @@ de)
   S_HALT_OFF="PC ausschalten"
   S_HALT_SHELL="Terminal öffnen"
   S_CANCELLED="Installation abgebrochen."
+  S_VFY_ABORT="Die Platte entspricht nicht dem Image: nicht davon starten."
   S_OK_UEFI="OK (UEFI)"
   S_BAD_UEFI="PRÜFEN (Legacy/CSM-Modus erkannt)"
   S_SB_OFF="OK (deaktiviert)"
@@ -187,6 +189,7 @@ da)
   S_HALT_OFF="Sluk PC'en"
   S_HALT_SHELL="Åbn en terminal"
   S_CANCELLED="Installation afbrudt."
+  S_VFY_ABORT="Disken svarer ikke til imaget: start ikke fra den."
   S_OK_UEFI="OK (UEFI)"
   S_BAD_UEFI="TJEK DETTE (Legacy/CSM-tilstand fundet)"
   S_SB_OFF="OK (deaktiveret)"
@@ -262,6 +265,7 @@ da)
   S_HALT_OFF="Power off"
   S_HALT_SHELL="Open a terminal"
   S_CANCELLED="Installation cancelled."
+  S_VFY_ABORT="The disk does not match the image: do not boot from it."
   S_OK_UEFI="OK (UEFI)"
   S_BAD_UEFI="CHECK THIS (Legacy/CSM mode detected)"
   S_SB_OFF="OK (disabled)"
@@ -369,12 +373,15 @@ wt_dims(){                                  # <text> -> WT_H, WT_W, WT_SCROLL
 }
 
 wt_msg(){                                   # <title> <text>
+  local t="$1"
+  [ -n "${STEP:-}" ] && t="$t  [$STEP]"    # language-neutral progress marker
   wt_dims "$2"
-  whiptail --title "$1" $WT_SCROLL --msgbox "$2" "$WT_H" "$WT_W"
+  whiptail --title "$t" $WT_SCROLL --msgbox "$2" "$WT_H" "$WT_W"
 }
 
 wt_yesno(){                                 # <title> <text> [whiptail args...]
   local title="$1" text="$2"; shift 2
+  [ -n "${STEP:-}" ] && title="$title  [$STEP]"
   wt_dims "$text"
   whiptail --title "$title" $WT_SCROLL "$@" --yesno "$text" "$WT_H" "$WT_W"
 }
@@ -385,6 +392,7 @@ wt_yesno(){                                 # <title> <text> [whiptail args...]
 # length. Prints the chosen label on stdout.
 wt_menu(){                    # <title> <prompt> <list height> <tag> <desc>...
   local title="$1" text="$2" listh="$3"; shift 3
+  [ -n "${STEP:-}" ] && title="$title  [$STEP]"
   local i=0 tagw=0 descw=0 a rows cols w h lines
   for a in "$@"; do
     if [ $(( i % 2 )) -eq 0 ]; then (( ${#a} > tagw ))  && tagw=${#a}
@@ -1151,8 +1159,9 @@ pick_disk(){
 
   local content
   content=$(lsblk -no NAME,SIZE,FSTYPE,LABEL "$TARGET" 2>/dev/null | sed 's/^/   /')
+  # --defaultno: the button that wins on a stray Enter must not erase the disk.
   wt_yesno "$S_CONFIRM_T" "$(printf "$S_DISK_CONFIRM" "$TARGET" "$content")" \
-    || die "$S_CANCELLED"
+    --defaultno || die "$S_CANCELLED"
   logx "target confirmed: $(describe_part "$TARGET"), ${gb} GB"
   logx "live medium excluded: ${live_dev:-<not identified>}"
 }
@@ -1162,7 +1171,7 @@ flash(){
   whiptail --title "$S_TITLE" --infobox "$(printf "$S_PREP" "$TARGET")" 7 62
   wipefs -af "$TARGET" 2>>"$LOG" || true
   dd if=/dev/zero of="$TARGET" bs=1M count=16 conv=fsync 2>>"$LOG" || true
-  local bytes seek; bytes=$(blockdev --getsize64 "$TARGET"); seek=$(( bytes/1048576 - 16 ))
+  local bytes seek; bytes=$(blockdev --getsize64 "$TARGET" 2>/dev/null || echo 0); seek=$(( bytes/1048576 - 16 ))
   (( seek > 0 )) && dd if=/dev/zero of="$TARGET" bs=1M seek="$seek" count=16 conv=fsync 2>>"$LOG" || true
 
   local dl
@@ -1238,7 +1247,7 @@ verify(){
     logx "VERIFICATION FAILED: expected $expect, read $actual"
     wt_msg "$S_WARN" \
       "$(printf "$S_VFY_KO" "${expect:0:24}" "${actual:0:24}")"
-    die "$S_CANCELLED"
+    die "$S_VFY_ABORT"
   fi
 }
 
@@ -1424,8 +1433,10 @@ finalize(){
   # last moment it is still plugged in. We only announce the result if it really
   # happened, otherwise the message would lie.
   logx "installation completed successfully on $TARGET"
-  local logmsg="" fmt_rc
-  reformat_stick "${live_dev:-}"; fmt_rc=$?
+  local logmsg="" fmt_rc=1
+  # Only when the boot stick was identified: otherwise reformat_stick can only
+  # answer "impossible", which would be announced as a failure.
+  [ -n "${live_dev:-}" ] && { reformat_stick "$live_dev"; fmt_rc=$?; }
   case $fmt_rc in
     0) logmsg="$S_DONE_LOG" ;;
     2) wt_msg "$S_WARN" "$S_FMT_FAIL" ;;     # stick intact
@@ -1508,12 +1519,18 @@ choose_lang_keyboard
 # not boot after an otherwise successful installation.
 logx "installer started -- language $UI_LANG, board $HAOS_BOARD"
 logx "boot: $(boot_status) | Secure Boot: $(secureboot_status)"
+STEP="1/6"                  # progress marker shown in every window title
 wt_msg "$S_TITLE" \
   "$(printf "$S_WELCOME" "$(boot_status)" "$(secureboot_status)")"
+STEP="2/6"
 setup_network
 log_active_net              # after setup_network: covers all of its exit points
+STEP="3/6"
 resolve_version             # REQUIRES the network: must stay after setup_network
+STEP="4/6"
 pick_disk
+STEP="5/6"
 flash
 verify
+STEP="6/6"
 finalize
