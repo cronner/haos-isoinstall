@@ -91,8 +91,7 @@ cp "$SRC" config/includes.chroot/usr/local/bin/haos-installer.sh
 REF=$(echo "${GITHUB_SHA:-}" | cut -c1-7)
 [ -n "$REF" ] || REF=$(git rev-parse --short=7 HEAD 2>/dev/null || echo local)
 mkdir -p config/includes.chroot/etc
-printf 'build %s %s
-' "$(date -u +%Y-%m-%d)" "$REF" > config/includes.chroot/etc/haos-installer-build
+printf 'build %s %s\n' "$(date -u +%Y-%m-%d)" "$REF" > config/includes.chroot/etc/haos-installer-build
 
 # --- NetworkManager manages every interface (otherwise it conflicts with live-config) ---
 mkdir -p config/includes.chroot/etc/NetworkManager/conf.d
