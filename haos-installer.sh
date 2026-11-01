@@ -45,6 +45,9 @@ fr)
   S_SB_UNK="À VÉRIFIER (état indéterminé)"
   S_WELCOME="Bienvenue.\n\nCet outil installe la dernière version de Home Assistant OS\nsur ce PC, sans ligne de commande.\n\nÉTAT DES PRÉREQUIS :\n  Démarrage   : %s\n  Secure Boot : %s\n\nUn « À VÉRIFIER » signifie que Home Assistant risque de ne\npas démarrer après l'installation. Cela se corrige dans le\nBIOS (touche Suppr/F2 au démarrage). Rien n'est bloqué :\ntu peux continuer quand même.\n\nÀ l'étape du disque, TOUT le disque choisi sera effacé."
   S_NET_ETH="Recherche d'une connexion filaire (Ethernet)..."
+  S_LAN_ASK="Aucune connexion réseau.\n\nBranchez un câble Ethernet (LAN) sur le PC, puis choisissez\nRéessayer.\n\nSans réseau, l'image ne peut pas être téléchargée.\nRien n'a encore été écrit sur aucun disque."
+  S_LAN_RETRY="Réessayer"
+  S_LAN_WIFI="Utiliser le Wi-Fi"
   S_NET_NOWIFI="Aucune carte Wi-Fi utilisable détectée.\n\n%s\n\nBranche un câble Ethernet, ou choisis la configuration\nmanuelle à l'écran suivant."
   S_NET_SCAN="Recherche des réseaux Wi-Fi..."
   S_NET_PICK="Sélectionne ton réseau Wi-Fi :"
@@ -121,6 +124,9 @@ de)
   S_SB_UNK="PRÜFEN (Status unklar)"
   S_WELCOME="Willkommen.\n\nDieses Werkzeug installiert die neueste Version von\nHome Assistant OS auf diesem PC, ohne Kommandozeile.\n\nVORAUSSETZUNGEN:\n  Startmodus  : %s\n  Secure Boot : %s\n\n„PRÜFEN“ heißt, dass Home Assistant nach der\nInstallation möglicherweise nicht startet. Das behebst\ndu im BIOS (Entf/F2 beim Einschalten). Nichts ist\ngesperrt: du kannst trotzdem weitermachen.\n\nBeim Schritt „Datenträger“ wird die gewählte Platte\nKOMPLETT gelöscht."
   S_NET_ETH="Suche nach einer Kabelverbindung (Ethernet)..."
+  S_LAN_ASK="Keine Netzwerkverbindung.\n\nStecke ein Ethernet-(LAN-)Kabel in den PC und wähle dann\nErneut versuchen.\n\nOhne Netz kann das Image nicht geladen werden.\nAuf keine Platte wurde bisher geschrieben."
+  S_LAN_RETRY="Erneut versuchen"
+  S_LAN_WIFI="Stattdessen WLAN"
   S_NET_NOWIFI="Keine nutzbare WLAN-Karte gefunden.\n\n%s\n\nStecke ein Ethernet-Kabel an, oder nutze im nächsten\nSchritt die manuelle Konfiguration."
   S_NET_SCAN="Suche nach WLAN-Netzen..."
   S_NET_PICK="Wähle dein WLAN-Netz:"
@@ -197,6 +203,9 @@ da)
   S_SB_UNK="TJEK DETTE (tilstand ukendt)"
   S_WELCOME="Velkommen.\n\nDette værktøj installerer den nyeste Home Assistant OS\npå denne PC, uden kommandolinje.\n\nKRAV:\n  Starttilstand : %s\n  Secure Boot   : %s\n\n»TJEK DETTE« betyder, at Home Assistant muligvis ikke\nstarter efter installationen. Det rettes i BIOS\n(Del/F2 ved opstart). Intet er blokeret: du kan fortsætte.\n\nVed disken bliver HELE den valgte disk slettet."
   S_NET_ETH="Søger efter en kabelforbindelse (Ethernet)..."
+  S_LAN_ASK="Ingen netværksforbindelse.\n\nSæt et Ethernet-(LAN-)kabel i PC'en, og vælg derefter\nPrøv igen.\n\nUden netværk kan imaget ikke hentes.\nDer er ikke skrevet noget til nogen disk endnu."
+  S_LAN_RETRY="Prøv igen"
+  S_LAN_WIFI="Brug Wi-Fi i stedet"
   S_NET_NOWIFI="Ingen brugbart Wi-Fi-kort fundet.\n\n%s\n\nSæt et Ethernet-kabel i, eller brug den manuelle\nkonfiguration på næste skærm."
   S_NET_SCAN="Søger efter Wi-Fi-netværk..."
   S_NET_PICK="Vælg dit Wi-Fi-netværk:"
@@ -273,6 +282,9 @@ da)
   S_SB_UNK="CHECK THIS (state unknown)"
   S_WELCOME="Welcome.\n\nThis tool installs the latest Home Assistant OS on this PC,\nwith no command line involved.\n\nREQUIREMENTS CHECK:\n  Boot mode   : %s\n  Secure Boot : %s\n\n\"CHECK THIS\" means Home Assistant may not boot after the\ninstall. Fix it in the BIOS (Del/F2 at power-on). Nothing\nis blocked: you may continue anyway.\n\nAt the disk step, the WHOLE disk you pick will be erased."
   S_NET_ETH="Looking for a wired (Ethernet) connection..."
+  S_LAN_ASK="No network connection.\n\nPlug an Ethernet (LAN) cable into the PC, then choose\nRetry.\n\nNo network means the image cannot be downloaded.\nNothing has been written to any disk yet."
+  S_LAN_RETRY="Retry"
+  S_LAN_WIFI="Use Wi-Fi instead"
   S_NET_NOWIFI="No usable Wi-Fi adapter detected.\n\n%s\n\nPlug in an Ethernet cable, or use manual configuration on\nthe next screen."
   S_NET_SCAN="Scanning for Wi-Fi networks..."
   S_NET_PICK="Select your Wi-Fi network:"
@@ -1006,6 +1018,17 @@ setup_network(){
   have_net && return 0
   whiptail --title "$S_TITLE" --infobox "$S_NET_ETH" 7 62
   sleep 5; have_net && return 0
+
+  # No connection yet: ask explicitly for a LAN cable, with a Retry button.
+  # That is the usual case on a desktop PC, and someone who simply plugged the
+  # cable in late must not be pushed into the Wi-Fi scan menu.
+  while ! have_net; do
+    wt_yesno "$S_WARN" "$S_LAN_ASK" \
+      --yes-button "$S_LAN_RETRY" --no-button "$S_LAN_WIFI" || break
+    whiptail --title "$S_TITLE" --infobox "$S_NET_ETH" 7 62
+    sleep 3
+  done
+  have_net && return 0
 
   rfkill unblock all 2>/dev/null || true
   nmcli radio wifi on 2>/dev/null || true
