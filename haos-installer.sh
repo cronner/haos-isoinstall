@@ -2,7 +2,7 @@
 # haos-installer.sh — Guided Home Assistant OS installer (bare metal).
 #
 # Whiptail screens, assisted Wi-Fi, disk selection, verification by read-back.
-# Started at boot of a Debian live system. Bilingual EN/FR (chosen on screen 1).
+# Started at boot of a Debian live system. Languages EN/DA/DE/FR (chosen on screen 1).
 set -uo pipefail          # no -e: errors are handled to keep the wizard alive
 export NEWT_COLORS='root=,blue; window=,lightgray; border=blue,lightgray; title=blue,'
 
@@ -28,7 +28,8 @@ logx(){ printf '[%s] %s\n' "$(date '+%F %T')" "$*" >> "$LOG"; }
 # definition time, otherwise $TARGET & co would be empty at this stage.
 # ---------------------------------------------------------------------------
 set_strings(){
-if [ "$UI_LANG" = "fr" ]; then
+case "$UI_LANG" in
+fr)
   S_TITLE="Installation Home Assistant OS"
   S_WARN="⚠  AVERTISSEMENT — Installation Home Assistant OS"
   S_RESCUE="\n\nTu vas pouvoir sauvegarder le journal, puis éteindre le PC."
@@ -102,7 +103,158 @@ if [ "$UI_LANG" = "fr" ]; then
   S_FMT_FAIL="La clé n'a pas pu être reformatée.\n\nRien n'a été touché : elle reste utilisable comme\ninstallateur. Le détail figure dans le journal."
   S_FMT_BROKEN="Le reformatage de la clé a échoué en cours de route.\n\n⚠  La clé n'est plus amorçable : il faudra la regraver pour\ns'en resservir comme installateur.\n\nL'installation de Home Assistant sur le disque n'est pas\nconcernée, elle est terminée."
   S_DONE="Installation terminée.\n\nHome Assistant OS est installé sur %s.\n\n➜ RETIRE LA CLÉ USB MAINTENANT, avant de valider.\n  (l'installateur tourne en mémoire : la clé ne sert plus)\n\nÀ SUIVRE :\n 1. Valide ci-dessous : le PC redémarre sur Home Assistant.\n 2. Garde le câble réseau branché.\n 3. Patiente 2 à 5 minutes (premier démarrage).\n 4. Depuis un autre appareil :  http://homeassistant.local"
-else
+;;
+de)
+  S_TITLE="Installation von Home Assistant OS"
+  S_WARN="⚠  WARNUNG — Installation von Home Assistant OS"
+  S_RESCUE="\n\nDu kannst jetzt das Protokoll speichern und den PC danach ausschalten."
+  S_HALT_ASK="Was jetzt?\n\nEs wird nichts mehr geändert: die Installation ist fehlgeschlagen.\nAusschalten ist die normale Wahl.\n\nDas Terminal ist nur etwas für dich, wenn du dich damit\nauskennst."
+  S_HALT_OFF="PC ausschalten"
+  S_HALT_SHELL="Terminal öffnen"
+  S_CANCELLED="Installation abgebrochen."
+  S_OK_UEFI="OK (UEFI)"
+  S_BAD_UEFI="PRÜFEN (Legacy/CSM-Modus erkannt)"
+  S_SB_OFF="OK (deaktiviert)"
+  S_SB_ON="PRÜFEN (aktiviert — HAOS startet nicht)"
+  S_SB_UNK="PRÜFEN (Status unklar)"
+  S_WELCOME="Willkommen.\n\nDieses Werkzeug installiert die neueste Version von\nHome Assistant OS auf diesem PC, ohne Kommandozeile.\n\nVORAUSSETZUNGEN:\n  Startmodus  : %s\n  Secure Boot : %s\n\n„PRÜFEN“ heißt, dass Home Assistant nach der\nInstallation möglicherweise nicht startet. Das behebst\ndu im BIOS (Entf/F2 beim Einschalten). Nichts ist\ngesperrt: du kannst trotzdem weitermachen.\n\nBeim Schritt „Datenträger“ wird die gewählte Platte\nKOMPLETT gelöscht."
+  S_NET_ETH="Suche nach einer Kabelverbindung (Ethernet)..."
+  S_NET_NOWIFI="Keine nutzbare WLAN-Karte gefunden.\n\n%s\n\nStecke ein Ethernet-Kabel an, oder nutze im nächsten\nSchritt die manuelle Konfiguration."
+  S_NET_SCAN="Suche nach WLAN-Netzen..."
+  S_NET_PICK="Wähle dein WLAN-Netz:"
+  S_NET_RESCAN="[ Erneut suchen ]"
+  S_NET_RESCAN_D="kein Netz gefunden? nochmal versuchen"
+  S_NET_MANUAL="[ Manuelle Konfiguration ]"
+  S_NET_MANUAL_D="versteckte SSID, WPA-Enterprise, feste IP (nmtui)"
+  S_NET_ETHRETRY="[ Ethernet erneut versuchen ]"
+  S_NET_ETHRETRY_D="Kabel inzwischen angesteckt"
+  S_NET_QUIT="Installation abbrechen?\n\nEs ist kein Netz konfiguriert: ohne Internetzugang kann\ndie Installation nicht weiterlaufen."
+  S_NET_PSK="Passwort für das Netz „%s“:\n(wird im Klartext angezeigt, damit du dich nicht vertippst)"
+  S_NET_CONN="Verbindung mit „%s“..."
+  S_NET_FAIL="Verbindung mit „%s“ fehlgeschlagen.\n\n%s\n\nPrüfe das Passwort, oder nutze die manuelle\nKonfiguration."
+  S_VER_FETCH="Suche die neueste Version von Home Assistant OS..."
+  S_VER_FAIL="Die Version von Home Assistant OS lässt sich nicht ermitteln.\n\nBeide Quellen wurden ohne Erfolg versucht:\n  version.home-assistant.io  (Stable-Kanal)\n  api.github.com             (letztes Release)\n\nDie Installation kann nicht weiterlaufen: ohne Version\ngibt es kein Image zum Herunterladen.\n\nPrüfe den Internetzugang und die DNS-Auflösung, und\nstarte den Installer neu."
+  S_VER_NOIMG="Kein Image für Version %s gefunden:\n%s"
+  S_DISK_NONE="Keine interne Festplatte gefunden."
+  S_DISK_PICK="Auf welche Platte soll Home Assistant OS installiert werden?\nIHR GESAMTER Inhalt wird endgültig gelöscht.\n\nPlatten mit [!! USB / EXTERN !!] sind wechselbar: das ist\nwahrscheinlich eine Sicherungsplatte, nicht das Ziel."
+  S_DISK_SMALL="Die Platte %s hat %s GB.\n\nHome Assistant braucht mindestens 32 GB. Das Schreiben\nkann fehlschlagen oder zu wenig Platz übrig lassen.\n\nBisher wurde nichts gelöscht."
+  S_DISK_CONFIRM="Die Platte %s wird KOMPLETT GELÖSCHT.\n\nErkannter aktueller Inhalt:\n%s\n\nLöschen und Installation bestätigen?"
+  S_CONFIRM_T="⚠  LETZTE BESTÄTIGUNG"
+  S_STOP="Abbrechen (empfohlen)"
+  S_GOON="Trotzdem weitermachen"
+  S_STOPPED="Vor jeder Änderung abgebrochen."
+  S_PREP="Platte %s wird vorbereitet..."
+  S_WRITING="HAOS %s wird heruntergeladen und geschrieben.\nSchalte den PC nicht aus."
+  S_FAIL="Installation fehlgeschlagen (Code %s).\n\nHäufigste Ursache: die Internetverbindung ist beim\nHerunterladen abgebrochen. Die Platte ist bereits\ngelöscht; die Installation von vorne zu starten ist\nunbedenklich.\n\nDetails:\n%s\n\nVollständiges Protokoll: %s"
+  S_VFY_ASK="Prüfen, ob die Platte korrekt geschrieben wurde?\n\n%s werden von %s zurückgelesen.\nDauer: 1 bis 3 Minuten je nach Platte.\n\nEmpfohlen, besonders bei einer älteren Platte."
+  S_VFY_RUN="Platte wird zurückgelesen und geprüft..."
+  S_VFY_OK="Prüfung erfolgreich.\n\nDer Inhalt der Platte entspricht genau dem Image.\n\nSHA256: %s..."
+  S_VFY_KO="PRÜFUNG FEHLGESCHLAGEN\n\nDie Platte entspricht nicht dem geschriebenen Image:\n  erwartet: %s...\n  gelesen : %s...\n\nMögliche Ursachen: defekte Platte, SATA-Kabel,\nSpeicher. DIESE Installation NICHT verwenden: beginne\nneu, und wenn der Fehler bleibt, tausche die Platte."
+  S_VFY_SKIP="Der Prüfwert des Images wurde nicht berechnet: Prüfung\nunmöglich. Die Installation ist wahrscheinlich in Ordnung\n(der Download wird durch das komprimierte Format\nvalidiert)."
+  S_LOG_ASK="Installationsprotokoll auf einen USB-Stick kopieren?\n\nSonst geht es beim Neustart verloren. Diese Datei gehört\nzu einer Fehlermeldung dazu."
+  S_LOG_OK="Protokoll kopiert auf %s\n(Datei haos-install-*.log)\n\nDu kannst den Stick abziehen."
+  S_LOG_MENU="Wo soll das Installationsprotokoll gespeichert werden?\n\nEs wurde kein beschreibbarer Datenträger gefunden.\nWähle eine Möglichkeit:"
+  S_LOG_M_USB="USB-Stick anstecken"
+  S_LOG_M_USB_D="5 s warten, dann bestätigen"
+  S_LOG_M_FMT="Diesen Stick neu formatieren"
+  S_LOG_M_FMT_D="löscht den Installer"
+  S_LOG_M_SHOW="Auf dem Bildschirm anzeigen"
+  S_LOG_M_SHOW_D="zum Abfotografieren"
+  S_LOG_M_NONE="Nicht speichern"
+  S_LOG_M_NONE_D="das Protokoll geht verloren"
+  S_LOG_VTOY="Der Stick wird erkannt, ist aber vom Startsystem belegt,\nund das automatische Freigeben ist fehlgeschlagen.\n\nDas passiert mit Ventoy: das Installationsimage ist eine\nDatei auf diesem Stick.\n\n➜ STECKE den Stick AB und wieder AN, warte 5 Sekunden\n  und wähle unten „USB-Stick anstecken“.\n\nDer Installer läuft im Speicher: Abziehen ist\nunbedenklich."
+  S_LOG_RO="Ein Datenträger wurde gefunden, ist aber schreibgeschützt.\n\nDas passiert mit Ventoy: das Installationssystem nutzt\ndiese Partition, sie ist deshalb nicht änderbar.\n\nAb- und wieder Anstecken gibt sie frei, oder wähle eine\nandere Möglichkeit."
+  S_LOG_DETECT="Datenträger wird gesucht..."
+  S_LOG_RETRY="Weiterhin nichts Beschreibbares.\n\nDer Stick ist vielleicht nicht partitioniert, oder sein\nFormat wird nicht erkannt. Du kannst einen anderen\nnehmen."
+  S_LOG_FULL="Ein Datenträger wurde gefunden, ist aber voll.\n\nEs ist kein Platz für das Protokoll. Stecke einen anderen\nUSB-Stick an, oder zeige das Protokoll im nächsten Schritt\nauf dem Bildschirm an, um es abzufotografieren."
+  S_LOG_NONE="Protokoll nicht kopiert.\n\nEs bleibt im Terminal lesbar:\n  cat %s"
+  S_WIFI_PUSH="WLAN-Netz „%s“ vorkonfiguriert.\n\nHome Assistant versucht beim ersten Start, sich damit zu\nverbinden — ABER nur, wenn deine WLAN-Karte zu denen\ngehört, die es unterstützt (seine Liste ist kürzer als die\ndieses Installers).\n\nWenn Home Assistant nach 5 min nicht online ist:\n • Ethernet-Kabel anstecken (empfohlen), oder\n • deine Karte beim Home-Assistant-OS-Projekt melden.\n\nHalte diesen PC in WLAN-Reichweite."
+  S_WIFI_PUSH_FAIL="Das WLAN konnte nicht ins Image vorkonfiguriert werden.\n\nHome Assistant startet ohne Netz: du musst es danach\nverbinden (Ethernet-Kabel, oder Tastatur+Bildschirm an der\nHAOS-Konsole)."
+  S_WIFI_PUSH_SKIP="Dieses WLAN-Netz lässt sich nicht vorkonfigurieren.\n\nEs beruht auf Zertifikaten oder einem Modus, den Home\nAssistant nicht unverändert übernehmen kann. Es wurde\nnichts geschrieben: besser so als ein Netz, das nie\nhochkommt.\n\nNACH DER INSTALLATION ZU TUN:\n • Ethernet-Kabel anstecken (am einfachsten), oder\n • WLAN in der Konsole von Home Assistant einrichten\n   (Tastatur + Bildschirm am PC).\n\nDetails stehen im Installationsprotokoll."
+  S_DONE_LOG="\n\nDer Stick wurde neu formatiert: er ist wieder ein normaler\nUSB-Stick, und das Installationsprotokoll wurde darauf\nkopiert."
+  S_FMT_ASK="Den Installations-USB-Stick neu formatieren?\n\n%s\n\nEr würde wieder ein gewöhnlicher FAT32-Stick, überall\nnutzbar, und das Installationsprotokoll würde darauf\nkopiert.\n\n⚠  DER INSTALLER WIRD GELÖSCHT: zum Neuinstallieren\nmüsstest du den Stick an einem anderen Rechner neu\nschreiben.\n\nDie bereits auf die Platte geschriebene Home-Assistant-\nInstallation ist nicht betroffen."
+  S_FMT_YES="Stick neu formatieren"
+  S_FMT_NO="Installer behalten"
+  S_FMT_FAIL="Der Stick konnte nicht neu formatiert werden.\n\nNichts wurde verändert: er bleibt als Installer nutzbar.\nDetails stehen im Protokoll."
+  S_FMT_BROKEN="Das Neuformatieren des Sticks ist unterwegs fehlgeschlagen.\n\n⚠  Der Stick ist nicht mehr bootfähig: du müsstest ihn neu\nschreiben, um ihn wieder als Installer zu nutzen.\n\nDie Installation von Home Assistant auf der Platte ist\nnicht betroffen, sie ist fertig."
+  S_DONE="Installation abgeschlossen.\n\nHome Assistant OS ist auf %s installiert.\n\n➜ ZIEHE JETZT DEN USB-STICK AB, bevor du bestätigst.\n  (der Installer läuft im Speicher: der Stick wird nicht mehr gebraucht)\n\nWEITER:\n 1. Bestätige unten: der PC startet in Home Assistant.\n 2. Lass das Netzwerkkabel angesteckt.\n 3. Warte 2 bis 5 Minuten (erster Start).\n 4. Von einem anderen Gerät:  http://homeassistant.local"
+;;
+da)
+  S_TITLE="Installation af Home Assistant OS"
+  S_WARN="⚠  ADVARSEL — Installation af Home Assistant OS"
+  S_RESCUE="\n\nDu kan gemme loggen og derefter slukke PC'en."
+  S_HALT_ASK="Hvad nu?\n\nDer ændres ikke mere: installationen mislykkedes.\nAt slukke er det normale valg.\n\nTerminalen er kun noget for dig, hvis du kender den."
+  S_HALT_OFF="Sluk PC'en"
+  S_HALT_SHELL="Åbn en terminal"
+  S_CANCELLED="Installation afbrudt."
+  S_OK_UEFI="OK (UEFI)"
+  S_BAD_UEFI="TJEK DETTE (Legacy/CSM-tilstand fundet)"
+  S_SB_OFF="OK (deaktiveret)"
+  S_SB_ON="TJEK DETTE (aktiveret — HAOS starter ikke)"
+  S_SB_UNK="TJEK DETTE (tilstand ukendt)"
+  S_WELCOME="Velkommen.\n\nDette værktøj installerer den nyeste Home Assistant OS\npå denne PC, uden kommandolinje.\n\nKRAV:\n  Starttilstand : %s\n  Secure Boot   : %s\n\n»TJEK DETTE« betyder, at Home Assistant muligvis ikke\nstarter efter installationen. Det rettes i BIOS\n(Del/F2 ved opstart). Intet er blokeret: du kan fortsætte.\n\nVed disken bliver HELE den valgte disk slettet."
+  S_NET_ETH="Søger efter en kabelforbindelse (Ethernet)..."
+  S_NET_NOWIFI="Ingen brugbart Wi-Fi-kort fundet.\n\n%s\n\nSæt et Ethernet-kabel i, eller brug den manuelle\nkonfiguration på næste skærm."
+  S_NET_SCAN="Søger efter Wi-Fi-netværk..."
+  S_NET_PICK="Vælg dit Wi-Fi-netværk:"
+  S_NET_RESCAN="[ Søg igen ]"
+  S_NET_RESCAN_D="intet netværk? prøv igen"
+  S_NET_MANUAL="[ Manuel konfiguration ]"
+  S_NET_MANUAL_D="skjult SSID, WPA enterprise, fast IP (nmtui)"
+  S_NET_ETHRETRY="[ Prøv Ethernet igen ]"
+  S_NET_ETHRETRY_D="kabel sat i i mellemtiden"
+  S_NET_QUIT="Forlad installationsprogrammet?\n\nDer er ikke konfigureret et netværk: installationen kan\nikke fortsætte uden internetadgang."
+  S_NET_PSK="Adgangskode til netværket »%s«:\n(vises i klartekst for at undgå tastefejl)"
+  S_NET_CONN="Forbinder til »%s«..."
+  S_NET_FAIL="Kunne ikke forbinde til »%s«.\n\n%s\n\nTjek adgangskoden, eller brug den manuelle\nkonfiguration."
+  S_VER_FETCH="Finder den nyeste version af Home Assistant OS..."
+  S_VER_FAIL="Kan ikke fastslå versionen af Home Assistant OS.\n\nBegge kilder blev forsøgt uden held:\n  version.home-assistant.io  (stabil kanal)\n  api.github.com             (seneste udgivelse)\n\nInstallationen kan ikke fortsætte: uden version er der\nintet image at hente.\n\nTjek internetadgang og DNS-opslag, og start\ninstallationsprogrammet igen."
+  S_VER_NOIMG="Intet image fundet til version %s:\n%s"
+  S_DISK_NONE="Ingen intern disk fundet."
+  S_DISK_PICK="Hvilken disk skal Home Assistant OS installeres på?\nHELE indholdet bliver slettet permanent.\n\nDiske markeret [!! USB / EKSTERN !!] er flytbare: det er\nsandsynligvis en backupdisk, ikke målet."
+  S_DISK_SMALL="Disken %s er %s GB.\n\nHome Assistant kræver mindst 32 GB. Skrivningen kan\nmislykkes eller efterlade for lidt plads.\n\nIntet er slettet endnu."
+  S_DISK_CONFIRM="Disken %s bliver HELT SLETTET.\n\nNuværende indhold fundet:\n%s\n\nBekræft sletning og installation?"
+  S_CONFIRM_T="⚠  SIDSTE BEKRÆFTELSE"
+  S_STOP="Stop (anbefales)"
+  S_GOON="Fortsæt alligevel"
+  S_STOPPED="Stoppet før nogen ændring."
+  S_PREP="Forbereder disken %s..."
+  S_WRITING="Henter og skriver HAOS %s.\nSluk ikke PC'en."
+  S_FAIL="Installationen mislykkedes (kode %s).\n\nHyppigste årsag: internetforbindelsen faldt ud under\nhentningen. Disken er allerede slettet; at starte\ninstallationen forfra er sikkert.\n\nDetaljer:\n%s\n\nFuld log: %s"
+  S_VFY_ASK="Kontroller, at disken blev skrevet korrekt?\n\nLæser %s tilbage fra %s.\nTager 1 til 3 minutter afhængigt af disken.\n\nAnbefales, især på en ældre disk."
+  S_VFY_RUN="Læser disken tilbage og kontrollerer..."
+  S_VFY_OK="Kontrollen lykkedes.\n\nDiskens indhold svarer præcis til imaget.\n\nSHA256: %s..."
+  S_VFY_KO="KONTROLLEN MISLYKKEDES\n\nDisken svarer ikke til det skrevne image:\n  forventet: %s...\n  læst     : %s...\n\nMulige årsager: defekt disk, SATA-kabel, hukommelse.\nBRUG IKKE denne installation: prøv igen, og hvis fejlen\nbliver ved, så skift disk."
+  S_VFY_SKIP="Imagets kontrolsum blev ikke beregnet: kontrol umulig.\nInstallationen er sandsynligvis i orden (hentningen\nvalideres af det komprimerede format)."
+  S_LOG_ASK="Kopier installationsloggen til et USB-stik?\n\nEllers går den tabt ved genstart. Det er filen, du\nvedhæfter, når du rapporterer problemet."
+  S_LOG_OK="Log kopieret til %s\n(fil haos-install-*.log)\n\nDu kan tage stikket ud."
+  S_LOG_MENU="Hvor skal installationsloggen gemmes?\n\nDer blev ikke fundet et skrivbart medie automatisk.\nVælg en mulighed:"
+  S_LOG_M_USB="Sæt et USB-stik i"
+  S_LOG_M_USB_D="vent 5 s, og bekræft"
+  S_LOG_M_FMT="Formatér dette stik"
+  S_LOG_M_FMT_D="sletter installationsprogrammet"
+  S_LOG_M_SHOW="Vis på skærmen"
+  S_LOG_M_SHOW_D="for at fotografere det"
+  S_LOG_M_NONE="Gem ikke"
+  S_LOG_M_NONE_D="loggen går tabt"
+  S_LOG_VTOY="Stikket genkendes, men er reserveret af start-systemet,\nog frigivelsen mislykkedes.\n\nDet sker med Ventoy: installationsimaget er en fil på\ndette stik.\n\n➜ TAG STIKKET UD og sæt det I IGEN, vent 5 sekunder,\n  og vælg »Sæt et USB-stik i« nedenfor.\n\nInstallationsprogrammet kører i hukommelsen: det er\nuskadeligt at tage det ud."
+  S_LOG_RO="Et medie blev fundet, men det er skrivebeskyttet.\n\nDet sker med Ventoy: installationssystemet bruger den\npartition, så den kan ikke ændres.\n\nAt tage stikket ud og sætte det i igen frigiver det, eller\nvælg en anden mulighed."
+  S_LOG_DETECT="Søger efter medie..."
+  S_LOG_RETRY="Stadig intet skrivbart.\n\nStikket er måske ikke partitioneret, eller formatet kendes\nikke. Du kan prøve et andet."
+  S_LOG_FULL="Et medie blev fundet, men det er fuldt.\n\nDer er ikke plads til loggen. Sæt et andet USB-stik i,\neller vis loggen på skærmen i næste trin for at\nfotografere den."
+  S_LOG_NONE="Log ikke kopieret.\n\nDen kan stadig læses i terminalen:\n  cat %s"
+  S_WIFI_PUSH="Wi-Fi-netværket »%s« er forkonfigureret.\n\nHome Assistant forsøger at forbinde ved første opstart —\nMEN kun hvis dit Wi-Fi-kort er blandt dem, den\nunderstøtter (listen er kortere end dette\ninstallationsprograms).\n\nHvis Home Assistant ikke er online efter 5 min:\n • sæt et Ethernet-kabel i (anbefales), eller\n • rapportér dit kort til Home Assistant OS-projektet.\n\nHold denne PC inden for Wi-Fi-rækkevidde."
+  S_WIFI_PUSH_FAIL="Wi-Fi kunne ikke forkonfigureres i imaget.\n\nHome Assistant starter uden netværk: du må forbinde det\nbagefter (Ethernet-kabel, eller tastatur+skærm på\nHAOS-konsollen)."
+  S_WIFI_PUSH_SKIP="Dette Wi-Fi-netværk kan ikke forkonfigureres.\n\nDet bygger på certifikater eller en tilstand, som Home\nAssistant ikke kan overtage som den er. Intet blev skrevet:\ndet er bedre end et netværk, der aldrig kommer op.\n\nGØR DETTE EFTER INSTALLATIONEN:\n • sæt et Ethernet-kabel i (nemmest), eller\n • konfigurér Wi-Fi fra Home Assistant-konsollen\n   (tastatur + skærm på PC'en).\n\nDetaljerne står i installationsloggen."
+  S_DONE_LOG="\n\nStikket blev formateret: det er et normalt USB-stik igen,\nog installationsloggen blev kopieret over på det."
+  S_FMT_ASK="Formatér installations-USB-stikket?\n\n%s\n\nDet bliver et almindeligt FAT32-stik, brugbart overalt,\nog installationsloggen kopieres over på det.\n\n⚠  INSTALLATIONSPROGRAMMET SLETTES: for at installere igen\nskal du skrive stikket på ny fra en anden computer.\n\nDen Home Assistant-installation, der allerede er skrevet\ntil disken, er ikke berørt."
+  S_FMT_YES="Formatér stikket"
+  S_FMT_NO="Behold installationsprogrammet"
+  S_FMT_FAIL="Stikket kunne ikke formateres.\n\nIntet blev rørt: det kan stadig bruges som\ninstallationsprogram. Detaljerne står i loggen."
+  S_FMT_BROKEN="Formateringen af stikket mislykkedes undervejs.\n\n⚠  Stikket kan ikke længere starte: du skal skrive det igen\nfor at bruge det som installationsprogram.\n\nHome Assistant-installationen på disken er ikke berørt,\nden er færdig."
+  S_DONE="Installationen er færdig.\n\nHome Assistant OS er installeret på %s.\n\n➜ TAG USB-STIKKET UD NU, før du bekræfter.\n  (installationsprogrammet kører i hukommelsen: stikket bruges ikke mere)\n\nNÆSTE:\n 1. Bekræft nedenfor: PC'en genstarter i Home Assistant.\n 2. Lad netværkskablet sidde i.\n 3. Vent 2 til 5 minutter (første opstart).\n 4. Fra en anden enhed:  http://homeassistant.local"
+;;
+*)
   S_TITLE="Home Assistant OS installation"
   S_WARN="⚠  WARNING — Home Assistant OS installation"
   S_RESCUE="\n\nYou will be able to save the log, then power the PC off."
@@ -176,8 +328,10 @@ else
   S_FMT_FAIL="The stick could not be reformatted.\n\nNothing was touched: it is still usable as an installer.\nDetails are in the log."
   S_FMT_BROKEN="Reformatting the stick failed partway through.\n\n⚠  The stick is no longer bootable: you will have to write it\nagain to reuse it as an installer.\n\nThe Home Assistant installation on the disk is not affected,\nit is complete."
   S_DONE="Installation complete.\n\nHome Assistant OS is installed on %s.\n\n➜ REMOVE THE USB STICK NOW, before confirming.\n  (the installer runs from memory: the stick is no longer used)\n\nNEXT:\n 1. Confirm below: the PC reboots into Home Assistant.\n 2. Keep the network cable plugged in.\n 3. Wait 2 to 5 minutes (first boot).\n 4. From another device:  http://homeassistant.local"
-fi
+;;
+esac
 }
+
 # ---------------------------------------------------------------------------
 # whiptail neither resizes anything nor scrolls: text taller than the box is
 # silently cut. So we compute the geometry from the text.
@@ -324,9 +478,11 @@ apply_keymap(){
     fr:)     km="fr-latin9" ;;
     be:)     km="be-latin1" ;;
     ch:fr)   km="fr_CH-latin1" ;;
+    ch:de)   km="de_CH-latin1" ;;
     ca:*)    km="cf" ;;
     gb:)     km="uk" ;;
     de:)     km="de-latin1" ;;
+    dk:)     km="dk-latin1" ;;
   esac
   out="$out"$'\n'"$(loadkeys "$km" 2>&1)" && return 0
 
@@ -344,10 +500,13 @@ choose_lang_keyboard(){
   local sel
   sel=$(whiptail --title "Language & keyboard" --menu \
     "Choose language and keyboard layout" \
-    18 66 8 \
+    21 70 13 \
     "en|us|"    "English   |  QWERTY   (US)" \
     "en|gb|"    "English   |  QWERTY   (UK)" \
     "en|de|"    "English   |  QWERTZ   (DE)" \
+    "da|dk|"    "Dansk     |  QWERTY   (DK)" \
+    "de|de|"    "Deutsch   |  QWERTZ   (DE)" \
+    "de|ch|de"  "Deutsch   |  QWERTZ   (CH)" \
     "fr|fr|"    "French    |  AZERTY   (France)" \
     "fr|be|"    "French    |  AZERTY   (Belgium)" \
     "fr|ch|fr"  "French    |  QWERTZ   (Switzerland)" \
@@ -490,7 +649,7 @@ secureboot_status(){
   if command -v mokutil >/dev/null 2>&1; then
     out=$(mokutil --sb-state 2>/dev/null)
     case "$out" in
-      *disabled*|*désactivé*) echo "$S_SB_OFF"; return ;;
+      *disabled*|*désactivé*|*deaktiviert*|*deaktiveret*) echo "$S_SB_OFF"; return ;;
       *enabled*)              echo "$S_SB_ON";  return ;;
     esac
   fi
@@ -965,8 +1124,12 @@ pick_disk(){
 
     tag=""
     if [ "${rm_:-0}" = "1" ] || [ "${hp:-0}" = "1" ] || [ "$tran" = "usb" ]; then
-      tag="[!! USB / EXTERNAL !!] "
-      [ "$UI_LANG" = "fr" ] && tag="[!! USB / EXTERNE !!] "
+      case "$UI_LANG" in
+        fr) tag="[!! USB / EXTERNE !!] " ;;
+        de) tag="[!! USB / EXTERN !!] " ;;
+        da) tag="[!! USB / EKSTERN !!] " ;;
+        *)  tag="[!! USB / EXTERNAL !!] " ;;
+      esac
     fi
     menu+=("/dev/$name" "$(printf '%s%-9s %-5s %s' "$tag" "${size:-?}" "${tran:-?}" \
            "$(echo "$vendor ${model:-?}" | xargs)")")

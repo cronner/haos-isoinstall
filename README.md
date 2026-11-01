@@ -86,7 +86,7 @@ This is **the step everybody trips over**. Power on the PC and immediately press
 Plug in the stick, boot. The wizard starts on its own:
 
 1. Welcome screen and reminders
-2. Keyboard layout
+2. Language and keyboard layout — English, Danish, German or French
 3. Network connection — automatic over Ethernet, otherwise Wi-Fi selection
 4. **Disk selection** — check the size and model; the current contents are
    displayed before confirmation
