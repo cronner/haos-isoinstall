@@ -1,32 +1,31 @@
 #!/bin/bash
-# haos-installer.sh — Assistant guidé d'installation de Home Assistant OS (bare-metal).
-# Guided Home Assistant OS installer (bare metal).
+# haos-installer.sh — Guided Home Assistant OS installer (bare metal).
 #
-# Ecrans whiptail, Wi-Fi assiste, choix du disque, verification par relecture.
-# Lance au boot d'un live Debian. Bilingue FR/EN (choix au premier ecran).
-set -uo pipefail          # pas de -e : on gere les erreurs pour garder l'assistant vivant
+# Whiptail screens, assisted Wi-Fi, disk selection, verification by read-back.
+# Started at boot of a Debian live system. Bilingual EN/FR (chosen on screen 1).
+set -uo pipefail          # no -e: errors are handled to keep the wizard alive
 export NEWT_COLORS='root=,blue; window=,lightgray; border=blue,lightgray; title=blue,'
 
-# Le noyau ecrit ses messages directement sur la console (pas de 'quiet' au boot,
-# volontairement). Pendant le TUI ils parasitent les fenetres -> urgences seulement.
+# The kernel writes its messages straight to the console (no 'quiet' at boot, on
+# purpose). During the TUI they bleed into the windows -> emergencies only.
 quiet_console(){ dmesg -n 1 2>/dev/null || echo 1 > /proc/sys/kernel/printk 2>/dev/null || true; }
 loud_console(){  dmesg -n 7 2>/dev/null || echo 7 > /proc/sys/kernel/printk 2>/dev/null || true; }
 quiet_console
 trap loud_console EXIT
 
-UI_LANG="fr"
+UI_LANG="en"
 LOG=/tmp/haos-install.log
 : > "$LOG"
 
-# Trace explicite des decisions. Les 21 redirections "2>>$LOG" du script ne
-# capturent que des stderr d'echec : sans ces lignes, le journal d'une
-# installation REUSSIE est vide, donc inutile a archiver et a joindre a un
-# rapport de bug. Jamais de secret ici (le PSK Wi-Fi n'y passe pas).
+# Explicit trace of the decisions. The script's 21 "2>>$LOG" redirections only
+# capture stderr on failure: without these lines, the log of a SUCCESSFUL
+# installation would be empty, hence useless to archive and attach to a bug
+# report. No secret ever goes here (the Wi-Fi PSK does not pass through it).
 logx(){ printf '[%s] %s\n' "$(date '+%F %T')" "$*" >> "$LOG"; }
 
 # ---------------------------------------------------------------------------
-# Chaines. Les variables sont injectees via printf (%s) : pas d'interpolation
-# a la definition, sinon $TARGET & co seraient vides a ce stade.
+# Strings. Variables are injected via printf (%s): no interpolation at
+# definition time, otherwise $TARGET & co would be empty at this stage.
 # ---------------------------------------------------------------------------
 set_strings(){
 if [ "$UI_LANG" = "fr" ]; then
@@ -179,14 +178,13 @@ else
   S_DONE="Installation complete.\n\nHome Assistant OS is installed on %s.\n\n➜ REMOVE THE USB STICK NOW, before confirming.\n  (the installer runs from memory: the stick is no longer used)\n\nNEXT:\n 1. Confirm below: the PC reboots into Home Assistant.\n 2. Keep the network cable plugged in.\n 3. Wait 2 to 5 minutes (first boot).\n 4. From another device:  http://homeassistant.local"
 fi
 }
-
 # ---------------------------------------------------------------------------
-# whiptail ne redimensionne rien et ne fait pas defiler : un texte plus haut que
-# la boite est coupe en silence. On calcule donc la geometrie depuis le texte.
-# Les chaines portent des \n litteraux (whiptail les interprete lui-meme) : on
-# mesure sur une copie developpee, mais on passe l'original a whiptail pour ne
-# pas alterer d'eventuels antislashs venus du journal.
-wt_dims(){                                  # <texte> -> WT_H, WT_W, WT_SCROLL
+# whiptail neither resizes anything nor scrolls: text taller than the box is
+# silently cut. So we compute the geometry from the text.
+# The strings carry literal \n (whiptail interprets them itself): we measure on
+# an expanded copy, but hand the original to whiptail so that any backslash
+# coming from the log is not altered.
+wt_dims(){                                  # <text> -> WT_H, WT_W, WT_SCROLL
   local body line len inner lines=0 max=0 rows cols
   body=$(printf '%b' "$1")
   rows=$(tput lines 2>/dev/null) || rows=24
@@ -205,33 +203,33 @@ wt_dims(){                                  # <texte> -> WT_H, WT_W, WT_SCROLL
   inner=$(( WT_W - 4 )); (( inner < 1 )) && inner=1
   while IFS= read -r line; do
     len=${#line}
-    (( len < 1 )) && len=1                  # une ligne vide occupe quand meme 1 ligne
+    (( len < 1 )) && len=1                  # an empty line still takes 1 line
     lines=$(( lines + (len + inner - 1) / inner ))
   done <<< "$body"
 
   WT_SCROLL=""
-  WT_H=$(( lines + 7 ))                     # marge de la convention du script
-  if (( WT_H > rows - 2 )); then            # trop haut pour l'ecran -> ascenseur
+  WT_H=$(( lines + 7 ))                     # margin of the script's convention
+  if (( WT_H > rows - 2 )); then            # too tall for the screen -> scrollbar
     WT_H=$(( rows - 2 )); WT_SCROLL="--scrolltext"
   fi
 }
 
-wt_msg(){                                   # <titre> <texte>
+wt_msg(){                                   # <title> <text>
   wt_dims "$2"
   whiptail --title "$1" $WT_SCROLL --msgbox "$2" "$WT_H" "$WT_W"
 }
 
-wt_yesno(){                                 # <titre> <texte> [args whiptail...]
+wt_yesno(){                                 # <title> <text> [whiptail args...]
   local title="$1" text="$2"; shift 2
   wt_dims "$text"
   whiptail --title "$title" $WT_SCROLL "$@" --yesno "$text" "$WT_H" "$WT_W"
 }
 
-# whiptail --menu : la largeur doit contenir la plus longue ETIQUETTE PLUS la plus
-# longue DESCRIPTION, sinon les lignes debordent du cadre. Des dimensions codees
-# en dur ne peuvent pas s'y adapter -- un modele de disque ou un SSID inconnus
-# sont de longueur imprevisible. Affiche l'etiquette choisie sur stdout.
-wt_menu(){                    # <titre> <invite> <hauteur_liste> <tag> <desc>...
+# whiptail --menu: the width must hold the longest LABEL PLUS the longest
+# DESCRIPTION, otherwise the lines overflow the frame. Hard-coded dimensions
+# cannot adapt to that -- an unknown disk model or SSID has an unpredictable
+# length. Prints the chosen label on stdout.
+wt_menu(){                    # <title> <prompt> <list height> <tag> <desc>...
   local title="$1" text="$2" listh="$3"; shift 3
   local i=0 tagw=0 descw=0 a rows cols w h lines
   for a in "$@"; do
@@ -245,15 +243,15 @@ wt_menu(){                    # <titre> <invite> <hauteur_liste> <tag> <desc>...
   [[ "$rows" =~ ^[0-9]+$ ]] || rows=24
   [[ "$cols" =~ ^[0-9]+$ ]] || cols=80
 
-  wt_dims "$text"                     # WT_W pour l'invite, WT_H = lignes + 7
+  wt_dims "$text"                     # WT_W for the prompt, WT_H = lines + 7
   lines=$(( WT_H - 7 ))
-  w=$(( tagw + descw + 12 ))          # etiquette + description + cadre whiptail
+  w=$(( tagw + descw + 12 ))          # label + description + whiptail frame
   (( WT_W > w ))     && w=$WT_W
   (( w > cols - 4 )) && w=$(( cols - 4 ))
   (( w < 40 ))       && w=40
 
-  # Hauteur : invite + liste + cadre. On rogne la LISTE si l'ecran est trop court,
-  # plutot que de laisser whiptail tronquer.
+  # Height: prompt + list + frame. We trim the LIST if the screen is too short,
+  # rather than letting whiptail truncate it.
   h=$(( lines + listh + 8 ))
   if (( h > rows - 2 )); then
     listh=$(( rows - 2 - lines - 8 ))
@@ -264,28 +262,28 @@ wt_menu(){                    # <titre> <invite> <hauteur_liste> <tag> <desc>...
   whiptail --title "$title" --menu "$text" "$h" "$w" "$listh" "$@" 3>&1 1>&2 2>&3
 }
 
-# Fin de parcours sur erreur. On ETEINT par defaut plutot que de rendre un shell :
-# une invite bash ne veut rien dire pour le public visé. Le terminal reste
-# accessible via le second bouton -- et non via Ctrl+Alt+F2, dont la
-# disponibilite depend d'un getty et d'un mot de passe qu'on ne maitrise pas
-# (le service occupe tty1 et le live bascule en multi-user.target).
+# End of the run on error. We POWER OFF by default rather than dropping to a
+# shell: a bash prompt means nothing to the intended audience. The terminal
+# stays reachable through the second button -- and not through Ctrl+Alt+F2,
+# whose availability depends on a getty and a password we do not control
+# (the service occupies tty1 and the live system switches to multi-user.target).
 
-# Extinction IMMEDIATE. Le systeme tourne entierement en RAM ('toram') : rien de
-# la session en cours n'a besoin de survivre, et l'arret complet de systemd
-# -- arret des unites, demontages, temporisations -- prend des dizaines de
-# secondes et peut se bloquer sur une unite recalcitrante. On le court-circuite.
-# Le 'sync' reste INDISPENSABLE : le journal vient peut-etre d'etre ecrit sur une
-# cle USB, et l'image du disque cible doit etre a plat sur le support.
+# IMMEDIATE power-off. The system runs entirely from RAM ('toram'): nothing in
+# the current session needs to survive, and a full systemd shutdown -- stopping
+# units, unmounting, timeouts -- takes tens of seconds and can hang on a
+# reluctant unit. We short-circuit it.
+# The 'sync' remains ESSENTIAL: the log may just have been written to a USB
+# stick, and the target disk image must be flat on the medium.
 halt_now(){
   sync
   clear
-  # -ff : arret immediat sans passer par le gestionnaire de services.
+  # -ff: immediate shutdown without going through the service manager.
   poweroff -ff 2>/dev/null || poweroff -f 2>/dev/null || poweroff 2>/dev/null || true
   sleep 3
-  # Repli noyau si systemd n'a pas repris la main : SysRq 'o' coupe
-  # l'alimentation depuis le noyau, sans espace utilisateur.
-  # Redirection sur le GROUPE et non sur 'echo' : c'est le shell qui signale un
-  # echec d'ouverture, son message echapperait a un 2>/dev/null pose sur echo.
+  # Kernel fallback if systemd did not take over: SysRq 'o' cuts the power from
+  # the kernel, with no user space.
+  # Redirection on the GROUP, not on 'echo': the shell reports an open failure,
+  # and its message would escape a 2>/dev/null set on echo.
   { echo 1 > /proc/sys/kernel/sysrq; } 2>/dev/null || true
   { echo o > /proc/sysrq-trigger; }   2>/dev/null || true
 }
@@ -301,14 +299,14 @@ die(){
 }
 
 # ---------------------------------------------------------------------------
-# ECRAN 1 : langue + clavier en une question.
-# La disposition n'implique PAS la langue (un francophone peut etre en QWERTY US)
-# -> chaque ligne annonce explicitement les deux, aucune deduction.
-# Applique la disposition. NB: deux mondes de noms coexistent —
-#   - console-setup / setupcon : noms X11 (fr, be, ch+variante fr, ca, us, gb, de)
-#   - loadkeys : noms de keymaps console (fr-latin9, cf, fr_CH, uk...)
-# console-setup est installe et fait autorite via /etc/default/keyboard : c'est lui
-# qu'il faut piloter, sinon il reapplique sa conf par-dessus loadkeys.
+# SCREEN 1: language + keyboard in a single question.
+# The layout does NOT imply the language (a French speaker may use a US QWERTY)
+# -> every line states both explicitly, nothing is inferred.
+# Applies the layout. NB: two naming worlds coexist --
+#   - console-setup / setupcon: X11 names (fr, be, ch+fr variant, ca, us, gb, de)
+#   - loadkeys: console keymap names (fr-latin9, cf, fr_CH, uk...)
+# console-setup is installed and is authoritative via /etc/default/keyboard: it
+# is the one to drive, otherwise it re-applies its config over loadkeys.
 apply_keymap(){
   local layout="$1" variant="${2:-}" out=""
 
@@ -320,7 +318,7 @@ apply_keymap(){
     out=$(setupcon --force 2>&1) && return 0
   fi
 
-  # Repli loadkeys, avec traduction vers les noms de keymaps console
+  # loadkeys fallback, with translation to the console keymap names
   local km="$layout"
   case "$layout:$variant" in
     fr:)     km="fr-latin9" ;;
@@ -332,30 +330,30 @@ apply_keymap(){
   esac
   out="$out"$'\n'"$(loadkeys "$km" 2>&1)" && return 0
 
-  # Ne plus echouer en silence : c'est ce qui a masque le bug precedent.
+  # No more silent failure: that is what masked the previous bug.
   wt_msg "$S_TITLE" \
     "Keyboard layout could not be applied / La disposition n'a pas pu être appliquée :\n\n$(echo "$out" | cut -c1-64 | head -6)\n\nQWERTY/AZERTY may be wrong. Use the manual config if needed."
   return 1
 }
 
 # ---------------------------------------------------------------------------
-# ECRAN 1 : langue + clavier en une question.
-# La disposition n'implique PAS la langue (un francophone peut etre en QWERTY US)
-# -> chaque ligne annonce explicitement les deux, aucune deduction.
+# SCREEN 1: language + keyboard in a single question.
+# The layout does NOT imply the language (a French speaker may use a US QWERTY)
+# -> every line states both explicitly, nothing is inferred.
 choose_lang_keyboard(){
   local sel
-  sel=$(whiptail --title "Language & keyboard / Langue et clavier" --menu \
-    "Choose language and keyboard layout\nChoisissez la langue et la disposition du clavier" \
+  sel=$(whiptail --title "Language & keyboard" --menu \
+    "Choose language and keyboard layout" \
     18 66 8 \
-    "fr|fr|"    "Français  |  AZERTY   (France)" \
-    "fr|be|"    "Français  |  AZERTY   (Belgique)" \
-    "fr|ch|fr"  "Français  |  QWERTZ   (Suisse)" \
-    "fr|ca|"    "Français  |  QWERTY   (Canada)" \
-    "fr|us|"    "Français  |  QWERTY   (US)" \
     "en|us|"    "English   |  QWERTY   (US)" \
     "en|gb|"    "English   |  QWERTY   (UK)" \
     "en|de|"    "English   |  QWERTZ   (DE)" \
-    3>&1 1>&2 2>&3) || sel="fr|fr|"
+    "fr|fr|"    "French    |  AZERTY   (France)" \
+    "fr|be|"    "French    |  AZERTY   (Belgium)" \
+    "fr|ch|fr"  "French    |  QWERTZ   (Switzerland)" \
+    "fr|ca|"    "French    |  QWERTY   (Canada)" \
+    "fr|us|"    "French    |  QWERTY   (US)" \
+    3>&1 1>&2 2>&3) || sel="en|us|"
 
   UI_LANG="${sel%%|*}"
   local rest="${sel#*|}"
@@ -365,42 +363,42 @@ choose_lang_keyboard(){
 
 have_net(){ curl -fsI --max-time 5 https://github.com >/dev/null 2>&1; }
 
-# UUID de la connexion Wi-Fi ACTIVE, quel qu'ait ete son mode de creation
-# (parcours guide ou nmtui). Vide s'il n'y en a pas.
+# UUID of the ACTIVE Wi-Fi connection, whatever way it was created (guided
+# walkthrough or nmtui). Empty when there is none.
 active_wifi_uuid(){
   nmcli -t -f UUID,TYPE connection show --active 2>/dev/null \
     | awk -F: '$2=="802-11-wireless" || $2=="wifi" {print $1; exit}'
 }
 
-# Detail du lien Wi-Fi : bande, generation 802.11 et chiffrement.
-# Pourquoi ca compte :
-#   - bande : le 6 GHz exige noyau, firmware ET domaine reglementaire recents.
-#     Ca marche ici et pas forcement sous HAOS -> vecteur d'echec reel.
-#   - chiffrement : c'est ce que le profil depose sur hassos-boot doit
-#     reproduire. Un ecart (WPA3 pur, reseau ouvert, 802.1X) et HAOS ne se
-#     connecte pas, alors que l'installateur annonce un succes.
+# Details of the Wi-Fi link: band, 802.11 generation and encryption.
+# Why it matters:
+#   - band: 6 GHz needs a recent kernel, firmware AND regulatory domain.
+#     It works here but not necessarily under HAOS -> a real failure vector.
+#   - encryption: it is what the profile dropped on hassos-boot has to
+#     reproduce. Any gap (pure WPA3, open network, 802.1X) and HAOS will not
+#     connect, while the installer announces success.
 #
-# ATTENTION, deux pieges corriges ici apres un faux diagnostic en test reel :
-#   1. l'AP courant est marque par un '*' dans IN-USE, PAS par "yes" dans
-#      ACTIVE -- un filtre sur ACTIVE ne matche jamais et tout ressort vide ;
-#   2. une valeur indeterminee ne doit JAMAIS devenir une affirmation. Un
-#      "${sec:-AUCUN (reseau ouvert)}" a fait passer un WPA2 pour un reseau
-#      ouvert. On distingue donc trois etats : detecte / ouvert confirme /
-#      indetermine, et on n'avertit que sur une detection positive.
-# Source autoritative : le key-mgmt de la connexion active, qui ne depend
-# d'aucun marqueur d'affichage.
-# Ni le SSID ni le BSSID ne sont journalises : 'iw link' les expose, on n'en
-# extrait que la frequence et le jeton de generation.
+# WARNING, two traps fixed here after a wrong diagnosis in a real test:
+#   1. the current AP is marked with a '*' in IN-USE, NOT with "yes" in
+#      ACTIVE -- a filter on ACTIVE never matches and everything comes out empty;
+#   2. an indeterminate value must NEVER become an assertion. A
+#      "${sec:-NONE (open network)}" made a WPA2 look like an open network. We
+#      therefore distinguish three states: detected / confirmed open /
+#      indeterminate, and we only warn on a positive detection.
+# Authoritative source: the key-mgmt of the active connection, which depends on
+# no display marker.
+# Neither the SSID nor the BSSID is logged: 'iw link' exposes them, we only
+# extract the frequency and the generation token.
 log_wifi_link(){
-  # km initialise : sinon 'set -u' fait echouer le script quand aucune connexion
-  # Wi-Fi active n'est trouvee et que le bloc d'affectation est saute.
+  # km initialised: otherwise 'set -u' makes the script fail when no active
+  # Wi-Fi connection is found and the assignment block is skipped.
   local dev="$1" drv="${2:-}" iwout freq band gen km="" sec uuid
 
   iwout=$(iw dev "$dev" link 2>/dev/null)
   freq=$(printf '%s\n' "$iwout" \
          | sed -n 's/^[[:space:]]*freq:[[:space:]]*\([0-9]\{3,\}\).*/\1/p' | head -1)
 
-  band="indeterminee"
+  band="indeterminate"
   if [ -n "$freq" ]; then
     if   [ "$freq" -lt 3000 ]; then band="2.4 GHz"
     elif [ "$freq" -lt 5925 ]; then band="5 GHz"
@@ -408,56 +406,56 @@ log_wifi_link(){
     fi
   fi
 
-  # Generation deduite du jeton de debit : EHT=Wi-Fi 7, HE=6, VHT=5, HT/MCS=4.
+  # Generation deduced from the rate token: EHT=Wi-Fi 7, HE=6, VHT=5, HT/MCS=4.
   case "$iwout" in
     *EHT-MCS*) gen="802.11be (Wi-Fi 7)" ;;
     *HE-MCS*)  gen="802.11ax (Wi-Fi 6)" ;;
     *VHT-MCS*) gen="802.11ac (Wi-Fi 5)" ;;
     *MCS*)     gen="802.11n (Wi-Fi 4)"  ;;
-    "")        gen="indeterminee"       ;;   # iw muet : ne rien inventer
+    "")        gen="indeterminate"      ;;   # iw silent: do not invent anything
     *)         gen="legacy a/b/g"       ;;
   esac
 
-  # key-mgmt effectif de la connexion active. Trois etats a distinguer.
+  # Effective key-mgmt of the active connection. Three states to distinguish.
   uuid=$(active_wifi_uuid)
   if [ -n "$uuid" ]; then
     km=$(nmcli -g 802-11-wireless-security.key-mgmt connection show "$uuid" 2>/dev/null)
   fi
-  # Chaine annoncee par l'AP, en complement : '*' dans IN-USE designe l'AP courant.
+  # String advertised by the AP, as a complement: '*' in IN-USE is the current AP.
   sec=$(nmcli -t -f IN-USE,SECURITY dev wifi list 2>/dev/null \
         | awk -F: '$1=="*"{print $2; exit}')
 
-  logx "reseau : Wi-Fi $gen, bande ${band}${freq:+ (${freq} MHz)}"
-  logx "reseau : lien Wi-Fi -- verifier que HAOS embarque le pilote ${drv:-?}"
+  logx "network: Wi-Fi $gen, band ${band}${freq:+ (${freq} MHz)}"
+  logx "network: Wi-Fi link -- check that HAOS ships the driver ${drv:-?}"
 
   if [ -n "$km" ]; then
-    logx "reseau : chiffrement key-mgmt=$km${sec:+ (AP annonce : $sec)}"
-    # Avertissements uniquement sur detection POSITIVE.
+    logx "network: encryption key-mgmt=$km${sec:+ (AP advertises: $sec)}"
+    # Warnings on a POSITIVE detection only.
     case "$km" in
-      sae)     logx "reseau : WPA3 pur (SAE) -- le profil injecte doit porter key-mgmt=sae" ;;
+      sae)     logx "network: pure WPA3 (SAE) -- the injected profile must carry key-mgmt=sae" ;;
       wpa-eap|wpa-eap-suite-b-192)
-               logx "reseau : ATTENTION 802.1X (entreprise) -- profil injectable seulement sans certificats" ;;
-      none)    logx "reseau : ATTENTION WEP ou sans chiffrement -- verifier le profil injecte" ;;
+               logx "network: WARNING 802.1X (enterprise) -- profile injectable only without certificates" ;;
+      none)    logx "network: WARNING WEP or no encryption -- check the injected profile" ;;
     esac
   elif [ -n "$uuid" ]; then
-    logx "reseau : chiffrement AUCUN (reseau ouvert confirme)"
-    logx "reseau : ATTENTION reseau ouvert -- le profil injecte ne doit porter aucun secret"
+    logx "network: encryption NONE (open network confirmed)"
+    logx "network: WARNING open network -- the injected profile must carry no secret"
   else
-    # Aucune connexion Wi-Fi active identifiee : on ne conclut rien.
-    logx "reseau : chiffrement indetermine (aucune connexion Wi-Fi active vue par nmcli)"
+    # No active Wi-Fi connection identified: we conclude nothing.
+    logx "network: encryption indeterminate (no active Wi-Fi connection seen by nmcli)"
   fi
 }
 
-# Journalise le type de lien retenu (Ethernet ou Wi-Fi) et le MATERIEL utilise.
-# C'est le renseignement le plus utile du journal : la couverture des cartes
-# Wi-Fi par HAOS est plus etroite que celle de cet installateur, donc quand HAOS
-# demarre sans reseau apres une installation reussie, c'est le nom du PILOTE
-# qu'il faut connaitre pour trancher.
-# Appele UNE fois apres setup_network : cette derniere a cinq points de sortie
-# (Ethernet immediat, Ethernet apres attente, Wi-Fi, nmtui, reprise Ethernet),
-# les instrumenter separement serait fragile.
-# Ni lspci ni ethtool dans l'ISO -> nmcli, qui expose deja vendeur/produit/pilote,
-# avec repli sysfs (le modalias porte les identifiants PCI/USB du composant).
+# Logs the link type that was used (Ethernet or Wi-Fi) and the HARDWARE involved.
+# This is the most useful piece of information in the log: HAOS covers fewer
+# Wi-Fi cards than this installer does, so when HAOS boots with no network after
+# a successful installation, the DRIVER name is what you need to decide.
+# Called ONCE after setup_network: that one has five exit points (immediate
+# Ethernet, Ethernet after waiting, Wi-Fi, nmtui, Ethernet retry), and
+# instrumenting them separately would be fragile.
+# Neither lspci nor ethtool in the ISO -> nmcli, which already exposes
+# vendor/product/driver, with a sysfs fallback (the modalias carries the PCI/USB
+# identifiers of the component).
 log_active_net(){
   local dev typ vendor product driver modalias found=0
   while IFS= read -r dev; do
@@ -468,26 +466,26 @@ log_active_net(){
     vendor=$(nmcli -g GENERAL.VENDOR  device show "$dev" 2>/dev/null | head -1)
     product=$(nmcli -g GENERAL.PRODUCT device show "$dev" 2>/dev/null | head -1)
     driver=$(nmcli -g GENERAL.DRIVER  device show "$dev" 2>/dev/null | head -1)
-    # Replis sysfs, utiles si nmcli reste muet (carte non geree, udev incomplet).
-    # On teste que le lien existe : sinon readlink -f pourrait rendre un chemin
-    # fabrique et basename en tirerait un faux nom de pilote.
+    # sysfs fallbacks, useful if nmcli stays silent (unmanaged card, incomplete udev).
+    # We check that the link exists: otherwise readlink -f could return a made-up
+    # path and basename would derive a bogus driver name from it.
     if [ -z "$driver" ] && [ -L "/sys/class/net/$dev/device/driver" ]; then
       driver=$(basename "$(readlink -f "/sys/class/net/$dev/device/driver")")
     fi
     modalias=$(cat "/sys/class/net/$dev/device/modalias" 2>/dev/null)
-    logx "reseau : $typ via $dev -- $(echo "${vendor:-?} ${product:-?}" | xargs)"
-    logx "reseau : pilote=${driver:-inconnu} modalias=${modalias:-inconnu}"
+    logx "network: $typ via $dev -- $(echo "${vendor:-?} ${product:-?}" | xargs)"
+    logx "network: driver=${driver:-unknown} modalias=${modalias:-unknown}"
     [ "$typ" = "wifi" ] && log_wifi_link "$dev" "$driver"
   done < <(nmcli -t -f DEVICE,STATE device status 2>/dev/null \
            | awk -F: '$2=="connected"{print $1}')
-  [ "$found" -eq 1 ] || logx "reseau : aucune interface connectee identifiee par nmcli"
+  [ "$found" -eq 1 ] || logx "network: no connected interface identified by nmcli"
 }
 
 boot_status(){ [ -d /sys/firmware/efi ] && echo "$S_OK_UEFI" || echo "$S_BAD_UEFI"; }
 
 secureboot_status(){
-  # mokutil gere les cas tordus (efivarfs absent, GUID multiples).
-  # Repli : lecture brute de l'efivar (4 octets d'attributs, puis la valeur).
+  # mokutil handles the awkward cases (missing efivarfs, multiple GUIDs).
+  # Fallback: raw read of the efivar (4 attribute bytes, then the value).
   local out sb f
   if command -v mokutil >/dev/null 2>&1; then
     out=$(mokutil --sb-state 2>/dev/null)
@@ -508,17 +506,18 @@ secureboot_status(){
 }
 
 # ---------------------------------------------------------------------------
-# Journal : /tmp meurt avec le live. On NE CREE PAS de partition sur le media
-# d'installation (fragile s'il est monte, casse Ventoy, impossible sur CD,
-# perdu au prochain flash). Inutile : une cle gravee expose deja son ESP en FAT.
-# Copie le journal sur une partition. 0 = ecrit, 1 = montage impossible,
-# 2 = montee mais trop petite (ou copie refusee).
-# NB: on interroge lsblk UNE COLONNE A LA FOIS. En multi-colonnes, une valeur
-#     vide (TRAN, FSTYPE...) fait glisser les champs suivants a la lecture.
-# La partition est-elle retenue par un device-mapper ? C'est le cas sous Ventoy :
-# l'ISO est un FICHIER de la partition exFAT, que Ventoy expose en dm-linear. La
-# partition est donc reclamee par dm et refuse un montage en ecriture -- d'ou le
-# contournement "debrancher/rebrancher", qui detruit ce mappage.
+# Log: /tmp dies with the live system. We do NOT CREATE a partition on the
+# installation medium (fragile when mounted, breaks Ventoy, impossible on a CD,
+# lost on the next flash). Unnecessary anyway: a written stick already exposes
+# its ESP as FAT.
+# Copies the log onto a partition. 0 = written, 1 = cannot mount,
+# 2 = mounted but too small (or copy refused).
+# NB: we query lsblk ONE COLUMN AT A TIME. With several columns, an empty value
+#     (TRAN, FSTYPE...) shifts the following fields when read back.
+# Is the partition claimed by a device-mapper? That is the case under Ventoy:
+# the ISO is a FILE on the exFAT partition, which Ventoy exposes as dm-linear.
+# The partition is therefore claimed by dm and refuses a read-write mount --
+# hence the "unplug/replug" workaround, which tears that mapping down.
 dm_holds(){
   local p="$1" s
   for s in /sys/block/dm-*/slaves/*; do
@@ -528,47 +527,47 @@ dm_holds(){
   return 1
 }
 
-# Libere la partition retenue par le mappage de demarrage (Ventoy), pour pouvoir
-# y ecrire le journal sans demander a l'utilisateur de debrancher la cle.
+# Releases the partition claimed by the boot mapping (Ventoy), so the log can be
+# written there without asking the user to unplug the stick.
 #
-# CONDITION DE SURETE ABSOLUE : ne rien retirer si le live lit encore le media.
-# 'toram' est SILENCIEUSEMENT IGNORE par live-boot quand la RAM est insuffisante ;
-# dans ce cas le systeme de fichiers racine vient toujours du mappage, et le
-# supprimer tuerait l'installateur en pleine execution. La preuve que toram a
-# pris effet : /run/live/medium est un tmpfs. Au moindre doute on renonce et on
-# retombe sur l'instruction manuelle.
+# ABSOLUTE SAFETY CONDITION: remove nothing if the live system still reads the
+# medium. 'toram' is SILENTLY IGNORED by live-boot when RAM is insufficient; in
+# that case the root filesystem still comes from the mapping, and removing it
+# would kill the installer mid-run. The proof that toram took effect:
+# /run/live/medium is a tmpfs. At the slightest doubt we give up and fall back to
+# the manual instruction.
 release_boot_medium(){
   local p="$1" fs dm base name holders mp disk
   fs=$(findmnt -no FSTYPE /run/live/medium 2>/dev/null || true)
   if [ -n "$fs" ] && [ "$fs" != "tmpfs" ]; then
-    logx "liberation refusee : le live lit encore le media ($fs), toram inactif"
+    logx "release refused: the live system still reads the medium ($fs), toram not active"
     return 1
   fi
-  command -v dmsetup >/dev/null 2>&1 || { logx "liberation impossible : dmsetup absent"; return 1; }
+  command -v dmsetup >/dev/null 2>&1 || { logx "release impossible: dmsetup missing"; return 1; }
 
   for dm in /sys/block/dm-*; do
     [ -e "$dm/slaves/$p" ] || continue
     base=$(basename "$dm")
     name=$(cat "$dm/dm/name" 2>/dev/null)
-    # Un mappage empile par-dessus interdit le retrait.
+    # A stacked mapping on top forbids removal.
     holders=$(find "$dm/holders" -mindepth 1 2>/dev/null | wc -l)
     if [ "${holders:-0}" -gt 0 ]; then
-      logx "liberation refusee : ${name:-$base} a des dependants"
+      logx "release refused: ${name:-$base} has dependants"
       return 1
     fi
-    # Demonter le mappage s'il l'est encore : avec toram l'ISO ne sert plus.
-    # "|| [ -n "$mp" ]" : sans cela une sortie sans retour chariot final ferait
-    # SAUTER la derniere ligne, donc un point de montage non demonte.
+    # Unmount the mapping if it is still mounted: with toram the ISO is no
+    # longer used. "|| [ -n "$mp" ]": without it, output with no trailing newline
+    # would DROP the last line, hence leave a mount point unmounted.
     while read -r mp || [ -n "$mp" ]; do
       [ -n "$mp" ] || continue
-      umount "$mp" 2>>"$LOG" || { logx "liberation : $mp non demontable"; return 1; }
+      umount "$mp" 2>>"$LOG" || { logx "release: $mp cannot be unmounted"; return 1; }
     done < <(findmnt -rn -S "/dev/$base" -o TARGET 2>/dev/null)
     dmsetup remove "${name:-$base}" 2>>"$LOG" \
-      || { logx "liberation : dmsetup remove a echoue sur ${name:-$base}"; return 1; }
-    logx "mappage de demarrage ${name:-$base} retire, /dev/$p libere"
+      || { logx "release: dmsetup remove failed on ${name:-$base}"; return 1; }
+    logx "boot mapping ${name:-$base} removed, /dev/$p released"
   done
 
-  # Ventoy protege parfois le peripherique en lecture seule.
+  # Ventoy sometimes write-protects the device.
   disk=$(lsblk -no PKNAME "/dev/$p" 2>/dev/null | head -1 | tr -d ' ')
   [ -n "$disk" ] && { blockdev --setrw "/dev/$disk" 2>>"$LOG" || true; }
   partprobe "/dev/${disk:-$p}" 2>>"$LOG" || true
@@ -579,26 +578,26 @@ release_boot_medium(){
 write_log_to(){
   local p="$1" src="$2" need="$3" mp avail owned=0 rc
 
-  # Retenue par un mappage de demarrage ? Tenter de le liberer plutot que
-  # d'imposer un debranchement. Si cela echoue, la suite renverra 4 et
-  # l'utilisateur recevra l'instruction manuelle.
+  # Claimed by a boot mapping? Try to release it rather than imposing an
+  # unplug. If that fails, the caller returns 4 and the user gets the manual
+  # instruction.
   if dm_holds "$p"; then
     release_boot_medium "$p" || true
   fi
-  # PIEGE (constate sous Ventoy) : si la partition est DEJA montee en lecture
-  # seule -- Ventoy tient sa partition de donnees pour y lire l'ISO -- alors
-  # "mount -o rw" reutilise le superbloc en lecture seule et reussit malgre tout.
-  # Le cp echouait ensuite, et etait rapporte comme un manque de place. On detecte
-  # donc le montage existant, on tente de le repasser en ecriture, et on ne
-  # DEMONTE JAMAIS ce qu'on n'a pas monte : le live peut en dependre.
-  # On TENTE d'abord, sans rien presumer : dm_holds ne sert qu'a EXPLIQUER un
-  # echec (code 4), jamais a refuser d'essayer -- une configuration ou cela
-  # fonctionnerait quand meme ne doit pas etre ecartee.
+  # TRAP (seen under Ventoy): if the partition is ALREADY mounted read-only --
+  # Ventoy holds its data partition to read the ISO from it -- then
+  # "mount -o rw" reuses the read-only superblock and succeeds anyway.
+  # The cp then failed, and was reported as lack of space. So we detect the
+  # existing mount, try to switch it back to read-write, and NEVER UNMOUNT what
+  # we did not mount: the live system may depend on it.
+  # We TRY first, presuming nothing: dm_holds only serves to EXPLAIN a failure
+  # (code 4), never to refuse to try -- a configuration where it would work
+  # anyway must not be discarded.
   mp=$(findmnt -rn -S "/dev/$p" -o TARGET 2>/dev/null | head -1)
   if [ -n "$mp" ]; then
     if ! touch "$mp/.haos-wtest" 2>/dev/null; then
       if ! mount -o remount,rw "$mp" 2>>"$LOG" || ! touch "$mp/.haos-wtest" 2>/dev/null; then
-        dm_holds "$p" && { logx "journal : /dev/$p retenu par device-mapper (Ventoy)"; return 4; }
+        dm_holds "$p" && { logx "log: /dev/$p claimed by device-mapper (Ventoy)"; return 4; }
         return 3
       fi
     fi
@@ -607,7 +606,7 @@ write_log_to(){
     mp=/mnt/logdest
     mkdir -p "$mp" 2>/dev/null
     if ! mount -o rw "/dev/$p" "$mp" 2>>"$LOG"; then
-      dm_holds "$p" && { logx "journal : /dev/$p retenu par device-mapper (Ventoy)"; return 4; }
+      dm_holds "$p" && { logx "log: /dev/$p claimed by device-mapper (Ventoy)"; return 4; }
       return 1
     fi
     owned=1
@@ -620,28 +619,28 @@ write_log_to(){
   elif cp "$src" "$mp/haos-install-$(date +%Y%m%d-%H%M).log" 2>>"$LOG"; then
     sync
   else
-    rc=3                      # monte mais non inscriptible : ce n'est PAS "plein"
+    rc=3                      # mounted but not writable: this is NOT "full"
   fi
   [ "$owned" -eq 1 ] && { umount "$mp" 2>/dev/null || true; }
   return $rc
 }
 
-# Tente d'ecrire le journal. Affiche le peripherique utilise, ou renvoie :
-#   1 = aucun support inscriptible trouve
-#   2 = support trouve mais sans place
-#   3 = support trouve mais non inscriptible (monte en lecture seule)
-#   4 = support retenu par le systeme de demarrage (Ventoy) : debrancher/rebrancher
+# Tries to write the log. Prints the device used, or returns:
+#   1 = no writable medium found
+#   2 = medium found but no room
+#   3 = medium found but not writable (mounted read-only)
+#   4 = medium claimed by the boot system (Ventoy): unplug/replug
 try_write_log(){
   local src="$1" part st need rc=1
-  need=$(( ($(stat -c%s "$src" 2>/dev/null || echo 0) / 1024) + 64 ))   # Ko + marge
+  need=$(( ($(stat -c%s "$src" 2>/dev/null || echo 0) / 1024) + 64 ))   # KB + margin
 
-  # Partitions des disques amovibles. TRAN est porte par le DISQUE, pas par la
-  # partition -> on etablit d'abord la liste des disques amovibles, puis on filtre
-  # les partitions par leur PKNAME. HOTPLUG seul ne suffirait pas : les NVMe et
-  # les baies SATA hot-swap le rapportent aussi, on ecrirait alors sur un disque
-  # interne. La cle d'installation elle-meme n'offre pas de cible : son ESP ne
-  # laisse que ~10 Ko libres et l'ISO9660 est en lecture seule -- d'ou l'offre de
-  # reformatage (reformat_stick) comme voie principale.
+  # Partitions of removable disks. TRAN belongs to the DISK, not to the
+  # partition -> we first build the list of removable disks, then filter the
+  # partitions by their PKNAME. HOTPLUG alone would not do: NVMe drives and
+  # hot-swap SATA bays report it too, and we would then write onto an internal
+  # disk. The installation stick itself offers no target: its ESP leaves only
+  # ~10 KB free and the ISO9660 is read-only -- hence the reformat offer
+  # (reformat_stick) as the main route.
   local usb_disks="" d
   while read -r d; do
     [ -n "$d" ] || continue
@@ -656,26 +655,26 @@ try_write_log(){
   while read -r part type_; do
     [ "$type_" = "part" ] || continue
     fstype=$(lsblk -no FSTYPE "/dev/$part" 2>/dev/null | tr -d ' ')
-    case "$fstype" in iso9660|udf|"") continue ;; esac       # RO par conception
+    case "$fstype" in iso9660|udf|"") continue ;; esac       # RO by design
     pk=$(lsblk -no PKNAME "/dev/$part" 2>/dev/null | head -1 | tr -d ' ')
     case " $usb_disks " in *" $pk "*) ;; *) continue ;; esac
-    # Jamais le disque cible : un die() posterieur au flash ecrirait dans le
-    # hassos-boot tout juste installe.
+    # Never the target disk: a die() after the flash would write into the
+    # freshly installed hassos-boot.
     [ -n "$target_disk" ] && [ "$pk" = "$target_disk" ] && continue
     write_log_to "$part" "$src" "$need"; st=$?
     [ $st -eq 0 ] && { echo "/dev/$part"; return 0; }
-    # On retient le diagnostic le plus informatif : "plein" ou "lecture seule"
-    # valent mieux que "aucun support", qui laisserait croire a un defaut de
-    # detection alors qu'un support a bien ete trouve.
-    # 4 (retenu par Ventoy) est le diagnostic le plus actionnable : il prime.
+    # We keep the most informative diagnosis: "full" or "read-only" beat "no
+    # medium", which would suggest a detection failure when a medium was in fact
+    # found.
+    # 4 (claimed by Ventoy) is the most actionable: it takes precedence.
     case $st in 4) rc=4 ;; 2|3) [ "$rc" -eq 4 ] || rc=$st ;; esac
   done < <(lsblk -lno NAME,TYPE 2>/dev/null)
 
   return $rc
 }
 
-# Description lisible d'une partition : "/dev/sdb3 (SanDisk Ultra 32G)".
-# Multi-colonnes admis ici : on affiche, on ne relit pas de champs.
+# Readable description of a partition: "/dev/sdb3 (SanDisk Ultra 32G)".
+# Multiple columns are allowed here: we display, we do not read fields back.
 describe_part(){
   local p pk info
   p=$(basename "$1")
@@ -685,93 +684,92 @@ describe_part(){
   else                    printf '/dev/%s' "$p"
   fi
 }
-
-# Reformate la CLE D'INSTALLATION en une seule partition FAT32 couvrant tout
-# l'espace, puis y depose le journal.
+# Reformats the INSTALLATION STICK as a single FAT32 partition covering the
+# whole space, then drops the log onto it.
 #
-# Deux problemes resolus d'un coup :
-#   - le journal atterrit sur une partition UNIQUE, donc visible partout ;
-#     Windows 11 n'expose que la 1re partition d'un support amovible, ce qui
-#     rendait invisible une partition dediee ajoutee a l'ISO ;
-#   - la cle redevient reutilisable. Windows ne sait pas reformater seul une cle
-#     gravee par Etcher (il faut diskpart en PowerShell administrateur), la
-#     disposition isohybrid deroutant son outil de formatage.
+# Two problems solved at once:
+#   - the log lands on a SINGLE partition, hence visible everywhere; Windows 11
+#     only exposes the first partition of a removable medium, which made a
+#     dedicated partition added to the ISO invisible;
+#   - the stick becomes reusable. Windows cannot reformat on its own a stick
+#     written by Etcher (that needs diskpart in an administrator PowerShell), the
+#     isohybrid layout confusing its formatting tool.
 #
-# 'toram' ayant recopie le live en RAM, le media n'est plus monte et peut donc
-# etre repartitionne. On le VERIFIE malgre tout avant d'ecrire : au moindre doute
-# on renonce SANS RIEN EFFACER, sur une cle qui est peut-etre le seul moyen de
-# reessayer.
-# Codes : 0 = reformatee | 1 = refus de l'utilisateur
-#         2 = renonce AVANT toute ecriture, la cle est intacte
-#         3 = echec APRES le debut de l'effacement : la cle n'est plus amorcable
-# La distinction 2/3 n'est pas cosmetique : elle decide si l'on peut dire a
-# l'utilisateur que sa cle sert encore d'installateur.
+# 'toram' having copied the live system to RAM, the medium is no longer mounted
+# and can therefore be repartitioned. We CHECK that before writing anyway: at the
+# slightest doubt we give up WITHOUT ERASING ANYTHING, on a stick that may be the
+# only way to try again.
+# Codes: 0 = reformatted | 1 = refused by the user
+#        2 = gave up BEFORE any write, the stick is intact
+#        3 = failure AFTER erasing started: the stick is no longer bootable
+# The 2/3 distinction is not cosmetic: it decides whether we may tell the user
+# that their stick still works as an installer.
 reformat_stick(){
   local dev="$1" p mnt=/mnt/newstick
-  [ -n "$dev" ] || { logx "reformatage impossible : media de boot non identifie"; return 2; }
-  [ -b "/dev/$dev" ] || { logx "reformatage impossible : /dev/$dev absent"; return 2; }
-  # JAMAIS un peripherique virtuel : sous Ventoy l'ISO est exposee via
-  # device-mapper (/dev/dm-0), et l'effacer reviendrait a ecrire dans les secteurs
-  # du fichier ISO sur la cle. to_physical_disk doit avoir remonte au vrai disque ;
-  # si ce n'est pas le cas, on renonce.
+  [ -n "$dev" ] || { logx "reformat impossible: boot medium not identified"; return 2; }
+  [ -b "/dev/$dev" ] || { logx "reformat impossible: /dev/$dev missing"; return 2; }
+  # NEVER a virtual device: under Ventoy the ISO is exposed through
+  # device-mapper (/dev/dm-0), and erasing it would mean writing into the sectors
+  # of the ISO file on the stick. to_physical_disk must have walked back to the
+  # real disk; if it did not, we give up.
   case "$dev" in
-    dm-*|loop*|md*) logx "reformatage refuse : $dev est un peripherique virtuel"; return 2 ;;
+    dm-*|loop*|md*) logx "reformat refused: $dev is a virtual device"; return 2 ;;
   esac
-  # Doit etre un DISQUE entier, pas une partition.
+  # Must be a WHOLE disk, not a partition.
   [ "$(lsblk -dno TYPE "/dev/$dev" 2>/dev/null | tr -d ' ')" = "disk" ] \
-    || { logx "reformatage refuse : $dev n'est pas un disque entier"; return 2; }
-  # Jamais le disque qu'on vient d'installer.
+    || { logx "reformat refused: $dev is not a whole disk"; return 2; }
+  # Never the disk we have just installed to.
   [ -n "${TARGET:-}" ] && [ "$dev" = "$(basename "$TARGET")" ] && {
-    logx "reformatage refuse : $dev est le disque d'installation"; return 2; }
+    logx "reformat refused: $dev is the installation disk"; return 2; }
 
-  # Aucune partition du peripherique ne doit etre montee.
+  # No partition of the device may be mounted.
   for p in $(lsblk -lno NAME "/dev/$dev" 2>/dev/null); do
     if findmnt -rn -S "/dev/$p" >/dev/null 2>&1; then
-      logx "reformatage impossible : /dev/$p est monte"
+      logx "reformat impossible: /dev/$p is mounted"
       return 2
     fi
   done
 
-  # --defaultno : l'action EFFACE la cle, le bouton par defaut doit donc etre
-  # « garder l'installateur ». Valider sans lire ne doit rien detruire.
+  # --defaultno: the action ERASES the stick, so the default button must be
+  # "keep the installer". Confirming without reading must not destroy anything.
   wt_yesno "$S_WARN" "$(printf "$S_FMT_ASK" "$(describe_part "/dev/$dev")")" \
     --defaultno --yes-button "$S_FMT_YES" --no-button "$S_FMT_NO" \
-    || { logx "reformatage refuse par l'utilisateur"; return 1; }
+    || { logx "reformat refused by the user"; return 1; }
 
-  # ---- A PARTIR D'ICI LA CLE EST MODIFIEE : tout echec renvoie 3, pas 2. ----
-  # 0x0c = FAT32 LBA, demarrage a 1 MiB (alignement).
+  # ---- FROM HERE ON THE STICK IS MODIFIED: any failure returns 3, not 2. ----
+  # 0x0c = FAT32 LBA, boot set, start at 1 MiB (alignment).
   wipefs -af "/dev/$dev" 2>>"$LOG" || true
   printf 'label: dos\nstart=2048, type=0c, bootable\n' \
     | sfdisk --quiet --force "/dev/$dev" 2>>"$LOG" || {
-        logx "reformatage : sfdisk en echec, cle plus amorcable"; return 3; }
+        logx "reformat: sfdisk failed, stick no longer bootable"; return 3; }
   partprobe "/dev/$dev" 2>>"$LOG" || true; udevadm settle 2>/dev/null || sleep 2
 
   p=$(lsblk -lno NAME,TYPE "/dev/$dev" 2>/dev/null | awk '$2=="part"{print $1; exit}')
-  [ -n "$p" ] || { logx "reformatage : aucune partition apres sfdisk"; return 3; }
-  # mkfs.vfat -F 32 formate au-dela de 32 Go, la ou l'outil de Windows refuse.
+  [ -n "$p" ] || { logx "reformat: no partition after sfdisk"; return 3; }
+  # mkfs.vfat -F 32 formats beyond 32 GB, where the Windows tool refuses.
   mkfs.vfat -F 32 -n "$LOGS_LABEL" "/dev/$p" >/dev/null 2>>"$LOG" || {
-      logx "reformatage : mkfs.vfat en echec sur /dev/$p"; return 3; }
+      logx "reformat: mkfs.vfat failed on /dev/$p"; return 3; }
 
   mkdir -p "$mnt"
-  mount "/dev/$p" "$mnt" 2>>"$LOG" || { logx "reformatage : montage de /dev/$p impossible"; return 3; }
+  mount "/dev/$p" "$mnt" 2>>"$LOG" || { logx "reformat: mounting /dev/$p impossible"; return 3; }
   cp "$LOG" "$mnt/haos-install-$(date +%Y%m%d-%H%M).log" 2>>"$LOG" || true
   sync; umount "$mnt" 2>>"$LOG" || true
-  logx "cle $dev reformatee en FAT32 ($LOGS_LABEL), journal copie"
+  logx "stick $dev reformatted as FAT32 ($LOGS_LABEL), log copied"
   return 0
 }
 
-# Sauvegarde du journal. Un MENU explicite, et non un enchainement de questions :
-# dans la version precedente, atteindre le reformatage imposait de repondre
-# "Abandonner" a la question sur la seconde cle -- un bouton qui semblait tout
-# arreter alors qu'il donnait acces aux autres solutions. Chaque destination est
-# desormais nommee et choisie directement.
+# Saving the log. An explicit MENU, not a chain of questions: in the previous
+# version, reaching the reformat step meant answering "Give up" to the question
+# about the second stick -- a button that looked like it stopped everything while
+# it actually gave access to the other options. Every destination is now named
+# and picked directly.
 save_log(){
   local dest st choice items=()
   [ -s "$LOG" ] || return 0
   wt_yesno "$S_TITLE" "$S_LOG_ASK" || return 0
 
-  # Premiere tentative automatique : si une cle inscriptible est deja la, inutile
-  # d'imposer un menu.
+  # First automatic attempt: if a writable stick is already there, no point
+  # imposing a menu.
   dest=$(try_write_log "$LOG"); st=$?
   if [ $st -eq 0 ]; then
     wt_msg "$S_TITLE" "$(printf "$S_LOG_OK" "$(describe_part "$dest")")"; return 0
@@ -779,12 +777,12 @@ save_log(){
   case $st in
     2) wt_msg "$S_WARN" "$S_LOG_FULL" ;;
     3) wt_msg "$S_WARN" "$S_LOG_RO" ;;
-    4) wt_msg "$S_WARN" "$S_LOG_VTOY" ;;   # retenu par dm : instruction precise
+    4) wt_msg "$S_WARN" "$S_LOG_VTOY" ;;   # claimed by dm: precise instruction
   esac
 
   while true; do
     items=("$S_LOG_M_USB" "$S_LOG_M_USB_D")
-    # Le reformatage n'est propose que si l'on a identifie la cle de boot.
+    # Reformatting is only offered if the boot stick was identified.
     [ -n "${live_dev:-}" ] && items+=("$S_LOG_M_FMT" "$S_LOG_M_FMT_D")
     items+=("$S_LOG_M_SHOW" "$S_LOG_M_SHOW_D" "$S_LOG_M_NONE" "$S_LOG_M_NONE_D")
 
@@ -810,10 +808,10 @@ save_log(){
           0) wt_msg "$S_TITLE" "$(printf "$S_LOG_OK" "$(describe_part "/dev/$live_dev")")"; return 0 ;;
           2) wt_msg "$S_WARN" "$S_FMT_FAIL" ;;
           3) wt_msg "$S_WARN" "$S_FMT_BROKEN" ;;
-        esac ;;                                  # 1 = refus, on revient au menu
+        esac ;;                                  # 1 = refused, back to the menu
       "$S_LOG_M_SHOW")
-        # Toujours disponible, sans aucun support : wt_msg bascule seul en
-        # --scrolltext pour que le journal defile.
+        # Always available, with no medium: wt_msg switches to --scrolltext on
+        # its own so that the log scrolls.
         wt_msg "$S_TITLE" "$(cat "$LOG")" ;;
       *) break ;;
     esac
@@ -822,10 +820,10 @@ save_log(){
 }
 
 # ---------------------------------------------------------------------------
-# PIEGE nmcli : apres un echec, un profil nomme d'apres le SSID subsiste avec le
-# mauvais mot de passe. Un nouvel appel "dev wifi connect ... password ..."
-# REACTIVE ce profil et IGNORE le mot de passe fourni -> la 2e tentative echoue
-# avec l'ancien. On supprime donc tout profil existant pour ce SSID.
+# nmcli TRAP: after a failure, a profile named after the SSID is left behind
+# with the wrong password. A new "dev wifi connect ... password ..." call
+# REACTIVATES that profile and IGNORES the supplied password -> the second
+# attempt fails with the old one. So we delete any existing profile for that SSID.
 forget_profile(){
   local ssid="$1" name
   nmcli connection delete "$ssid" >/dev/null 2>&1 || true
@@ -881,8 +879,8 @@ setup_network(){
       "$S_NET_ETHRETRY")  have_net && return 0 || continue ;;
     esac
 
-    # --inputbox et non --passwordbox : saisie a l'aveugle + clavier eventuellement
-    # mal mappe = trop d'echecs. La machine est en cours d'installation.
+    # --inputbox and not --passwordbox: blind typing plus a possibly wrongly
+    # mapped keyboard = too many failures. The machine is being installed.
     local psk
     psk=$(whiptail --title "$S_TITLE" --inputbox "$(printf "$S_NET_PSK" "$choice")" 10 66 3>&1 1>&2 2>&3) || continue
 
@@ -890,7 +888,7 @@ setup_network(){
     forget_profile "$choice"
     local err
     if err=$(nmcli dev wifi connect "$choice" password "$psk" 2>&1) && have_net; then
-      WIFI_SSID="$choice"; WIFI_PSK="$psk"   # memorises pour push_wifi_config
+      WIFI_SSID="$choice"; WIFI_PSK="$psk"   # remembered for push_wifi_config
       return 0
     fi
     wt_msg "$S_TITLE" \
@@ -899,42 +897,42 @@ setup_network(){
 }
 
 # ---------------------------------------------------------------------------
-# NECESSITE le reseau : en Wi-Fi, rien n'est joignable avant setup_network.
+# REQUIRES the network: over Wi-Fi, nothing is reachable before setup_network.
 resolve_version(){
   whiptail --title "$S_TITLE" --infobox "$S_VER_FETCH" 7 66
 
-  # Source de verite : le canal stable du Supervisor. L'API GitHub ignore les
-  # retrogradations de canal (une release stable peut etre retiree apres coup,
-  # cf. HAOS 18.0 et le firmware RPi/Yellow) et proposerait alors une version
-  # que Home Assistant ne considere plus courante.
-  # jq et non grep : la cle de la carte existe AUSSI sous "homeassistant"
-  # (version de HA Core) -> un grep renverrait cette valeur-la.
+  # Source of truth: the Supervisor's stable channel. The GitHub API ignores
+  # channel demotions (a stable release can be withdrawn afterwards,
+  # cf. HAOS 18.0 and the RPi/Yellow firmware) and would then offer a version
+  # Home Assistant no longer considers current.
+  # jq rather than grep: the board key exists ALSO under "homeassistant"
+  # (HA Core version) -> a grep would return that value.
   HAOS_VERSION=$(curl -fsSL --max-time 15 https://version.home-assistant.io/stable.json 2>>"$LOG" \
     | jq -r --arg b "$HAOS_BOARD" '.hassos[$b] // empty' 2>>"$LOG" || true)
   [[ "$HAOS_VERSION" =~ ^[0-9]+(\.[0-9]+)+$ ]] || HAOS_VERSION=""
-  VER_SRC="canal stable"
+  VER_SRC="stable channel"
 
-  # Repli : l'API GitHub, qui exclut les pre-releases (RC) par construction.
-  # Volontairement laisse en grep : si jq disparaissait de la liste de paquets,
-  # l'etape precedente rendrait vide et ce chemin resterait fonctionnel.
+  # Fallback: the GitHub API, which excludes pre-releases (RC) by construction.
+  # Deliberately left on grep: if jq disappeared from the package list, the
+  # previous step would return empty and this path would keep working.
   if [ -z "$HAOS_VERSION" ]; then
     HAOS_VERSION=$(curl -fsSL --max-time 15 \
       https://api.github.com/repos/home-assistant/operating-system/releases/latest \
       2>>"$LOG" | grep -oP '"tag_name":\s*"\K[^"]+' || true)
     [[ "$HAOS_VERSION" =~ ^[0-9]+(\.[0-9]+)+$ ]] || HAOS_VERSION=""
-    VER_SRC="repli API GitHub"
-    logx "canal stable injoignable ou muet, repli sur l'API GitHub"
+    VER_SRC="GitHub API fallback"
+    logx "stable channel unreachable or silent, falling back to the GitHub API"
   fi
 
-  # Pas de version en dur en dernier recours : elle ne servirait que si les deux
-  # sources etaient injoignables ALORS QUE le telechargement de l'image depuis
-  # GitHub fonctionne -- scenario quasi vide. Elle imposerait en revanche d'editer
-  # le script et de reconstruire l'ISO a chaque version de HAOS. Echec franc.
+  # No hard-coded version as a last resort: it would only help if both sources
+  # were unreachable WHILE downloading the image from GitHub works -- a
+  # near-empty scenario. It would however mean editing the script and rebuilding
+  # the ISO for every HAOS release. Plain failure.
   [ -n "$HAOS_VERSION" ] || die "$S_VER_FAIL"
 
   IMG_URL="https://github.com/home-assistant/operating-system/releases/download/${HAOS_VERSION}/haos_${HAOS_BOARD}-${HAOS_VERSION}.img.xz"
-  logx "version resolue : $HAOS_VERSION (carte $HAOS_BOARD, source $VER_SRC)"
-  logx "image : $IMG_URL"
+  logx "version resolved: $HAOS_VERSION (board $HAOS_BOARD, source $VER_SRC)"
+  logx "image: $IMG_URL"
   curl -fsI --max-time 15 "$IMG_URL" >/dev/null 2>>"$LOG" \
     || die "$(printf "$S_VER_NOIMG" "$HAOS_VERSION" "$IMG_URL")"
 }
@@ -942,20 +940,20 @@ resolve_version(){
 # ---------------------------------------------------------------------------
 pick_disk(){
   local menu=() name size model tran vendor rm_ hp tag
-  # whiptail ne sait pas colorer un item de menu -> marquage textuel en tete.
-  # Pas d'eval sur la sortie de lsblk : un champ MODEL contenant un guillemet
-  # casserait le parsing. Une colonne a la fois, sinon un champ vide decale les
-  # suivants a la lecture.
+  # whiptail cannot colour a menu item -> textual marking at the front.
+  # No eval on lsblk output: a MODEL field containing a quote would break the
+  # parsing. One column at a time, otherwise an empty field shifts the following
+  # ones when read back.
   while read -r name; do
     [ -n "$name" ] || continue
-    [ -n "$live_dev" ] && [ "$name" = "$live_dev" ] && continue   # jamais le media de boot
-    # Ceinture et bretelles : tout disque portant un iso9660 (lui-meme ou une de
-    # ses partitions) est un media d'installation, jamais une cible. Couvre les
-    # gravures ou le LABEL ne serait pas celui attendu (dd d'un autre ISO).
+    [ -n "$live_dev" ] && [ "$name" = "$live_dev" ] && continue   # never the boot medium
+    # Belt and braces: any disk carrying an iso9660 (itself or one of its
+    # partitions) is an installation medium, never a target. Covers the writes
+    # where the LABEL would not be the expected one (dd of another ISO).
     lsblk -no FSTYPE "/dev/$name" 2>/dev/null | grep -qx iso9660 && continue
-    # Cle Ventoy : elle ne porte PAS d'iso9660 (l'ISO est un fichier sur sa
-    # partition exFAT, expose via device-mapper), donc le test precedent la
-    # laissait passer. Sa 2e partition porte l'etiquette VTOYEFI : signal fiable.
+    # Ventoy stick: it does NOT carry an iso9660 (the ISO is a file on its exFAT
+    # partition, exposed via device-mapper), so the previous test let it through.
+    # Its 2nd partition carries the VTOYEFI label: a reliable signal.
     lsblk -no LABEL "/dev/$name" 2>/dev/null | grep -qix 'VTOYEFI' && continue
 
     size=$(lsblk -dno SIZE    "/dev/$name" 2>/dev/null | xargs)
@@ -967,8 +965,8 @@ pick_disk(){
 
     tag=""
     if [ "${rm_:-0}" = "1" ] || [ "${hp:-0}" = "1" ] || [ "$tran" = "usb" ]; then
-      tag="[!! USB / EXTERNE !!] "
-      [ "$UI_LANG" = "en" ] && tag="[!! USB / EXTERNAL !!] "
+      tag="[!! USB / EXTERNAL !!] "
+      [ "$UI_LANG" = "fr" ] && tag="[!! USB / EXTERNE !!] "
     fi
     menu+=("/dev/$name" "$(printf '%s%-9s %-5s %s' "$tag" "${size:-?}" "${tran:-?}" \
            "$(echo "$vendor ${model:-?}" | xargs)")")
@@ -979,7 +977,7 @@ pick_disk(){
   TARGET=$(wt_menu "$S_TITLE" "$S_DISK_PICK" 8 "${menu[@]}") \
     || die "$S_CANCELLED"
 
-  # 32 Go : sous ce seuil le dd mourrait "No space left" APRES avoir efface.
+  # 32 GB: below that threshold dd would die with "No space left" AFTER erasing.
   local bytes gb
   bytes=$(blockdev --getsize64 "$TARGET" 2>/dev/null || echo 0)
   gb=$(( bytes / 1000000000 ))
@@ -992,8 +990,8 @@ pick_disk(){
   content=$(lsblk -no NAME,SIZE,FSTYPE,LABEL "$TARGET" 2>/dev/null | sed 's/^/   /')
   wt_yesno "$S_CONFIRM_T" "$(printf "$S_DISK_CONFIRM" "$TARGET" "$content")" \
     || die "$S_CANCELLED"
-  logx "cible confirmee : $(describe_part "$TARGET"), ${gb} Go"
-  logx "media du live exclu : ${live_dev:-<non identifie>}"
+  logx "target confirmed: $(describe_part "$TARGET"), ${gb} GB"
+  logx "live medium excluded: ${live_dev:-<not identified>}"
 }
 
 # ---------------------------------------------------------------------------
@@ -1007,20 +1005,20 @@ flash(){
   local dl
   dl=$(curl -fsSLI "$IMG_URL" 2>>"$LOG" \
        | awk 'BEGIN{IGNORECASE=1}/^content-length/{v=$2}END{gsub(/\r/,"",v);print v}')
-  [[ "$dl" =~ ^[0-9]+$ ]] && (( dl > 1000000 )) || dl=560000000     # repli si en-tete absent
+  [[ "$dl" =~ ^[0-9]+$ ]] && (( dl > 1000000 )) || dl=560000000     # fallback if the header is missing
 
-  # Le stdout de whiptail est force sur /dev/tty : sinon la substitution de
-  # processus herite du tube vers xz et y injecte les codes terminal.
+  # whiptail's stdout is forced onto /dev/tty: otherwise the process substitution
+  # inherits the pipe to xz and injects the terminal codes into it.
   set -o pipefail
   local rc
   {
-    # --speed-limit/--speed-time : sans eux, une coupure reseau laissait curl
-    # attendre selon les temporisations TCP, 'pv -n' reemettre le dernier
-    # pourcentage, et la jauge se figer indefiniment -- l'utilisateur ne pouvait
-    # pas distinguer "lent" de "mort". Sous 1 Ko/s pendant 30 s, curl abandonne.
-    # Pas de --retry ici : sans -C - la reprise recommence a zero et reinjecte les
-    # octets dans le flux xz, ce qui le corrompt ; et -C - est inutilisable sur un
-    # tube, curl ne pouvant s'y repositionner.
+    # --speed-limit/--speed-time: without them, a network drop left curl waiting
+    # on the TCP timers, 'pv -n' re-emitting the last percentage, and the gauge
+    # frozen indefinitely -- the user could not tell "slow" from "dead". Below
+    # 1 KB/s for 30 s, curl gives up.
+    # No --retry here: without -C - the resume starts from zero and re-injects
+    # the bytes into the xz stream, which corrupts it; and -C - is unusable on a
+    # pipe, curl being unable to seek in it.
     curl -fSL --speed-limit 1024 --speed-time 30 "$IMG_URL" 2>>"$LOG" \
       | pv -n -s "$dl" 2> >(whiptail --title "$S_TITLE" --gauge \
             "$(printf "$S_WRITING" "$HAOS_VERSION")" 9 72 0 >/dev/tty) \
@@ -1031,7 +1029,7 @@ flash(){
   }
   rc=$?
   sync; wait 2>/dev/null || true
-  logx "ecriture terminee sur $TARGET (code $rc)"
+  logx "writing finished on $TARGET (code $rc)"
 
   if [ $rc -ne 0 ]; then
     die "$(printf "$S_FAIL" "$rc" "$(tail -n 10 "$LOG" 2>/dev/null | cut -c1-66)" "$LOG")"
@@ -1039,14 +1037,14 @@ flash(){
 }
 
 # ---------------------------------------------------------------------------
-# xz valide deja l'integrite du TELECHARGEMENT (sommes de controle du format).
-# Ici on valide l'ECRITURE : secteur defaillant, SSD en fin de vie, cable douteux.
+# xz already validates the integrity of the DOWNLOAD (checksums of the format).
+# Here we validate the WRITE: failing sector, end-of-life SSD, doubtful cable.
 verify(){
   local expect size actual i
-  # Ces deux fichiers sont ecrits par les substitutions de processus de flash(),
-  # que 'wait' ne garantit pas d'attendre selon les versions de bash. Un fichier
-  # partiel donnerait une somme tronquee, donc une FAUSSE alerte de disque
-  # defaillant : on patiente brievement jusqu'a obtenir des valeurs completes.
+  # These two files are written by flash()'s process substitutions, which 'wait'
+  # does not guarantee to wait for on every bash version. A partial file would
+  # give a truncated checksum, hence a FALSE failing-disk alert: we wait briefly
+  # until complete values are available.
   for i in {1..20}; do
     expect=$(tr -d ' \n' < /tmp/haos-img.sha256 2>/dev/null)
     size=$(tr -d ' \n' < /tmp/haos-img.size 2>/dev/null)
@@ -1055,7 +1053,7 @@ verify(){
   done
 
   if ! [[ "$size" =~ ^[0-9]+$ ]] || ! [[ "$expect" =~ ^[0-9a-f]{64}$ ]]; then
-    logx "verification impossible : somme ou taille de reference indisponible"
+    logx "verification impossible: reference checksum or size unavailable"
     wt_msg "$S_TITLE" "$S_VFY_SKIP"; return 0
   fi
 
@@ -1063,7 +1061,7 @@ verify(){
     "$(printf "$S_VFY_ASK" "$(numfmt --to=iec "$size" 2>/dev/null || echo "$size")" "$TARGET")" \
     || return 0
 
-  # Vider le cache : sinon on relit la RAM, pas le disque -> verification inutile.
+  # Flush the cache: otherwise we read back RAM, not the disk -> useless check.
   sync; echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
 
   actual=$(head -c "$size" "$TARGET" 2>>"$LOG" \
@@ -1071,10 +1069,10 @@ verify(){
     | sha256sum | cut -d' ' -f1)
 
   if [ "$actual" = "$expect" ]; then
-    logx "verification OK : sha256 du disque conforme a l'image ($expect)"
+    logx "verification OK: disk sha256 matches the image ($expect)"
     wt_msg "$S_TITLE" "$(printf "$S_VFY_OK" "${expect:0:32}")"
   else
-    logx "VERIFICATION EN ECHEC : attendu $expect, lu $actual"
+    logx "VERIFICATION FAILED: expected $expect, read $actual"
     wt_msg "$S_WARN" \
       "$(printf "$S_VFY_KO" "${expect:0:24}" "${actual:0:24}")"
     die "$S_CANCELLED"
@@ -1082,9 +1080,9 @@ verify(){
 }
 
 # ---------------------------------------------------------------------------
-# Localise le fichier keyfile d'une connexion. nmcli expose connection.filename
-# dans les versions recentes ; sinon on le retrouve par son UUID, l'emplacement
-# etant deterministe.
+# Locates the keyfile of a connection. nmcli exposes connection.filename in
+# recent versions; otherwise we find it by its UUID, the location being
+# deterministic.
 nm_profile_path(){
   local uuid="$1" f
   f=$(nmcli -g connection.filename connection show "$uuid" 2>/dev/null | head -1)
@@ -1094,11 +1092,11 @@ nm_profile_path(){
   return 1
 }
 
-# Profil ecrit a la main, employe SEULEMENT en repli. key-mgmt derive du
-# chiffrement reellement detecte : le forcer a wpa-psk (ancien comportement)
-# produit un profil inoperant en WPA3 pur ou sur un reseau ouvert.
-# UUID tire au sort mais fixe dans le fichier : sinon l'IP change a chaque boot.
-# Fins de ligne UNIX (LF) imperatives.
+# Hand-written profile, used ONLY as a fallback. key-mgmt is derived from the
+# encryption actually detected: forcing it to wpa-psk (previous behaviour)
+# produced a profile that does not work with pure WPA3 or on an open network.
+# UUID random but fixed in the file: otherwise the IP changes on every boot.
+# UNIX line endings (LF) mandatory.
 write_fallback_profile(){
   local dst="$1" km="$2" hidden=""
   nmcli -g 802-11-wireless.hidden connection show "$WIFI_SSID" 2>/dev/null | grep -qi yes \
@@ -1112,7 +1110,7 @@ write_fallback_profile(){
     printf 'mode=infrastructure\n'
     printf 'ssid=%s\n' "$WIFI_SSID"
     [ -n "$hidden" ] && printf '%s\n' "$hidden"
-    # Reseau ouvert : AUCUNE section de securite, sinon NM refuse le profil.
+    # Open network: NO security section, otherwise NM rejects the profile.
     if [ -n "$km" ]; then
       printf '\n[802-11-wireless-security]\n'
       printf 'key-mgmt=%s\n' "$km"
@@ -1124,50 +1122,51 @@ write_fallback_profile(){
   } > "$dst" 2>>"$LOG"
 }
 
-# Installation en Wi-Fi : HAOS oublie tout au premier boot et attend un reseau.
-# On lui depose un profil NetworkManager dans CONFIG/network/my-network de la
-# partition hassos-boot (FAT), que HAOS importe au demarrage.
+# Wi-Fi installation: HAOS forgets everything on first boot and waits for a
+# network. So we drop a NetworkManager profile into CONFIG/network/my-network of
+# the hassos-boot partition (FAT), which HAOS imports at startup.
 #
-# On COPIE le profil que NM a deja ecrit, au lieu de le reconstruire : son
-# key-mgmt est juste par construction (WPA2, WPA3 pur/SAE, OWE, WEP, ouvert) et
-# il embarque SSID cache, IP fixe et tout ce que l'utilisateur a regle. Le motif
-# invoque autrefois pour le reecrire -- "interface-name verrouille le profil sur
-# la carte du live" -- se corrige directement en vidant cette propriete.
-# Cela couvre aussi le parcours nmtui, qui n'injectait RIEN auparavant : le
-# garde portait sur WIFI_SSID, jamais renseigne par ce chemin.
+# We COPY the profile NM has already written, instead of rebuilding it: its
+# key-mgmt is right by construction (WPA2, pure WPA3/SAE, OWE, WEP, open) and it
+# carries the hidden SSID, the static IP and everything the user configured. The
+# reason once given for rewriting it -- "interface-name locks the profile to the
+# live system's card" -- is fixed directly by emptying that property.
+# This also covers the nmtui path, which injected NOTHING before: the guard was
+# on WIFI_SSID, never set by that route.
 #
-# Codes de retour :
-#   0 = injecte | 1 = echec technique | 2 = refus delibere | 3 = rien a faire
+# Return codes:
+#   0 = injected | 1 = technical failure | 2 = deliberate refusal | 3 = nothing to do
 push_wifi_config(){
   local uuid part src km mnt=/mnt/hassos-boot dst
-  # Connexion Wi-Fi active, quel qu'ait ete son mode de creation.
+  # Active Wi-Fi connection, whatever way it was created.
   uuid=$(active_wifi_uuid)
-  [ -n "$uuid" ] || return 3                   # installation filaire : rien a faire
+  [ -n "$uuid" ] || return 3                   # wired installation: nothing to do
 
-  # Parcours nmtui : WIFI_SSID n'a jamais ete renseigne. On le recupere pour
-  # l'AFFICHAGE du message final (le journal, lui, ne le porte pas).
+  # nmtui path: WIFI_SSID was never set. We recover it for the DISPLAY of the
+  # final message (the log itself does not carry it).
   [ -n "${WIFI_SSID:-}" ] \
     || WIFI_SSID=$(nmcli -g 802-11-wireless.ssid connection show "$uuid" 2>/dev/null | head -1)
 
-  # hassos-boot = 1re partition de l'image ecrite (label hassos-boot, sinon p1)
+  # hassos-boot = 1st partition of the written image (label hassos-boot, else p1)
   partprobe "$TARGET" 2>>"$LOG" || true; sleep 1
   part=$(lsblk -nro NAME,LABEL "$TARGET" 2>/dev/null | awk '$2=="hassos-boot"{print $1; exit}')
   [ -n "$part" ] || part=$(lsblk -nro NAME "$TARGET" 2>/dev/null | sed -n '2p')
   [ -n "$part" ] || return 1
 
-  # Delier le profil de l'interface du live AVANT de le lire : NM reecrit alors
-  # le fichier sur disque. Sans cela HAOS ne l'activerait sur aucune carte.
+  # Detach the profile from the live system's interface BEFORE reading it: NM
+  # then rewrites the file on disk. Without that HAOS would not activate it on
+  # any card.
   nmcli connection modify "$uuid" connection.interface-name "" >/dev/null 2>&1 || true
 
   km=$(nmcli -g 802-11-wireless-security.key-mgmt connection show "$uuid" 2>/dev/null)
   src=$(nm_profile_path "$uuid") || src=""
 
-  # Refus delibere : un profil referencant des FICHIERS de certificats ne peut
-  # pas fonctionner sous HAOS, ces chemins n'y existant pas. Mieux vaut ne rien
-  # ecrire que promettre un reseau qui ne montera jamais. Un PEAP/MSCHAPv2 sans
-  # certificat, mot de passe stocke, se copie et fonctionne : ne pas le refuser.
+  # Deliberate refusal: a profile referencing certificate FILES cannot work under
+  # HAOS, those paths not existing there. Better to write nothing than to promise
+  # a network that will never come up. A PEAP/MSCHAPv2 without a certificate, with
+  # the password stored, copies over and works: do not refuse it.
   if [ -n "$src" ] && grep -qE '^[[:space:]]*(ca-cert|client-cert|private-key|ca-path)=' "$src"; then
-    logx "profil Wi-Fi NON injecte : 802.1X a certificats, fichiers absents sous HAOS"
+    logx "Wi-Fi profile NOT injected: 802.1X with certificates, files absent under HAOS"
     return 2
   fi
 
@@ -1176,8 +1175,8 @@ push_wifi_config(){
   mkdir -p "$mnt/CONFIG/network"
   dst="$mnt/CONFIG/network/my-network"
 
-  # Le secret doit etre DANS le fichier : s'il est gere par un agent, le profil
-  # copie serait muet cote HAOS -> on bascule sur le repli.
+  # The secret must be IN the file: if it is managed by an agent, the copied
+  # profile would be mute on the HAOS side -> we switch to the fallback.
   local copied=1
   if [ -n "$src" ]; then
     case "$km" in
@@ -1185,35 +1184,35 @@ push_wifi_config(){
     esac
   fi
   if [ -n "$src" ]; then
-    # Retirer les cles propres a CETTE machine : interface-name (ceinture et
-    # bretelles si le modify n'a pas pris) et permissions, qui lierait le profil
-    # a un compte utilisateur inexistant sous HAOS.
+    # Remove keys specific to THIS machine: interface-name (belt and braces if
+    # the modify did not take) and permissions, which would tie the profile to a
+    # user account that does not exist under HAOS.
     grep -vE '^[[:space:]]*(interface-name|permissions)=' "$src" > "$dst" 2>>"$LOG" && copied=0
   fi
 
   if [ "$copied" -ne 0 ]; then
-    # Repli : necessite le parcours guide (SSID et PSK connus).
+    # Fallback: requires the guided walkthrough (SSID and PSK known).
     if [ -z "${WIFI_SSID:-}" ] || [ -z "${WIFI_PSK:-}" ]; then
-      logx "profil Wi-Fi NON injecte : profil NM illisible et aucun secret memorise"
+      logx "Wi-Fi profile NOT injected: unreadable NM profile and no stored secret"
       sync; umount "$mnt" 2>>"$LOG" || true
       return 2
     fi
     case "$km" in
       none|wpa-eap|wpa-eap-suite-b-192)
-        # WEP et entreprise : ne pas deviner un format qu'on ne maitrise pas.
-        logx "profil Wi-Fi NON injecte : key-mgmt=$km non gere par le repli"
+        # WEP and enterprise: do not guess a format we do not master.
+        logx "Wi-Fi profile NOT injected: key-mgmt=$km not handled by the fallback"
         sync; umount "$mnt" 2>>"$LOG" || true
         return 2 ;;
     esac
-    logx "profil Wi-Fi : repli sur un profil ecrit a la main (key-mgmt=${km:-aucun})"
+    logx "Wi-Fi profile: falling back to a hand-written profile (key-mgmt=${km:-none})"
     write_fallback_profile "$dst" "$km"
   else
-    logx "profil Wi-Fi : profil NetworkManager copie (key-mgmt=${km:-aucun})"
+    logx "Wi-Fi profile: NetworkManager profile copied (key-mgmt=${km:-none})"
   fi
 
-  # Controler AVANT de demonter : apres umount le point de montage est vide et le
-  # test serait toujours faux -- c'est ce qui faisait annoncer un succes meme
-  # quand l'ecriture du keyfile avait echoue.
+  # Check BEFORE unmounting: after umount the mount point is empty and the test
+  # would always be false -- that is what made it announce success even when
+  # writing the keyfile had failed.
   local ok=1
   [ -s "$mnt/CONFIG/network/my-network" ] && ok=0
   sync; umount "$mnt" 2>>"$LOG" || true
@@ -1222,26 +1221,28 @@ push_wifi_config(){
 
 # ---------------------------------------------------------------------------
 finalize(){
-  # Installation Wi-Fi : injecter le profil pour que HAOS se reconnecte seul.
-  # Plus de garde sur WIFI_SSID : push_wifi_config detecte elle-meme la connexion
-  # Wi-Fi active et sort proprement en filaire. C'est ce qui couvre nmtui.
-  # Journalise le resultat sans le SSID : c'est le SUCCES de l'injection qui
-  # compte pour un diagnostic, pas le nom du reseau.
+  # Wi-Fi installation: inject the profile so that HAOS reconnects on its own.
+  # No guard on WIFI_SSID any more: push_wifi_config detects the active Wi-Fi
+  # connection itself and exits cleanly on a wired install. That is what covers
+  # nmtui.
+  # Logs the result without the SSID: the SUCCESS of the injection is what
+  # matters for a diagnosis, not the network name.
   local wifi_rc
   push_wifi_config; wifi_rc=$?
   case $wifi_rc in
-    3) : ;;                                    # filaire : rien a dire
-    0) logx "profil Wi-Fi injecte dans CONFIG/network de hassos-boot"
+    3) : ;;                                    # wired: nothing to say
+    0) logx "Wi-Fi profile injected into CONFIG/network of hassos-boot"
        wt_msg "$S_TITLE" "$(printf "$S_WIFI_PUSH" "${WIFI_SSID:-Wi-Fi}")" ;;
-    2) wt_msg "$S_WARN" "$S_WIFI_PUSH_SKIP" ;; # refus delibere, deja journalise
-    *) logx "ECHEC de l'injection du profil Wi-Fi : HAOS demarrera sans reseau"
+    2) wt_msg "$S_WARN" "$S_WIFI_PUSH_SKIP" ;; # deliberate refusal, already logged
+    *) logx "FAILED to inject the Wi-Fi profile: HAOS will boot with no network"
        wt_msg "$S_WARN" "$S_WIFI_PUSH_FAIL" ;;
   esac
 
-  # L'image contient deja \EFI\BOOT\bootx64.efi ; filet pour firmwares capricieux.
+  # The image already contains \EFI\BOOT\bootx64.efi; safety net for fussy
+  # firmwares.
   if command -v efibootmgr >/dev/null && [ -d /sys/firmware/efi ]; then
-    # Purger les entrees laissees par de precedentes installations sur ce
-    # meme disque (sinon efibootmgr --create en accumule une a chaque essai).
+    # Purge the entries left by previous installations on this same disk
+    # (otherwise efibootmgr --create adds one more on every attempt).
     local partuuid bootnum
     for partuuid in $(lsblk -no PARTUUID "$TARGET" 2>>"$LOG"); do
       [ -n "$partuuid" ] || continue
@@ -1253,54 +1254,55 @@ finalize(){
     done
     efibootmgr --create --disk "$TARGET" --part 1 \
       --label "HAOS" --loader '\EFI\BOOT\bootx64.efi' >/dev/null 2>&1 || true
-    logx "entree UEFI 'HAOS' recreee sur $TARGET"
+    logx "UEFI entry 'HAOS' recreated on $TARGET"
   fi
 
-  # Proposer le reformatage AVANT de demander le retrait de la cle : c'est le
-  # dernier moment ou elle est encore branchee. On n'annonce le resultat que s'il
-  # a reellement eu lieu, sinon le message mentirait.
-  logx "installation terminee avec succes sur $TARGET"
+  # Offer the reformat BEFORE asking for the stick to be removed: this is the
+  # last moment it is still plugged in. We only announce the result if it really
+  # happened, otherwise the message would lie.
+  logx "installation completed successfully on $TARGET"
   local logmsg="" fmt_rc
   reformat_stick "${live_dev:-}"; fmt_rc=$?
   case $fmt_rc in
     0) logmsg="$S_DONE_LOG" ;;
-    2) wt_msg "$S_WARN" "$S_FMT_FAIL" ;;     # cle intacte
-    3) wt_msg "$S_WARN" "$S_FMT_BROKEN" ;;   # cle plus amorcable : le dire
-                                             # 1 = refus assume, rien a dire
+    2) wt_msg "$S_WARN" "$S_FMT_FAIL" ;;     # stick intact
+    3) wt_msg "$S_WARN" "$S_FMT_BROKEN" ;;   # stick no longer bootable: say it
+                                             # 1 = deliberate refusal, nothing to say
   esac
 
-  # 'toram' a recopie le live en RAM : la cle n'est plus utilisee, on peut donc
-  # demander son retrait MAINTENANT. Le reboot part alors directement sur HAOS,
-  # sans risque de relancer l'installateur ni de retirer la cle trop tot.
+  # 'toram' copied the live system to RAM: the stick is no longer used, so we can
+  # ask for it to be removed NOW. The reboot then goes straight into HAOS, with
+  # no risk of restarting the installer or removing the stick too early.
   wt_msg "$S_TITLE" "$(printf "$S_DONE" "$TARGET")$logmsg"
   clear; reboot
 }
 
 # ---------------------------------------------------------------------------
-HAOS_BOARD="generic-x86-64"   # cle du canal stable ET nom de l'image : gardes en phase
-# ISO_LABEL est pose par build-iso.sh (--iso-volume) : garder les deux fichiers en
-# phase. Il sert a reconnaitre le media de boot, 'toram' ayant remplace
-# /run/live/medium par un tmpfs. LOGS_LABEL est l'etiquette donnee a la cle si
-# l'utilisateur accepte son reformatage en fin d'installation.
+HAOS_BOARD="generic-x86-64"   # stable channel key AND image name: keep in step
+# ISO_LABEL is set by build-iso.sh (--iso-volume): keep both files in step. It is
+# used to recognise the boot medium, 'toram' having replaced /run/live/medium
+# with a tmpfs. LOGS_LABEL is the label given to the stick if the user accepts
+# its reformat at the end of the installation.
 ISO_LABEL="HAOS Installer"
 LOGS_LABEL="HAOS_LOGS"
 HAOS_VERSION=""
-VER_SRC=""                    # source retenue pour la version : trace dans le journal
+VER_SRC=""                    # source chosen for the version: traced in the log
 IMG_URL=""
 TARGET=""
 WIFI_SSID=""
 WIFI_PSK=""
-# Disque du live, a exclure des cibles. PIEGE : 'toram' (voir --bootappend-live
-# dans build-iso.sh) recopie le media en RAM et remplace /run/live/medium par un
-# tmpfs -- findmnt y renvoie donc "tmpfs" et non un peripherique. On identifie
-# donc le media par le LABEL que build-iso.sh a pose (--iso-volume), en remontant
-# au disque parent si la correspondance tombe sur une partition.
-# Remonte d'un nom de peripherique au DISQUE PHYSIQUE qui le porte.
-# Indispensable sous Ventoy : celui-ci n'expose pas la partition de la cle mais un
-# peripherique device-mapper (/dev/dm-0) dont le contenu est l'ISO. C'est donc
-# dm-0 que blkid trouve, un nom qui ne correspond a aucun disque -- l'exclusion
-# de pick_disk ne s'appliquait pas et la CLE VENTOY ETAIT PROPOSEE COMME CIBLE
-# D'INSTALLATION. /sys/block/dm-N/slaves/ donne le peripherique sous-jacent.
+# Disk of the live system, to be excluded from the targets. TRAP: 'toram' (see
+# --bootappend-live in build-iso.sh) copies the medium to RAM and replaces
+# /run/live/medium with a tmpfs -- findmnt therefore returns "tmpfs" there and not
+# a device. So we identify the medium by the LABEL that build-iso.sh set
+# (--iso-volume), walking back to the parent disk if the match falls on a
+# partition.
+# Walks back from a device name to the PHYSICAL DISK carrying it.
+# Essential under Ventoy: it exposes not the stick's partition but a
+# device-mapper device (/dev/dm-0) whose content is the ISO. So it is dm-0 that
+# blkid finds, a name matching no disk -- pick_disk's exclusion did not apply and
+# THE VENTOY STICK WAS OFFERED AS AN INSTALLATION TARGET. /sys/block/dm-N/slaves/
+# gives the underlying device.
 to_physical_disk(){
   local n s pk
   n=$(basename "${1:-}")
@@ -1309,13 +1311,13 @@ to_physical_disk(){
     dm-*|md*)
       for s in "/sys/block/$n/slaves/"*; do
         [ -e "$s" ] || continue
-        # Recursif : un empilement dm sur dm reste possible.
+        # Recursive: a dm stacked on dm is still possible.
         to_physical_disk "$(basename "$s")" && return 0
       done
       return 1 ;;
     loop*)
-      # Le fichier de sauvegarde ne dit pas sur quel disque il se trouve : on
-      # renonce plutot que de deviner.
+      # The backing file does not say which disk it lives on: we give up rather
+      # than guess.
       return 1 ;;
   esac
   pk=$(lsblk -no PKNAME "/dev/$n" 2>/dev/null | head -1 | tr -d ' ')
@@ -1328,7 +1330,7 @@ resolve_live_dev(){
   if [ -n "$hit" ]; then
     d=$(to_physical_disk "$hit") && [ -n "$d" ] && { printf '%s' "$d"; return 0; }
   fi
-  # Repli historique : valable si un jour 'toram' disparait du bootappend.
+  # Historical fallback: valid if 'toram' ever disappears from bootappend.
   src=$(findmnt -no SOURCE /run/live/medium 2>/dev/null || true)
   case "$src" in
     /dev/*) to_physical_disk "$src" || printf '' ;;
@@ -1337,17 +1339,17 @@ resolve_live_dev(){
 }
 live_dev=$(resolve_live_dev)
 
-set_strings                 # defauts FR, remplaces par le choix de l'ecran 1
+set_strings                 # EN defaults, replaced by the choice on screen 1
 choose_lang_keyboard
-# Etat des prerequis dans le journal : c'est la premiere chose a regarder quand
-# HAOS ne demarre pas apres une installation pourtant reussie.
-logx "installateur demarre -- langue $UI_LANG, carte $HAOS_BOARD"
-logx "demarrage : $(boot_status) | Secure Boot : $(secureboot_status)"
+# Requirements state in the log: it is the first thing to look at when HAOS does
+# not boot after an otherwise successful installation.
+logx "installer started -- language $UI_LANG, board $HAOS_BOARD"
+logx "boot: $(boot_status) | Secure Boot: $(secureboot_status)"
 wt_msg "$S_TITLE" \
   "$(printf "$S_WELCOME" "$(boot_status)" "$(secureboot_status)")"
 setup_network
-log_active_net              # apres setup_network : couvre tous ses points de sortie
-resolve_version             # NECESSITE le reseau : doit rester apres setup_network
+log_active_net              # after setup_network: covers all of its exit points
+resolve_version             # REQUIRES the network: must stay after setup_network
 pick_disk
 flash
 verify

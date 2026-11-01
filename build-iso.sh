@@ -1,37 +1,37 @@
 #!/bin/bash
-# build-iso.sh — Construit un ISO live "installateur HAOS" néophyte (Debian live-build).
-# Inclut : firmware reseau/Wi-Fi non-libres (sans les blobs GPU/audio), NetworkManager,
-# assistant guide whiptail.
-# NB: pas d'option --bootloaders / --uefi-secure-boot : elles n'existent pas dans
-#     toutes les versions de live-build (echec sur Ubuntu). Inutiles de toute facon,
-#     le defaut produit deja une ESP avec /EFI/boot/bootx64.efi (verifie via fdisk).
-# Prérequis (Debian/Ubuntu, en root) : apt install live-build
-# Lancer depuis un dossier contenant haos-installer.sh :  sudo ./build-iso.sh
+# build-iso.sh — Builds a beginner-friendly "HAOS installer" live ISO (Debian live-build).
+# Includes: non-free network/Wi-Fi firmware (without the GPU/audio blobs), NetworkManager,
+# a guided whiptail wizard.
+# NB: no --bootloaders / --uefi-secure-boot option: they do not exist in every
+#     live-build version (fails on Ubuntu). Pointless anyway, the default already
+#     produces an ESP with /EFI/boot/bootx64.efi (checked via fdisk).
+# Prerequisites (Debian/Ubuntu, as root): apt install live-build
+# Run from a folder containing haos-installer.sh:  sudo ./build-iso.sh
 set -euo pipefail
 
 WORK="haos-installer-iso"
-[[ -f haos-installer.sh ]] || { echo "haos-installer.sh manquant dans le dossier courant"; exit 1; }
-[[ $EUID -eq 0 ]] || { echo "Lance en root (live-build l'exige)."; exit 1; }
+[[ -f haos-installer.sh ]] || { echo "haos-installer.sh missing from the current folder"; exit 1; }
+[[ $EUID -eq 0 ]] || { echo "Run as root (live-build requires it)."; exit 1; }
 
 SRC="$(pwd)/haos-installer.sh"
 rm -rf "$WORK"; mkdir -p "$WORK"; cd "$WORK"
 
-# L'amorcage BIOS ne vient aujourd'hui que du DEFAUT de live-build (syslinux) :
-# rien ne le fige, une evolution amont pourrait le retirer sans erreur. On le
-# demande donc explicitement -- mais seulement si l'option existe, car elle est
-# absente de certaines versions (cf. la note en tete de fichier : echec Ubuntu).
+# BIOS boot currently only comes from live-build's DEFAULT (syslinux): nothing
+# pins it down, so an upstream change could drop it without any error. We
+# therefore request it explicitly -- but only if the option exists, since it is
+# missing from some versions (see the note at the top of the file: fails on Ubuntu).
 BOOTLOADERS_OPT=()
 if lb config --help 2>&1 | grep -q -- '--bootloaders'; then
   BOOTLOADERS_OPT=(--bootloaders syslinux,grub-efi)
-  echo ">>> --bootloaders supporte : amorcage BIOS+UEFI fige explicitement."
+  echo ">>> --bootloaders supported: BIOS+UEFI boot pinned explicitly."
 else
-  echo ">>> --bootloaders absent de cette version de live-build : defaut conserve."
+  echo ">>> --bootloaders absent from this live-build version: default kept."
 fi
 
-# --iso-volume : le LABEL "HAOS Installer" est PARTAGE avec haos-installer.sh
-# (constante ISO_LABEL). L'installateur s'en sert pour reconnaitre le media de
-# boot et l'exclure des disques cibles -- 'toram' remplacant /run/live/medium par
-# un tmpfs, c'est le seul moyen fiable de l'identifier. Garder les deux en phase.
+# --iso-volume: the "HAOS Installer" LABEL is SHARED with haos-installer.sh
+# (ISO_LABEL constant). The installer uses it to recognise the boot medium and
+# exclude it from the target disks -- 'toram' replacing /run/live/medium with a
+# tmpfs, that is the only reliable way to identify it. Keep both in step.
 lb config \
   ${BOOTLOADERS_OPT[@]+"${BOOTLOADERS_OPT[@]}"} \
   --distribution trixie \
@@ -42,21 +42,21 @@ lb config \
   --debian-installer none \
   --memtest none \
   --iso-volume "HAOS Installer" \
-  --bootappend-live "boot=live components toram locales=fr_FR.UTF-8 keyboard-layouts=fr timezone=Europe/Paris"
+  --bootappend-live "boot=live components toram locales=en_US.UTF-8 keyboard-layouts=us timezone=Etc/UTC"
 
-# --- Paquets : firmware reseau + outils de l'assistant (voir liste) ---
+# --- Packages: network firmware + the wizard's tools (see the list) ---
 mkdir -p config/package-lists
 cat > config/package-lists/haos.list.chroot <<'EOF'
-# --- Firmware reseau uniquement ---
-# NB: firmware-realtek fournit AUSSI les blobs Ethernet Gigabit (rtl_nic/rtl8168*)
-#     omnipresents sur les PC bon marche et thin clients -> indispensable.
+# --- Network firmware only ---
+# NB: firmware-realtek ALSO provides the Gigabit Ethernet blobs
+#     (rtl_nic/rtl8168*), ubiquitous on cheap PCs and thin clients -> essential.
 firmware-realtek
 firmware-iwlwifi
 firmware-atheros
 firmware-brcm80211
-# Retires volontairement (installeur en mode texte, aucun besoin GPU/audio/TV) :
+# Removed on purpose (text-mode installer, no GPU/audio/TV need):
 #   firmware-linux, firmware-linux-nonfree, firmware-misc-nonfree
-# --- Outils ---
+# --- Tools ---
 network-manager
 rfkill
 wpasupplicant
@@ -66,8 +66,8 @@ kbd
 whiptail
 pv
 curl
-# jq : lecture du canal stable (version.home-assistant.io/stable.json), ou la
-# cle de la carte apparait sous deux sections -> un grep renverrait la mauvaise.
+# jq: reads the stable channel (version.home-assistant.io/stable.json), where the
+# board key also appears under two sections -> a grep would return the wrong one.
 jq
 xz-utils
 util-linux
@@ -75,17 +75,17 @@ efibootmgr
 mokutil
 dosfstools
 parted
-# Pour ecrire le journal sur la cle de secours de l'utilisateur : sans ces
-# paquets, une cle en exFAT ou NTFS (le cas de la plupart des cles > 32 Go, et le
-# format par defaut de Ventoy) n'est pas montable du tout.
+# To write the log onto the user's rescue stick: without these packages, an
+# exFAT or NTFS stick (the case for most sticks over 32 GB, and Ventoy's default
+# format) cannot be mounted at all.
 exfatprogs
 ntfs-3g
 EOF
-# --- Assistant guidé ---
+# --- Guided wizard ---
 mkdir -p config/includes.chroot/usr/local/bin
 cp "$SRC" config/includes.chroot/usr/local/bin/haos-installer.sh
 
-# --- NetworkManager gère toutes les interfaces (sinon conflit avec live-config) ---
+# --- NetworkManager manages every interface (otherwise it conflicts with live-config) ---
 mkdir -p config/includes.chroot/etc/NetworkManager/conf.d
 cat > config/includes.chroot/etc/NetworkManager/conf.d/10-live.conf <<'EOF'
 [main]
@@ -94,7 +94,7 @@ plugins=keyfile
 unmanaged-devices=none
 EOF
 
-# --- Service : lance l'assistant au boot, plein écran sur tty1 ---
+# --- Service: starts the wizard at boot, full screen on tty1 ---
 mkdir -p config/includes.chroot/etc/systemd/system
 cat > config/includes.chroot/etc/systemd/system/haos-installer.service <<'EOF'
 [Unit]
@@ -121,7 +121,7 @@ Restart=on-failure
 WantedBy=multi-user.target
 EOF
 
-# --- Hook : exécutable + activation services ---
+# --- Hook: executable bit + enabling services ---
 mkdir -p config/hooks/live
 cat > config/hooks/live/9000-haos.hook.chroot <<'EOF'
 #!/bin/sh
@@ -133,16 +133,16 @@ systemctl set-default multi-user.target
 EOF
 chmod +x config/hooks/live/9000-haos.hook.chroot
 
-# --- Timeout des menus de boot ---
-# Mecanisme officiel live-build : tout repertoire present dans config/bootloaders/
-# remplace le modele de /usr/share/live/build/bootloaders/.
-#   - isolinux/syslinux : "timeout 0" signifie ATTENDRE INDEFINIMENT (piege classique),
-#     l'unite est le 1/10 s -> 10 = 1 seconde.
-#   - grub : les modeles ne definissent aucun timeout -> GRUB attend indefiniment.
-#     Sur certains ecrans (vieux portables) le menu ne s'affiche meme pas : ecran noir
-#     et l'utilisateur doit appuyer sur Entree a l'aveugle. D'ou timeout_style=hidden.
-# NB: lb config cree deja un config/bootloaders/ VIDE. Un "cp -r src dst" y creerait
-#     dst/bootloaders/ au lieu de le remplir -> on copie le CONTENU (src/.).
+# --- Boot menu timeouts ---
+# Official live-build mechanism: any directory present in config/bootloaders/
+# replaces the template from /usr/share/live/build/bootloaders/.
+#   - isolinux/syslinux: "timeout 0" means WAIT FOREVER (classic trap),
+#     the unit is 1/10 s -> 10 = 1 second.
+#   - grub: the templates define no timeout -> GRUB waits forever.
+#     On some screens (old laptops) the menu does not even show up: black screen
+#     and the user has to press Enter blindly. Hence timeout_style=hidden.
+# NB: lb config already creates an EMPTY config/bootloaders/. A "cp -r src dst"
+#     would create dst/bootloaders/ instead of filling it -> we copy the CONTENT (src/.).
 mkdir -p config/bootloaders
 cp -r /usr/share/live/build/bootloaders/. config/bootloaders/
 
@@ -152,7 +152,7 @@ for f in config/bootloaders/isolinux/isolinux.cfg \
   [ -f "$f" ] && sed -i 's/^timeout 0$/timeout 10/' "$f"
 done
 
-# GRUB : injecter le timeout dans chaque .cfg du modele
+# GRUB: inject the timeout into every .cfg of the template
 for f in config/bootloaders/grub-pc/*.cfg config/bootloaders/grub-efi/*.cfg; do
   [ -f "$f" ] || continue
   grep -q '^set timeout=' "$f" \
@@ -160,23 +160,23 @@ for f in config/bootloaders/grub-pc/*.cfg config/bootloaders/grub-efi/*.cfg; do
     || sed -i '1i set timeout=1\nset timeout_style=hidden' "$f"
 done
 
-echo ">>> Timeouts appliques :"
-grep -rn '^timeout \|^set timeout' config/bootloaders/ || echo "  (aucun - a verifier)"
+echo ">>> Timeouts applied:"
+grep -rn '^timeout \|^set timeout' config/bootloaders/ || echo "  (none - check this)"
 
-echo ">>> Build (accès aux miroirs Debian requis)..."
+echo ">>> Build (access to the Debian mirrors required)..."
 lb build
 
 ISO=$(ls -1 live-image-*.iso 2>/dev/null | head -1)
-[ -n "$ISO" ] || { echo ">>> ISO : échec"; exit 1; }
+[ -n "$ISO" ] || { echo ">>> ISO: failed"; exit 1; }
 
-# NB: pas de partition dediee aux journaux dans l'ISO. Une 3e partition a bien
-# ete essayee (FAT16 ajoutee par 'xorriso -append_partition'), mais Windows 11
-# n'expose que la PREMIERE partition d'un support amovible : elle y restait
-# invisible sans intervention manuelle dans la gestion des disques. Et la 1re
-# partition ne peut pas servir, elle doit porter l'ISO9660 pour l'amorcage BIOS.
-# L'installateur propose desormais de reformater la cle entiere en FAT32 et d'y
-# deposer le journal, ce qui la rend en outre reutilisable -- Windows ne sait pas
-# reformater seul une cle gravee par Etcher.
-echo ">>> ISO : $ISO  ($(du -h "$ISO" | cut -f1))"
-echo ">>> Partitions :"
+# NB: no partition dedicated to the logs in the ISO. A third partition was
+# indeed tried (FAT16 added by 'xorriso -append_partition'), but Windows 11 only
+# exposes the FIRST partition of a removable medium: it stayed invisible there
+# without manual work in disk management. And the 1st partition cannot be used,
+# it has to carry the ISO9660 filesystem for BIOS boot.
+# The installer now offers to reformat the whole stick as FAT32 and drop the log
+# onto it, which also makes it reusable -- Windows cannot reformat an Etcher-written
+# stick on its own.
+echo ">>> ISO: $ISO  ($(du -h "$ISO" | cut -f1))"
+echo ">>> Partitions:"
 fdisk -l "$ISO" 2>/dev/null | tail -6 || true

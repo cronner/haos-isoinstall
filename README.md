@@ -1,383 +1,375 @@
-# haos-netinstall — installer Home Assistant OS sur un PC, sans ligne de commande
+# haos-netinstall — install Home Assistant OS on a PC, without a command line
 
-Clé USB bootable qui installe **Home Assistant OS** sur un PC via un assistant
-guidé : réglage du réseau (Ethernet ou Wi-Fi), choix du disque, téléchargement et
-écriture de l'image officielle. Aucune commande à taper.
+Bootable USB stick that installs **Home Assistant OS** on a PC through a guided
+wizard: network setup (Ethernet or Wi-Fi), disk selection, download and writing
+of the official image. Nothing to type.
 
-L'ISO ne contient **pas** HAOS : l'image est téléchargée pendant l'installation
-(approche « netinstall »). Il reste donc petit (**~450 Mo**) et installe toujours
-la **dernière version** publiée de Home Assistant OS.
+The ISO does **not** contain HAOS: the image is downloaded during the
+installation ("netinstall" approach). It therefore stays small (**~450 MB**) and
+always installs the **latest published version** of Home Assistant OS.
 
-## ⚠️ À LIRE AVANT TOUT
+## ⚠️ READ THIS BEFORE ANYTHING ELSE
 
-> ### Cet outil EFFACE INTÉGRALEMENT le disque que vous sélectionnez.
+> ### This tool COMPLETELY ERASES the disk you select.
 >
-> Aucune récupération n'est possible. À utiliser sur une machine **dédiée**,
-> **sans aucune donnée à conserver**.
+> No recovery is possible. Use it on a **dedicated** machine,
+> **with no data worth keeping**.
 
-**Livré tel quel, sans aucune garantie ni support.**
+**Provided as is, with no warranty and no support.**
 
-- Projet **personnel**, publié dans l'espoir qu'il serve. Rien de plus.
-- **Aucun support n'est assuré.** Pas d'assistance à l'installation, pas de
-  garantie de réponse aux issues, pas d'engagement de correction, pas de
-  maintenance dans la durée, pas d'engagement de compatibilité matérielle.
-- **Aucune responsabilité** n'est acceptée en cas de perte de données, de
-  matériel inutilisable ou de tout autre dommage. Voir [LICENSE](LICENSE).
-- **Ce projet ne convient pas ? Forkez-le.** C'est une licence MIT, c'est fait
-  pour. Vous êtes libre de le modifier, l'améliorer, le redistribuer et le
-  maintenir à votre façon, sans rien demander à personne.
+- **Personal** project, published in the hope that it is useful. Nothing more.
+- **No support is provided.** No installation assistance, no promise of an
+  answer to issues, no commitment to fix anything, no long-term maintenance, no
+  promise of hardware compatibility.
+- **No liability** is accepted for data loss, unusable hardware or any other
+  damage. See [LICENSE](LICENSE).
+- **Not happy with this project? Fork it.** It is an MIT licence, that is what
+  it is for. You are free to modify it, improve it, redistribute it and
+  maintain it your own way, without asking anyone.
 
-En utilisant cet outil, vous acceptez d'en assumer seul les conséquences.
+By using this tool, you accept that you alone bear the consequences.
 
-**Projet non officiel** — sans affiliation avec l'Open Home Foundation, Nabu Casa
-ni le projet Home Assistant, et ni approuvé ni soutenu par eux. La méthode
-officiellement supportée est décrite
-[ici](https://www.home-assistant.io/installation/generic-x86-64/). Pour tout
-problème concernant **Home Assistant lui-même**, adressez-vous à la communauté
-Home Assistant — pas à ce dépôt.
+**Unofficial project** — not affiliated with the Open Home Foundation, Nabu Casa
+or the Home Assistant project, and neither approved nor supported by them. The
+officially supported method is described
+[here](https://www.home-assistant.io/installation/generic-x86-64/). For any
+problem with **Home Assistant itself**, turn to the Home Assistant community —
+not to this repository.
 
 ---
 
-# Partie 1 — Installer Home Assistant (utilisateurs)
+# Part 1 — Installing Home Assistant (users)
 
-## Ce qu'il vous faut
+## What you need
 
-- Un PC **dédié** à Home Assistant — **son disque sera entièrement effacé**
-- **32 Go de disque** minimum, **2 Go de RAM** minimum
-- Une **clé USB** de 1 Go ou plus (son contenu sera effacé)
-- Un **câble Ethernet** — recommandé ; le Wi-Fi est proposé en secours
+- A PC **dedicated** to Home Assistant — **its disk will be completely erased**
+- **32 GB of disk** minimum, **2 GB of RAM** minimum
+- A **USB stick** of 1 GB or more (its contents will be erased)
+- An **Ethernet cable** — recommended; Wi-Fi is offered as a fallback
 
-## Étape 1 — Télécharger l'ISO
+## Step 1 — Download the ISO
 
-**[⬇️ Télécharger la dernière version](https://github.com/PocketFR/haos-netinstall/releases/latest)**
+**[⬇️ Download the latest version](https://github.com/cronner/haos-isoinstall/releases/latest)**
 
-Prenez le fichier `.iso` dans la section *Assets*. Le fichier `.sha256` à côté
-permet de vérifier que le téléchargement n'est pas corrompu (facultatif) :
+Take the `.iso` file from the *Assets* section. The `.sha256` file next to it
+lets you check that the download is not corrupted (optional):
 
 ```bash
 sha256sum -c haos-netinstall-*.iso.sha256
 ```
 
-## Étape 2 — Écrire l'ISO sur la clé USB
+## Step 2 — Write the ISO to the USB stick
 
-Avec l'un de ces outils, au choix :
+With one of these tools, your choice:
 
-- **[Balena Etcher](https://etcher.balena.io/)** — le plus simple, Windows/macOS/Linux
+- **[Balena Etcher](https://etcher.balena.io/)** — the simplest, Windows/macOS/Linux
 - **[Rufus](https://rufus.ie/)** — Windows
-- **[Ventoy](https://www.ventoy.net/)** — copier simplement le `.iso` sur la clé
-- **Linux, en ligne de commande** :
+- **[Ventoy](https://www.ventoy.net/)** — simply copy the `.iso` onto the stick
+- **Linux, from the command line**:
   ```bash
   sudo dd if=haos-netinstall-*.iso of=/dev/sdX bs=4M status=progress conv=fsync
   ```
-  ⚠️ Vérifiez `/dev/sdX` avec `lsblk` — une erreur ici efface le mauvais disque.
+  ⚠️ Check `/dev/sdX` with `lsblk` — a mistake here erases the wrong disk.
 
-## Étape 3 — Régler le BIOS/UEFI du PC
+## Step 3 — Configure the PC's BIOS/UEFI
 
-C'est **l'étape sur laquelle tout le monde trébuche**. Allumez le PC et appuyez
-aussitôt sur `Suppr`, `F2`, `F10` ou `Échap` (selon la marque) :
+This is **the step everybody trips over**. Power on the PC and immediately press
+`Del`, `F2`, `F10` or `Esc` (depending on the brand):
 
-1. **Mode de démarrage : UEFI** — pas « Legacy », pas « CSM »
-2. **Secure Boot : DÉSACTIVÉ** ← *obligatoire, Home Assistant ne démarre pas sinon*
-3. **Clé USB en premier** dans l'ordre de démarrage
-4. Enregistrer et quitter (`F10`)
+1. **Boot mode: UEFI** — not "Legacy", not "CSM"
+2. **Secure Boot: DISABLED** ← *mandatory, Home Assistant will not boot otherwise*
+3. **USB stick first** in the boot order
+4. Save and exit (`F10`)
 
-## Étape 4 — Installer
+## Step 4 — Install
 
-Branchez la clé, démarrez. L'assistant se lance tout seul :
+Plug in the stick, boot. The wizard starts on its own:
 
-1. Écran d'accueil et rappels
-2. Disposition du clavier
-3. Connexion réseau — automatique en Ethernet, sinon sélection du Wi-Fi
-4. **Choix du disque** — vérifiez la taille et le modèle ; le contenu actuel est
-   affiché avant confirmation
-5. Téléchargement et écriture (barre de progression) — **ne pas éteindre le PC**
-6. **Retirez la clé USB**, puis validez : le PC redémarre directement sur Home
-   Assistant. L'installateur est chargé en mémoire, la clé ne sert plus à rien
-   à cette étape.
+1. Welcome screen and reminders
+2. Keyboard layout
+3. Network connection — automatic over Ethernet, otherwise Wi-Fi selection
+4. **Disk selection** — check the size and model; the current contents are
+   displayed before confirmation
+5. Download and writing (progress bar) — **do not power off the PC**
+6. **Remove the USB stick**, then confirm: the PC reboots straight into Home
+   Assistant. The installer runs from memory, so the stick is no longer needed
+   at this point.
 
-Des lignes de texte défilent au démarrage : c'est normal, ce n'est pas planté.
+Lines of text scroll by during boot: that is normal, it has not crashed.
 
-## Étape 5 — Premier démarrage
+## Step 5 — First boot
 
-Laissez le câble réseau branché et **patientez 2 à 5 minutes** : Home Assistant
-finalise son installation, l'écran peut sembler figé. Puis, depuis un autre
-appareil du même réseau :
+Leave the network cable plugged in and **wait 2 to 5 minutes**: Home Assistant
+finishes its installation, the screen may look frozen. Then, from another
+device on the same network:
 
 ```
 http://homeassistant.local
 ```
 
-Si l'adresse ne répond pas, utilisez l'adresse IP affichée à l'écran du PC :
-`http://<adresse-ip>`
+If that address does not answer, use the IP address shown on the PC's screen:
+`http://<ip-address>`
 
-> Depuis Home Assistant Core 2026.8, les nouvelles installations écoutent sur le
-> port 80 et non plus sur 8123. Si votre installation date d'avant, ajoutez
-> `:8123` à l'adresse.
+> Since Home Assistant Core 2026.8, new installations listen on port 80 instead
+> of 8123. If your installation is older, add `:8123` to the address.
 
-## En cas de problème
+## If something goes wrong
 
-| Symptôme | Cause probable |
+| Symptom | Likely cause |
 |---|---|
-| La clé ne démarre pas | Secure Boot encore actif, ou mode Legacy/CSM au lieu d'UEFI |
-| Home Assistant ne démarre pas après l'installation | Secure Boot encore actif ; sur PC physique, mode SATA en RAID/Intel RST au lieu d'**AHCI** |
-| Wi-Fi OK pendant l'install mais HA hors-ligne ensuite | La carte Wi-Fi n'est pas embarquée par Home Assistant OS (couverture firmware plus restreinte que l'installateur). Utilisez l'Ethernet. |
-| Installation interrompue en cours d'écriture | Coupure de la connexion Internet pendant le téléchargement. L'assistant abandonne au bout de 30 s sans débit et l'annonce ; relancer l'installation depuis le début est sans danger |
-| Installation échouée | Un journal est écrit dans `/tmp/haos-install.log`. L'assistant propose de le copier sur la clé (reformatée), sur une autre clé USB, ou de l'afficher à l'écran. Puis il éteint le PC |
+| The stick does not boot | Secure Boot still enabled, or Legacy/CSM mode instead of UEFI |
+| Home Assistant does not boot after installation | Secure Boot still enabled; on a physical PC, SATA mode set to RAID/Intel RST instead of **AHCI** |
+| Wi-Fi works during the install but HA is offline afterwards | The Wi-Fi card is not included in Home Assistant OS (narrower firmware coverage than the installer). Use Ethernet. |
+| Installation interrupted while writing | The Internet connection dropped during the download. The wizard gives up after 30 s without throughput and says so; starting the installation over from scratch is safe |
+| Installation failed | A log is written to `/tmp/haos-install.log`. The wizard offers to copy it to the stick (reformatted), to another USB stick, or to display it on screen. It then powers the PC off |
 
-**Couverture Wi-Fi** : Intel, Realtek, Atheros et Broadcom. L'Ethernet reste le
-chemin fiable. Le journal d'installation indique le pilote exact de votre carte
-et le `key-mgmt` utilisé : c'est ce qu'il faut regarder si Home Assistant reste
-hors-ligne.
+**Wi-Fi coverage**: Intel, Realtek, Atheros and Broadcom. Ethernet remains the
+reliable path. The installation log gives the exact driver of your card and the
+`key-mgmt` used: that is what to look at if Home Assistant stays offline.
 
-**Report du Wi-Fi vers Home Assistant** — l'assistant copie dans l'image le
-profil réseau que vous venez d'utiliser, y compris s'il a été créé par la
-configuration manuelle (`nmtui`) : SSID caché, IP fixe et WPA3 sont donc
-repris tels quels. Deux exceptions, signalées à l'écran plutôt que passées sous
-silence : un réseau **d'entreprise à certificats** (802.1X avec fichiers de
-certificats) n'est pas reportable, ces fichiers n'existant pas dans Home
-Assistant ; et un profil dont le mot de passe n'est pas stocké dans le fichier
-ne peut pas l'être non plus. Dans ces cas rien n'est écrit — mieux vaut cela
-qu'un réseau qui ne monte jamais — et la configuration se fait ensuite depuis la
-console de Home Assistant, ou par câble Ethernet.
+**Wi-Fi handover to Home Assistant** — the wizard copies the network profile you
+just used into the image, including one created through manual configuration
+(`nmtui`): hidden SSID, static IP and WPA3 are therefore carried over as they
+are. Two exceptions, reported on screen rather than left unsaid: a
+**corporate network with certificates** (802.1X with certificate files) cannot
+be handed over, since those files do not exist in Home Assistant; and a profile
+whose password is not stored in the file cannot be either. In those cases
+nothing is written — better that than a network that never comes up — and the
+configuration is done afterwards from the Home Assistant console, or over an
+Ethernet cable.
 
-### Statut des tests
+### Test status
 
 | | |
 |---|---|
-| Proxmox (q35 + OVMF, Secure Boot désactivé) | ✅ |
-| PC physique (Dell Inspiron, Wi-Fi) | ✅ |
-| Hyper-V / VirtualBox | ❌ non pertinent — voir les notes techniques |
+| Proxmox (q35 + OVMF, Secure Boot disabled) | ✅ |
+| Physical PC (Dell Inspiron, Wi-Fi) | ✅ |
+| Hyper-V / VirtualBox | ❌ not applicable — see the technical notes |
 
 ---
 
-# Partie 2 — Construire l'ISO soi-même (utilisateurs avancés)
+# Part 2 — Building the ISO yourself (advanced users)
 
-Inutile si vous avez téléchargé l'ISO ci-dessus. Utile pour auditer, modifier ou
-adapter l'installateur.
+Unnecessary if you downloaded the ISO above. Useful for auditing, modifying or
+adapting the installer.
 
-| Fichier | Rôle |
+| File | Role |
 |---|---|
-| `build-iso.sh` | Construit l'ISO (à lancer sur une machine de build) |
-| `haos-installer.sh` | L'assistant, embarqué dans l'ISO et lancé au boot |
+| `build-iso.sh` | Builds the ISO (run it on a build machine) |
+| `haos-installer.sh` | The wizard, embedded in the ISO and started at boot |
 
-## 1. Où construire
+## 1. Where to build
 
-`live-build` a besoin de `chroot`, de périphériques `loop` et de montages
-`/proc`, `/sys`, `/dev`. Cela conditionne l'environnement.
+`live-build` needs `chroot`, `loop` devices and `/proc`, `/sys`, `/dev`
+mounts. That constrains the environment.
 
-| Environnement | Verdict |
+| Environment | Verdict |
 |---|---|
-| **VM Debian** (sur Proxmox) | ✅ **Recommandé** — isolé, jetable, rien à nettoyer |
-| Hôte Proxmox directement | ⚠️ Techniquement possible (c'est une Debian) mais **déconseillé** : installe des paquets et laisse des montages orphelins en cas d'échec, sur l'hyperviseur de prod |
-| LXC **non privilégié** | ❌ Ne marche pas (pas de `loop`, `debootstrap` bloqué) |
-| LXC **privilégié** | ⚠️ Possible avec `nesting=1`, `fuse=1` et accès `loop` — fragile |
-| Ubuntu / Debian physique | ✅ Fonctionne aussi |
-| GitHub Actions | ✅ Voir `.github/workflows/build-iso.yml` (conteneur Debian privilégié) |
+| **Debian VM** (on Proxmox) | ✅ **Recommended** — isolated, disposable, nothing to clean up |
+| Proxmox host directly | ⚠️ Technically possible (it is a Debian) but **not advised**: it installs packages and leaves orphaned mounts on failure, on the production hypervisor |
+| **Unprivileged** LXC | ❌ Does not work (no `loop`, `debootstrap` blocked) |
+| **Privileged** LXC | ⚠️ Possible with `nesting=1`, `fuse=1` and `loop` access — fragile |
+| Physical Ubuntu / Debian | ✅ Works too |
+| GitHub Actions | ✅ See `.github/workflows/build-iso.yml` (privileged Debian container) |
 
-> **Pas besoin d'une distribution particulière** : n'importe quelle Debian ou
-> Ubuntu récente convient. La seule vraie contrainte est `debootstrap` (§2.2).
+> **No particular distribution is required**: any recent Debian or Ubuntu will
+> do. The only real constraint is `debootstrap` (§2.2).
 
-Une VM de build minimale : **2 vCPU**, **4 Go RAM**, **20 Go de disque**, accès
-Internet (miroirs Debian + GitHub).
+A minimal build VM: **2 vCPU**, **4 GB RAM**, **20 GB disk**, Internet access
+(Debian mirrors + GitHub).
 
-## 2. Construire
+## 2. Building
 
-### 2.1 Prérequis
+### 2.1 Prerequisites
 
 ```bash
 sudo apt update
 sudo apt install live-build
 ```
 
-### 2.2 Vérifier la cible
+### 2.2 Check the target
 
-`build-iso.sh` construit une **Debian 13 (trixie)**. Le `debootstrap` local doit
-la connaître :
+`build-iso.sh` builds a **Debian 13 (trixie)**. The local `debootstrap` must
+know about it:
 
 ```bash
 ls /usr/share/debootstrap/scripts/ | grep trixie
 ```
 
-- **Rien ne s'affiche** (typique sur Debian 12 / Proxmox VE 8) → soit remplacer
-  `--distribution trixie` par `--distribution bookworm` dans `build-iso.sh`, soit
-  installer un `debootstrap` récent depuis backports.
-- **`trixie` apparaît** (Debian 13 / Proxmox VE 9) → rien à faire.
+- **Nothing is printed** (typical on Debian 12 / Proxmox VE 8) → either replace
+  `--distribution trixie` with `--distribution bookworm` in `build-iso.sh`, or
+  install a recent `debootstrap` from backports.
+- **`trixie` appears** (Debian 13 / Proxmox VE 9) → nothing to do.
 
-### 2.3 Lancer
+### 2.3 Run it
 
-Les deux scripts dans un même dossier, puis :
+Both scripts in the same folder, then:
 
 ```bash
 chmod +x build-iso.sh
 sudo ./build-iso.sh
 ```
 
-Le build prend **15 à 40 minutes** et produit
-`haos-installer-iso/live-image-amd64.hybrid.iso` (~450 Mo). Le script repart d'un
-dossier propre à chaque exécution.
+The build takes **15 to 40 minutes** and produces
+`haos-installer-iso/live-image-amd64.hybrid.iso` (~450 MB). The script starts
+from a clean folder on every run.
 
-Les timeouts de boot appliqués s'affichent **dès les premières secondes** : si la
-liste est vide, inutile d'attendre la fin.
+The boot timeouts that were applied are displayed **within the first seconds**:
+if the list is empty, there is no point waiting for the end.
 
-### 2.4 En cas de problème
+### 2.4 If something goes wrong
 
 ```bash
 cd haos-installer-iso
-sudo lb clean --purge            # nettoyage complet avant de relancer
-mount | grep haos-installer-iso  # montages orphelins après une interruption ?
+sudo lb clean --purge            # full cleanup before running again
+mount | grep haos-installer-iso  # orphaned mounts after an interruption?
 ```
 
-## 3. Tester sans clé USB
+## 3. Testing without a USB stick
 
-Sur Proxmox, une VM de test :
+On Proxmox, a test VM:
 
-- **BIOS : OVMF (UEFI)** — obligatoire
-- **Machine : q35**
-- **EFI Disk sans « Pre-Enroll keys »** — sinon Secure Boot rejette HAOS
-  (`Access Denied` sur `bootx64.efi`)
-- Un disque de **32 Go minimum**
+- **BIOS: OVMF (UEFI)** — mandatory
+- **Machine: q35**
+- **EFI Disk without "Pre-Enroll keys"** — otherwise Secure Boot rejects HAOS
+  (`Access Denied` on `bootx64.efi`)
+- A disk of **32 GB minimum**
 
-Cela valide l'assistant, la sélection du disque, le téléchargement et l'écriture.
-Le **Wi-Fi**, lui, exige une machine physique.
+That validates the wizard, the disk selection, the download and the writing.
+**Wi-Fi**, on the other hand, requires a physical machine.
 
-## 4. Personnalisation
+## 4. Customisation
 
-**Résolution de la version** — après la configuration réseau,
-`resolve_version()` interroge le canal stable de Home Assistant
-(`version.home-assistant.io/stable.json`, clé `hassos` de la carte
-`generic-x86-64`). C'est la même source que le Supervisor : elle reflète les
-rétrogradations de canal, contrairement à l'API GitHub qui sert de repli si
-elle est injoignable. Si les deux échouent, l'installation s'arrête sur une
-erreur explicite : aucune version n'est codée en dur. C'est délibéré — une
-constante de repli n'aiderait que si les deux sources étaient injoignables
-*alors que* le téléchargement de l'image fonctionne, et il faudrait la
-rafraîchir à chaque version de HAOS.
+**Version resolution** — after the network configuration,
+`resolve_version()` queries the Home Assistant stable channel
+(`version.home-assistant.io/stable.json`, `hassos` key of the `generic-x86-64`
+board map). It is the same source as the Supervisor: it reflects channel
+demotions, unlike the GitHub API, which is used as a fallback when the first is
+unreachable. If both fail, the installation stops with an explicit error: no
+version is hard-coded. That is deliberate — a fallback constant would only help
+if both sources were unreachable *while* downloading the image works, and it
+would have to be refreshed for every HAOS release.
 
-**Figer une version de HAOS** — remplacer le corps de `resolve_version()` par
-un `HAOS_VERSION` en dur ; `IMG_URL` s'en déduit automatiquement.
+**Pinning a HAOS version** — replace the body of `resolve_version()` with a
+hard-coded `HAOS_VERSION`; `IMG_URL` follows from it automatically.
 
-**Ajouter des paquets** — bloc `config/package-lists/haos.list.chroot` de
-`build-iso.sh`. Chaque paquet alourdit l'ISO.
+**Adding packages** — the `config/package-lists/haos.list.chroot` block of
+`build-iso.sh`. Every package makes the ISO bigger.
 
-**Couverture matérielle plus large** — remastériser une **Ubuntu** avec
-[Cubic](https://github.com/PJ-Singh-001/Cubic) et y injecter `haos-installer.sh`,
-réutilisable tel quel.
+**Broader hardware coverage** — remaster an **Ubuntu** with
+[Cubic](https://github.com/PJ-Singh-001/Cubic) and inject `haos-installer.sh`
+into it, reusable as it is.
 
-## 5. Notes techniques
+## 5. Technical notes
 
-- **Pourquoi pas l'installateur Debian (d-i) ?** HAOS est une image disque
-  complète (GPT + partitions système A/B), pas un ensemble de paquets. `d-i` sait
-  partitionner et installer une Debian, pas écrire une image brute. D'où le choix
-  d'un live minimal + assistant maison.
-- **Pourquoi pas en machine virtuelle ?** Home Assistant fournit des images
-  **dédiées** aux hyperviseurs (build `haos_ova` : `.qcow2`, `.vmdk`, `.vhdx`,
-  `.vdi`, `.ova`). Cet ISO écrit l'image `generic-x86-64`, prévue pour le
-  bare-metal. Utilisez l'artefact officiel de votre hyperviseur.
-  Cas particulier fréquent : un hyperviseur qui n'accepte que des ISO **à la
-  création** d'une VM — Synology VMM, typiquement. La restriction ne vaut que
-  pour la création : à l'**import**, VMM accepte les images disque
-  (`.img`, `.vmdk`, `.vdi`, `.vhd`, `.vhdx`, `.qcow2`). Importez donc
-  `haos_ova-*` plutôt que de passer par un installateur.
-- **Matériel sans UEFI** — HAOS impose UEFI et GPT : c'est une contrainte de
-  l'image officielle, pas de cet ISO. Sur une machine qui ne sait démarrer
-  qu'en Legacy/CSM, aucune installation de HAOS n'est possible. La seule
-  alternative est une installation *Supervised* sur Debian, méthode nettement
-  moins supportée par Home Assistant (bandeau « unsupported » dès que l'OS
-  dévie, maintenance du système à votre charge).
-- **Mac Apple Silicon — ne pas essayer.** Ces machines n'ont pas d'UEFI (chaîne
-  iBoot propre à Apple), leur SSD interne n'est pas un NVMe standard, et le
-  noyau de HAOS n'embarque aucun pilote Apple Silicon. Surtout : effacer
-  intégralement le disque ôte au Mac sa capacité à démarrer quoi que ce soit,
-  la récupération passant par un restore en DFU depuis un autre Mac. Pour
-  faire tourner HAOS sur un Mac ARM, utilisez une VM (UTM) et l'image
-  `haos_generic-aarch64` — sans cet ISO, qui est amd64.
-- **Journal, et clé réutilisable** — le journal trace les décisions de
-  l'installation (version retenue et sa source, matériel réseau et pilote, bande
-  et chiffrement en Wi-Fi, disque cible, résultat de la vérification, état
-  UEFI/Secure Boot) et ne contient jamais le mot de passe Wi-Fi.
+- **Why not the Debian installer (d-i)?** HAOS is a complete disk image
+  (GPT + A/B system partitions), not a set of packages. `d-i` knows how to
+  partition and install a Debian, not how to write a raw image. Hence the choice
+  of a minimal live system + a purpose-built wizard.
+- **Why not in a virtual machine?** Home Assistant provides images **dedicated**
+  to hypervisors (`haos_ova` build: `.qcow2`, `.vmdk`, `.vhdx`, `.vdi`, `.ova`).
+  This ISO writes the `generic-x86-64` image, meant for bare metal. Use the
+  official artefact for your hypervisor.
+  A frequent special case: a hypervisor that only accepts ISOs **when creating**
+  a VM — Synology VMM, typically. The restriction only applies to creation: on
+  **import**, VMM accepts disk images (`.img`, `.vmdk`, `.vdi`, `.vhd`, `.vhdx`,
+  `.qcow2`). So import `haos_ova-*` rather than going through an installer.
+- **Hardware without UEFI** — HAOS requires UEFI and GPT: that is a constraint
+  of the official image, not of this ISO. On a machine that can only boot in
+  Legacy/CSM, no HAOS installation is possible. The only alternative is a
+  *Supervised* installation on Debian, a method far less supported by Home
+  Assistant (an "unsupported" banner as soon as the OS deviates, and system
+  maintenance on your hands).
+- **Apple Silicon Mac — do not try.** Those machines have no UEFI (Apple's own
+  iBoot chain), their internal SSD is not a standard NVMe drive, and the HAOS
+  kernel ships no Apple Silicon driver. Above all: completely erasing the disk
+  takes away the Mac's ability to boot anything at all, recovery going through a
+  DFU restore from another Mac. To run HAOS on an ARM Mac, use a VM (UTM) and
+  the `haos_generic-aarch64` image — without this ISO, which is amd64.
+- **Log, and a reusable stick** — the log records the installation decisions
+  (version chosen and its source, network hardware and driver, Wi-Fi band and
+  encryption, target disk, verification result, UEFI/Secure Boot state) and
+  never contains the Wi-Fi password.
 
-  En fin de parcours — que l'installation ait réussi ou échoué — l'assistant
-  propose de **reformater la clé en une seule partition FAT32** couvrant tout
-  l'espace, et y dépose le journal. La clé redevient alors une clé USB
-  ordinaire, ce que **Windows ne sait pas faire seul** sur une clé écrite par
-  Etcher : la disposition isohybrid déroute son outil de formatage, et il faut
-  passer par `diskpart` en PowerShell administrateur. L'écran de confirmation
-  prévient que l'installateur sera effacé — il faudra regraver la clé pour
-  réinstaller. Refuser est sans conséquence.
+  At the end of the run — whether the installation succeeded or failed — the
+  wizard offers to **reformat the stick as a single FAT32 partition** covering
+  the whole device, and drops the log onto it. The stick then becomes an
+  ordinary USB stick again, something **Windows cannot do on its own** on a
+  stick written by Etcher: the isohybrid layout confuses its formatting tool,
+  and you have to go through `diskpart` in an administrator PowerShell. The
+  confirmation screen warns that the installer will be erased — the stick will
+  have to be written again to reinstall. Declining has no consequence.
 
-  Si vous refusez, ou si le reformatage échoue, restent la copie sur une autre
-  clé USB et l'affichage du journal à l'écran pour le photographier.
+  If you decline, or if the reformat fails, copying to another USB stick and
+  displaying the log on screen to photograph it remain available.
 
-  > Une partition dédiée embarquée dans l'ISO a été essayée puis abandonnée :
-  > **Windows 11 n'expose que la première partition d'un support amovible**
-  > (Windows 10 savait en gérer plusieurs depuis la Creators Update), et la
-  > première partition doit porter le système ISO9660 pour l'amorçage BIOS. Elle
-  > restait donc invisible sans attribution manuelle d'une lettre.
+  > A dedicated partition embedded in the ISO was tried and then abandoned:
+  > **Windows 11 only exposes the first partition of a removable medium**
+  > (Windows 10 could handle several since the Creators Update), and the first
+  > partition has to carry the ISO9660 filesystem for BIOS boot. It therefore
+  > stayed invisible without manually assigning a drive letter.
 
-- **Cas Ventoy** — Ventoy n'écrit pas l'ISO sur la clé : il la laisse sous forme
-  de fichier sur sa partition exFAT et l'expose au démarrage comme un
-  périphérique *device-mapper* (`/dev/dm-0`). Deux conséquences, toutes deux
-  traitées :
-  - la clé Ventoy n'est **jamais** proposée comme disque cible. Le média de boot
-    est résolu en remontant de `dm-0` au disque physique via
-    `/sys/block/dm-*/slaves/`, et tout disque portant une partition étiquetée
-    `VTOYEFI` est écarté par sécurité ;
-  - sa partition exFAT est **réservée** par ce mappage, donc non inscriptible :
-    le journal ne peut pas y être copié. L'assistant le détecte et vous demande
-    de débrancher puis rebrancher la clé — ce qui libère la partition — avant de
-    réessayer. L'installateur tournant en mémoire, la débrancher est sans
-    conséquence.
-- **Partition de données** — inutile de l'agrandir : HAOS étend automatiquement
-  sa partition `hassos-data` à la taille du disque au premier démarrage.
-- **Effacement préalable** — l'assistant vide les signatures et les tables GPT
-  (début et fin du disque) avant écriture. Délibéré : sur un disque portant un
-  ancien OS, le redimensionnement automatique de HAOS peut échouer.
-- **Secure Boot** — HAOS ne le prend pas en charge. Le désactiver étant de toute
-  façon nécessaire, l'ISO n'a pas besoin d'être signé.
-- **Firmware embarqués** — seuls les firmwares **réseau** sont inclus (Realtek,
-  Intel, Atheros, Broadcom). `--firmware-chroot` est désactivé : sinon
-  `live-build` embarque tous les paquets `firmware-*` de l'archive, dont les
-  blobs GPU/audio inutiles à un installateur en mode texte (851 Mo → 450 Mo).
-  ⚠️ `firmware-realtek` fournit aussi les blobs **Ethernet** Gigabit
-  (`rtl_nic/rtl8168*`) : ne pas le retirer en croyant ne couper que le Wi-Fi.
-- **Timeout de boot** — les modèles `live-build` n'en définissent aucun pour GRUB,
-  et `timeout 0` signifie « attendre indéfiniment » pour isolinux. Le menu restant
-  invisible sur certains écrans, `build-iso.sh` force `timeout=1` +
+- **The Ventoy case** — Ventoy does not write the ISO to the stick: it leaves it
+  as a file on its exFAT partition and exposes it at boot as a *device-mapper*
+  device (`/dev/dm-0`). Two consequences, both handled:
+  - the Ventoy stick is **never** offered as a target disk. The boot medium is
+    resolved by walking back from `dm-0` to the physical disk via
+    `/sys/block/dm-*/slaves/`, and any disk carrying a partition labelled
+    `VTOYEFI` is skipped as a precaution;
+  - its exFAT partition is **claimed** by that mapping, hence not writable: the
+    log cannot be copied there. The wizard detects this and asks you to unplug
+    and replug the stick — which releases the partition — before trying again.
+    Since the installer runs from memory, unplugging it is harmless.
+- **Data partition** — no need to enlarge it: HAOS automatically extends its
+  `hassos-data` partition to the size of the disk on first boot.
+- **Prior erasure** — the wizard wipes signatures and GPT tables (start and end
+  of the disk) before writing. Deliberate: on a disk carrying an older OS,
+  HAOS's automatic resize can fail.
+- **Secure Boot** — HAOS does not support it. Since disabling it is necessary
+  anyway, the ISO does not need to be signed.
+- **Embedded firmware** — only **network** firmware is included (Realtek,
+  Intel, Atheros, Broadcom). `--firmware-chroot` is disabled: otherwise
+  `live-build` pulls in every `firmware-*` package from the archive, including
+  GPU/audio blobs that are useless to a text-mode installer (851 MB → 450 MB).
+  ⚠️ `firmware-realtek` also provides the Gigabit **Ethernet** blobs
+  (`rtl_nic/rtl8168*`): do not remove it thinking you are only dropping Wi-Fi.
+- **Boot timeout** — `live-build` templates define none for GRUB, and
+  `timeout 0` means "wait forever" for isolinux. Since the menu stays invisible
+  on some screens, `build-iso.sh` forces `timeout=1` +
   `timeout_style=hidden` via `config/bootloaders/`.
-- **`toram`** — le live est copié en RAM au démarrage : la clé USB peut être
-  retirée à tout moment. Coût : démarrage plus long (~450 Mo à copier) et ~2 Go de
-  RAM. Retirer `toram` du `--bootappend-live` sur les machines très peu dotées.
-- **Pas de `quiet`** — le log noyau défile volontairement, comme le fait HAOS
-  lui-même : c'est le seul signe de vie pendant l'attente, et un écran exploitable
-  en cas de rapport de bogue.
-- **Pré-configuration Wi-Fi (installation sans fil)** — après écriture, si
-  l'installation s'est faite en Wi-Fi, l'assistant dépose un profil NetworkManager
-  dans `CONFIG/network/my-network` de la partition `hassos-boot`, que HAOS importe
-  au premier démarrage (profil minimal, **sans `interface-name`** : ce champ,
-  copié tel quel depuis le live, verrouille le profil sur une carte inexistante
-  côté HAOS). **Limite importante :** cela ne fonctionne que si la carte Wi-Fi est
-  prise en charge par HAOS. Sa couverture firmware est plus restreinte que celle
-  de l'installateur (basé sur Debian) : une carte qui fonctionne pendant l'install
-  peut être absente sous HAOS (`Direct firmware load ... failed`). Il n'existe
-  **aucun moyen d'injecter le firmware manquant depuis l'installateur** — HAOS
-  n'utilise pas d'initrd, le pilote se charge trop tôt pour qu'un firmware déposé
-  après coup soit lu. La seule voie est de faire ajouter le firmware au paquet
-  `linux-firmware` de HAOS (en amont, à la construction de l'image). L'Ethernet
-  reste donc recommandé.
+- **`toram`** — the live system is copied to RAM at boot, so the USB stick can
+  be removed at any time. Cost: slower boot (~450 MB to copy) and ~2 GB of RAM.
+  Remove `toram` from `--bootappend-live` on very low-spec machines.
+- **No `quiet`** — the kernel log scrolls by on purpose, just as HAOS itself
+  does: it is the only sign of life while waiting, and a usable screen when
+  filing a bug report.
+- **Wi-Fi pre-configuration (wireless installation)** — after writing, if the
+  installation was done over Wi-Fi, the wizard places a NetworkManager profile
+  in `CONFIG/network/my-network` on the `hassos-boot` partition, which HAOS
+  imports on first boot (minimal profile, **without `interface-name`**: that
+  field, copied as is from the live system, locks the profile to a card that
+  does not exist on the HAOS side). **Important limitation:** this only works if
+  the Wi-Fi card is supported by HAOS. Its firmware coverage is narrower than
+  the installer's (which is Debian-based): a card that works during the install
+  may be missing under HAOS (`Direct firmware load ... failed`). There is **no
+  way to inject the missing firmware from the installer** — HAOS uses no initrd,
+  the driver loads too early for firmware dropped in afterwards to be read. The
+  only route is to have the firmware added to HAOS's `linux-firmware` package
+  (upstream, when the image is built). Ethernet therefore remains recommended.
 
 ---
 
-## Licence
+## License
 
-[MIT](LICENSE) pour les scripts de ce dépôt.
+[MIT](LICENSE) for the scripts in this repository.
 
-Debian, les firmwares non-libres et Home Assistant OS restent soumis à leurs
-licences respectives — voir les précisions dans le fichier [LICENSE](LICENSE).
+Debian, the non-free firmwares and Home Assistant OS remain subject to their
+respective licences — see the details in the [LICENSE](LICENSE) file.
 
-## Contribuer
+## Contributing
 
-Voir [CONTRIBUTING.md](CONTRIBUTING.md). Les issues documentent les problèmes ;
-elles ne constituent pas une file de support.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Issues document problems; they are not a
+support queue.
 
 ## Sources
 

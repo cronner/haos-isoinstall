@@ -1,67 +1,67 @@
 name: Build ISO
 
 on:
-  workflow_dispatch:          # build manuel
+  workflow_dispatch:          # manual build
   push:
-    tags: ['v*']              # un tag v1.0.0 -> build + release
+    tags: ['v*']              # a v1.0.0 tag -> build + release
   pull_request:
     paths: ['build-iso.sh', 'haos-installer.sh']
 
-# Le conteneur Debian execute les 'run' avec sh (dash) par defaut, qui ignore
-# les bashismes (ex: ${VAR//x/y}). On force bash partout.
+# The Debian container runs 'run' steps with sh (dash) by default, which ignores
+# bashisms (e.g. ${VAR//x/y}). We force bash everywhere.
 defaults:
   run:
     shell: bash
 
 jobs:
   build:
-    # Les runners GitHub n'existent qu'en Ubuntu/Windows/macOS : pas de Debian.
-    # On build donc DANS un conteneur Debian (meme live-build et meme debootstrap
-    # que l'environnement de dev), sur un hote Ubuntu.
-    # --privileged est requis : live-build a besoin des loop devices et de chroot.
+    # GitHub runners only exist as Ubuntu/Windows/macOS: no Debian.
+    # So we build INSIDE a Debian container (same live-build and same debootstrap
+    # as the dev environment), on an Ubuntu host.
+    # --privileged is required: live-build needs the loop devices and chroot.
     runs-on: ubuntu-latest
     container:
       image: debian:trixie
       options: --privileged
     permissions:
-      contents: write          # requis pour créer la release sur tag
+      contents: write          # required to create the release on tag
     steps:
       - uses: actions/checkout@v4
 
-      - name: Vérification syntaxe
+      - name: Syntax check
         run: |
           bash -n build-iso.sh
           bash -n haos-installer.sh
           apt-get update && apt-get install -y shellcheck
-          # Bloquant sur les ERREURS uniquement : les avertissements restent
-          # informatifs pour ne pas casser le build sur du style.
+          # Blocking on ERRORS only: warnings stay informative so that style
+          # does not break the build.
           shellcheck -S warning build-iso.sh haos-installer.sh || true
           shellcheck -S error build-iso.sh haos-installer.sh
 
-      - name: Installer live-build
+      - name: Install live-build
         run: |
           apt-get install -y live-build debootstrap fdisk sudo libarchive-tools xorriso
-          apt-get install -y p7zip-full || true   # absent de certaines versions Debian
+          apt-get install -y p7zip-full || true   # missing from some Debian versions
           lb --version
-          echo "--- debootstrap connait-il la cible ? ---"
+          echo "--- does debootstrap know the target? ---"
           ls /usr/share/debootstrap/scripts/ | grep -E 'trixie|bookworm' || true
 
-      - name: Construire l'ISO
+      - name: Build the ISO
         run: |
           chmod +x build-iso.sh haos-installer.sh
           bash ./build-iso.sh
 
-      - name: Vérifier la conformité UEFI de l'ISO
+      - name: Check the ISO's UEFI conformance
         run: |
           set -x
           ISO=$(ls haos-installer-iso/live-image-*.iso | head -1)
 
-          # 1) Partition EFI presente dans la table
+          # 1) EFI partition present in the table
           fdisk -l "$ISO" | grep -i 'EFI' \
-            || { echo "ERREUR: pas de partition EFI dans l'ISO"; exit 1; }
+            || { echo "ERROR: no EFI partition in the ISO"; exit 1; }
 
-          # 2) Chargeur de repli present. On liste l'ISO9660 avec plusieurs outils :
-          #    un outil manquant ne doit PAS etre confondu avec un fichier absent.
+          # 2) Fallback loader present. We list the ISO9660 with several tools:
+          #    a missing tool must NOT be confused with a missing file.
           LIST=""
           for tool in "bsdtar -tf" "7z l" "xorriso -indev"; do
             bin=${tool%% *}
@@ -70,31 +70,30 @@ jobs:
               xorriso) out=$(xorriso -indev "$ISO" -find / 2>/dev/null) ;;
               *)       out=$($tool "$ISO" 2>/dev/null) ;;
             esac
-            [ -n "$out" ] && { LIST="$out"; echo "--- liste obtenue via $bin ---"; break; }
+            [ -n "$out" ] && { LIST="$out"; echo "--- listing obtained via $bin ---"; break; }
           done
 
           if [ -z "$LIST" ]; then
-            echo "ERREUR: aucun outil n'a pu lister l'ISO (bsdtar/7z/xorriso)"; exit 1
+            echo "ERROR: no tool could list the ISO (bsdtar/7z/xorriso)"; exit 1
           fi
 
           echo "$LIST" | grep -i 'efi' || true
           echo "$LIST" | grep -qi 'bootx64.efi' \
-            || { echo "ERREUR: /EFI/boot/bootx64.efi introuvable dans l'ISO"; exit 1; }
-          echo "OK: ISO UEFI-conforme (ESP + bootx64.efi)"
+            || { echo "ERROR: /EFI/boot/bootx64.efi not found in the ISO"; exit 1; }
+          echo "OK: UEFI-conformant ISO (ESP + bootx64.efi)"
 
-          # 3) Table de partitions, pour trace dans les logs de build. On en
-          #    attend deux : l'ISO9660 et l'ESP. Pas de partition de journaux,
-          #    voir la note dans build-iso.sh.
+          # 3) Partition table, for the record in the build logs. We expect two:
+          #    the ISO9660 and the ESP. No log partition, see the note in build-iso.sh.
           fdisk -l "$ISO" | tail -6
 
-          # 4) Amorcage BIOS : l'entree El Torito n'est produite que par le defaut
-          #    de live-build (--bootloaders n'est pas passe). On la verifie pour
-          #    qu'une evolution de live-build ne la fasse pas disparaitre en silence.
+          # 4) BIOS boot: the El Torito entry is only produced by live-build's
+          #    default (--bootloaders is not passed). We check it so that a
+          #    live-build change cannot make it disappear silently.
           if command -v xorriso >/dev/null; then
             xorriso -indev "$ISO" -report_el_torito plain 2>/dev/null | head -20 || true
           fi
 
-      - name: Renommer et calculer le SHA256
+      - name: Rename and compute the SHA256
         id: iso
         run: |
           ISO=$(ls haos-installer-iso/live-image-*.iso | head -1)
@@ -109,7 +108,7 @@ jobs:
           cat "$NAME.sha256" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Publier en artefact
+      - name: Publish as an artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.iso.outputs.name }}
@@ -118,7 +117,7 @@ jobs:
             ${{ steps.iso.outputs.name }}.sha256
           retention-days: 14
 
-      - name: Publier la release (sur tag uniquement)
+      - name: Publish the release (tags only)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
@@ -126,12 +125,12 @@ jobs:
             ${{ steps.iso.outputs.name }}
             ${{ steps.iso.outputs.name }}.sha256
           body: |
-            ISO d'installation Home Assistant OS (bare-metal) — build automatique.
+            Home Assistant OS installation ISO (bare metal) — automatic build.
 
-            **Livré tel quel, sans garantie ni support.** Cet outil efface
-            intégralement le disque sélectionné. Voir le README et la LICENSE.
+            **Provided as is, with no warranty and no support.** This tool
+            completely erases the selected disk. See the README and the LICENSE.
 
-            Projet non officiel, sans affiliation avec l'Open Home Foundation
-            ni Nabu Casa.
+            Unofficial project, not affiliated with the Open Home Foundation
+            or Nabu Casa.
 
-            Vérifiez l'intégrité avec le fichier `.sha256` joint.
+            Check the integrity with the attached `.sha256` file.

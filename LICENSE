@@ -22,19 +22,19 @@ SOFTWARE.
 
 ---
 
-Note : cette licence couvre UNIQUEMENT les scripts de ce dépôt
-(build-iso.sh, haos-installer.sh) et leur documentation.
+Note: this licence covers ONLY the scripts in this repository
+(build-iso.sh, haos-installer.sh) and their documentation.
 
-Elle ne couvre pas :
+It does not cover:
 
-  - Debian et les paquets qu'il contient, redistribués sans modification depuis
-    les miroirs officiels, sous leurs licences respectives (GPL, BSD, etc.) ;
-  - les firmwares non-libres (composant non-free-firmware de Debian), soumis
-    aux licences de leurs fabricants respectifs ;
-  - Home Assistant OS, téléchargé à l'exécution depuis les dépôts officiels de
-    l'Open Home Foundation, sous sa propre licence.
+  - Debian and the packages it contains, redistributed unmodified from the
+    official mirrors, under their respective licences (GPL, BSD, etc.);
+  - the non-free firmwares (Debian's non-free-firmware component), subject to
+    the licences of their respective manufacturers;
+  - Home Assistant OS, downloaded at run time from the official repositories of
+    the Open Home Foundation, under its own licence.
 
-Les ISO éventuellement publiés dans les Releases de ce dépôt contiennent des
-logiciels sous GPL. Conformément à la GPLv2 §3, les sources correspondantes
-sont celles des miroirs Debian officiels pour la distribution et la version
-indiquées dans build-iso.sh, aucun de ces paquets n'ayant été modifié.
+Any ISOs published in this repository's Releases contain software under the
+GPL. In accordance with GPLv2 §3, the corresponding sources are those of the
+official Debian mirrors for the distribution and version given in
+build-iso.sh, none of those packages having been modified.
