@@ -47,6 +47,13 @@ not to this repository.
 - A **USB stick** of 1 GB or more (its contents will be erased)
 - An **Ethernet cable** — recommended; Wi-Fi is offered as a fallback
 
+It also works in a **virtual machine**: attach the ISO as a virtual CD/DVD
+drive, boot UEFI (q35 + OVMF on Proxmox) with Secure Boot disabled, and give
+the VM at least a 32 GB virtual disk. Wi-Fi pre-configuration does not apply
+there — use a virtual Ethernet adapter instead. This is tested on Proxmox (see
+*Test status* below); for a long-lived hypervisor install, the official
+`haos_ova` images remain the better fit, as explained in the Part 2 notes.
+
 ## Step 1 — Download the ISO
 
 **[⬇️ Download the latest version](https://github.com/cronner/haos-isoinstall/releases/latest)**
