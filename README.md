@@ -4,6 +4,9 @@ Bootable USB stick that installs **Home Assistant OS** on a PC through a guided
 wizard: network setup (Ethernet or Wi-Fi), disk selection, download and writing
 of the official image. Nothing to type.
 
+The wizard speaks **English, Danish, German and French**, and sets the matching
+keyboard layout (QWERTY, QWERTZ or AZERTY).
+
 The ISO does **not** contain HAOS: the image is downloaded during the
 installation ("netinstall" approach). It therefore stays small (**~450 MB**) and
 always installs the **latest published version** of Home Assistant OS.
