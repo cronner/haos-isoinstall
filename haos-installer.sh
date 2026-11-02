@@ -913,6 +913,27 @@ describe_part(){
 #        3 = failure AFTER erasing started: the stick is no longer bootable
 # The 2/3 distinction is not cosmetic: it decides whether we may tell the user
 # that their stick still works as an installer.
+# Is the boot medium something we can honestly offer to reformat? Only a whole,
+# writable, removable or USB-attached disk qualifies. A virtual CD -- the usual
+# boot medium in a virtual machine, /dev/sr0 with TYPE "rom" -- an internal disk
+# or a device-mapper/loop device does not, and telling the user "the stick could
+# not be reformatted" there is misleading noise at the end of an installation
+# that went perfectly well.
+can_reformat_medium(){
+  local d="${1:-}" type rm tran
+  [ -n "$d" ] || return 1
+  [ -b "/dev/$d" ] || return 1
+  case "$d" in dm-*|loop*|md*|sr*) return 1 ;; esac
+  type=$(lsblk -dno TYPE "/dev/$d" 2>/dev/null | tr -d ' ')
+  [ "$type" = "disk" ] || return 1
+  rm=$(lsblk -dno RM "/dev/$d" 2>/dev/null | tr -d ' ')
+  tran=$(lsblk -dno TRAN "/dev/$d" 2>/dev/null | tr -d ' ')
+  case "$rm$tran" in
+    *1*|*usb*) return 0 ;;                 # removable, or on the USB bus
+  esac
+  return 1                                 # fixed internal disk: leave it alone
+}
+
 reformat_stick(){
   local dev="$1" p mnt=/mnt/newstick
   [ -n "$dev" ] || { logx "reformat impossible: boot medium not identified"; return 2; }
@@ -1647,9 +1668,17 @@ finalize(){
   # happened, otherwise the message would lie.
   logx "installation completed successfully on $TARGET"
   local logmsg="" fmt_rc=1
-  # Only when the boot stick was identified: otherwise reformat_stick can only
-  # answer "impossible", which would be announced as a failure.
-  [ -n "${live_dev:-}" ] && { reformat_stick "$live_dev"; fmt_rc=$?; }
+  # Offered only on a writable removable medium. Inside a VM the installer boots
+  # from a virtual CD: reformatting it is impossible, and the warning used to
+  # claim "the USB stick could not be reformatted" about a device that was never
+  # a stick. Each skip is logged with its reason, so the next report says why.
+  if [ -z "${live_dev:-}" ]; then
+    logx "reformat not offered: boot medium not identified"
+  elif ! can_reformat_medium "$live_dev"; then
+    logx "reformat not offered: /dev/$live_dev is not a writable removable disk (type '$(lsblk -dno TYPE "/dev/$live_dev" 2>/dev/null | tr -d ' ')', rm '$(lsblk -dno RM "/dev/$live_dev" 2>/dev/null | tr -d ' ')')"
+  else
+    reformat_stick "$live_dev"; fmt_rc=$?
+  fi
   case $fmt_rc in
     0) logmsg="$S_DONE_LOG" ;;
     2) wt_msg "$S_WARN" "$S_FMT_FAIL" ;;     # stick intact
