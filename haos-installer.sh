@@ -2,7 +2,7 @@
 # haos-installer.sh — Guided Home Assistant OS installer (bare metal).
 #
 # Whiptail screens, assisted Wi-Fi, disk selection, verification by read-back.
-# Started at boot of a Debian live system. Languages EN/DA/DE/FR (chosen on screen 1).
+# Started at boot of a Debian live system. 14 languages, chosen on screen 1.
 set -uo pipefail          # no -e: errors are handled to keep the wizard alive
 export NEWT_COLORS='root=,blue; window=,lightgray; border=blue,lightgray; title=blue,'
 
@@ -657,7 +657,7 @@ sv)
   S_NET_CONN="Ansluter till \"%s\"..."
   S_NET_FAIL="Kunde inte ansluta till \"%s\".\n\n%s\n\nKontrollera losenordet eller anvand manuell konfiguration."
   S_VER_FETCH="Slar upp senaste versionen av Home Assistant OS..."
-  S_VER_FAIL="Kunde inte faststalla versionen av Home Assistant OS.\n\nBada kallorna provades utan framgang:\n  version.home-assistant.io  (stable-kanalen)\n  api.github.com             (senaste utgaVan)\n\nInstallationen kan inte fortsatta: utan version finns ingen\navbild att hamta.\n\nKontrollera internet och DNS, och starta sedan\ninstallationsprogrammet igen."
+  S_VER_FAIL="Kunde inte faststalla versionen av Home Assistant OS.\n\nBada kallorna provades utan framgang:\n  version.home-assistant.io  (stable-kanalen)\n  api.github.com             (senaste utgavan)\n\nInstallationen kan inte fortsatta: utan version finns ingen\navbild att hamta.\n\nKontrollera internet och DNS, och starta sedan\ninstallationsprogrammet igen."
   S_VER_NOIMG="Ingen avbild hittades for version %s:\n%s"
   S_DISK_NONE="Ingen intern disk hittades."
   S_DISK_PICK="Vilken disk ska Home Assistant OS installeras pa?\nALLT innehall raderas permanent.\n\nDiskar markta [!! USB / EXTERN !!] ar flyttbara: det ar\nformodligen en sakerhetskopiedisk, inte ditt mal."
@@ -1397,9 +1397,6 @@ apply_keymap(){
 }
 
 # ---------------------------------------------------------------------------
-# SCREEN 1: language + keyboard in a single question.
-# The layout does NOT imply the language (a French speaker may use a US QWERTY)
-# -> every line states both explicitly, nothing is inferred.
 choose_lang_keyboard(){
   local sel
   sel=$(whiptail --title "Language & keyboard" --menu \
@@ -2095,8 +2092,14 @@ pick_disk(){
     if [ "${rm_:-0}" = "1" ] || [ "${hp:-0}" = "1" ] || [ "$tran" = "usb" ]; then
       case "$UI_LANG" in
         fr) tag="[!! USB / EXTERNE !!] " ;;
-        de) tag="[!! USB / EXTERN !!] " ;;
-        da) tag="[!! USB / EKSTERN !!] " ;;
+        de|nl|sv) tag="[!! USB / EXTERN !!] " ;;
+        da|no)    tag="[!! USB / EKSTERN !!] " ;;
+        es|pt)    tag="[!! USB / EXTERNO !!] " ;;
+        it)       tag="[!! USB / ESTERNO !!] " ;;
+        pl)       tag="[!! USB / ZEWNETRZNY !!] " ;;
+        cs)       tag="[!! USB / EXTERNI !!] " ;;
+        fi)       tag="[!! USB / ULKOINEN !!] " ;;
+        ru)       tag="[!! USB / VNESHNIY !!] " ;;
         *)  tag="[!! USB / EXTERNAL !!] " ;;
       esac
     fi
@@ -2175,7 +2178,6 @@ prepare_disk(){
 # pipe, and a resume there re-injects bytes into the xz stream and corrupts it.
 download_image(){
   local dst="$1" size="$2" have rc detail bad=0
-  local -a st
   while :; do
     have=0
     [ -f "$dst" ] && have=$(stat -c%s "$dst" 2>/dev/null || echo 0)
@@ -2190,7 +2192,7 @@ download_image(){
       # line above already says how much is on disk.
       curl -fSL -C - --speed-limit 1024 --speed-time 30 "$IMG_URL" 2>>"$LOG" \
         | pv -s "$(( size - have ))" >> "$dst"
-      st=("${PIPESTATUS[@]}"); rc=${st[0]}
+      rc=${PIPESTATUS[0]}
     elif (( have >= size )) && [ -s "$dst" ]; then
       rc=0                                   # nothing left to fetch
     else
@@ -2198,7 +2200,7 @@ download_image(){
       rm -f "$dst"
       curl -fSL --speed-limit 1024 --speed-time 30 "$IMG_URL" 2>>"$LOG" \
         | pv -s "$size" > "$dst"
-      st=("${PIPESTATUS[@]}"); rc=${st[0]}
+      rc=${PIPESTATUS[0]}
     fi
 
     if [ "$rc" -ne 0 ] || [ ! -s "$dst" ]; then
@@ -2233,7 +2235,6 @@ flash(){
 
   # whiptail's stdout is forced onto /dev/tty: otherwise the process substitution
   # inherits the pipe to xz and injects the terminal codes into it.
-  set -o pipefail
   local rc=0 avail_kb need_kb usize t0 secs d_file=/tmp/haos.img.xz
   local -a pvargs
 
@@ -2630,7 +2631,8 @@ choose_lang_keyboard
 # Requirements state in the log: it is the first thing to look at when HAOS does
 # not boot after an otherwise successful installation.
 logx "installer started -- language $UI_LANG, board $HAOS_BOARD"
-logx "boot: $(boot_status) | Secure Boot: $(secureboot_status)"
+BOOT_STATE=$(boot_status); SB_STATE=$(secureboot_status)
+logx "boot: $BOOT_STATE | Secure Boot: $SB_STATE"
 # Build stamp written by build-iso.sh: without it, a bug report cannot say which
 # ISO it came from, and every "it fails" starts with guessing.
 BUILD_STAMP=""
@@ -2638,7 +2640,7 @@ if [ -r /etc/haos-installer-build ]; then
   BUILD_STAMP=$(head -1 /etc/haos-installer-build 2>/dev/null | tr -d '\r' | cut -c1-40)
 fi
 STEP="1/6"                  # progress marker shown in every window title
-WELCOME_TEXT=$(printf "$S_WELCOME" "$(boot_status)" "$(secureboot_status)")
+WELCOME_TEXT=$(printf "$S_WELCOME" "$BOOT_STATE" "$SB_STATE")
 if [ -n "$BUILD_STAMP" ]; then
   logx "installer build: $BUILD_STAMP"
   WELCOME_TEXT="$WELCOME_TEXT"$'\n\n'"$BUILD_STAMP"
