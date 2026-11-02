@@ -4,10 +4,31 @@ Bootable USB stick that installs **Home Assistant OS** on a PC through a guided
 wizard: network setup (Ethernet or Wi-Fi), disk selection, download and writing
 of the official image. Nothing to type.
 
-The wizard speaks **14 languages** — Czech, Danish, Dutch, English, Finnish,
-French, German, Italian, Norwegian, Polish, Portuguese, Russian, Spanish and
-Swedish — and sets the matching keyboard layout (QWERTY, QWERTZ, AZERTY or
-YTsUKEN).
+The wizard speaks **14 languages**. Language and keyboard layout are two
+separate choices, so a French speaker can pick a US QWERTY — nothing is
+inferred from one to the other:
+
+| Language | Menu entry | Keyboard layouts offered |
+| -------- | ---------- | ------------------------ |
+| Czech | `Cestina` | QWERTZ (CZ) |
+| Danish | `Dansk` | QWERTY (DK) |
+| Dutch | `Nederlands` | QWERTY (NL) |
+| English | `English` | QWERTY (US), QWERTY (UK), QWERTZ (DE) |
+| Finnish | `Suomi` | QWERTY (FI) |
+| French | `French` | AZERTY (FR), AZERTY (BE), QWERTZ (CH), QWERTY (CA), QWERTY (US) |
+| German | `Deutsch` | QWERTZ (DE), QWERTZ (CH) |
+| Italian | `Italiano` | QWERTY (IT) |
+| Norwegian | `Norsk` | QWERTY (NO) |
+| Polish | `Polski` | QWERTY (PL) |
+| Portuguese | `Portugues` | QWERTY (PT) |
+| Russian | `Russkiy` | YTsUKEN (RU) |
+| Spanish | `Espanol` | QWERTY (ES) |
+| Swedish | `Svenska` | QWERTY (SE) |
+
+That is 21 menu entries in all. The menu labels are kept in plain ASCII so they
+stay readable on the text console; the translated messages themselves use the
+language's own characters. A language code that is not in this table falls back
+to English and US QWERTY.
 
 The ISO does **not** contain HAOS: the image is downloaded during the
 installation ("network install" approach). It therefore stays small (**~450 MB**) and
@@ -109,7 +130,7 @@ otherwise keep priority and start the installer again.
 Plug in the stick, boot. The wizard starts on its own:
 
 1. Welcome screen and reminders
-2. Language and keyboard layout — 14 languages, each with its keyboard layout
+2. Language and keyboard layout — 14 languages, 21 layout choices (table above)
 3. Network connection — automatic over Ethernet, otherwise Wi-Fi selection
 4. **Disk selection** — check the size and model; the current contents are
    displayed, and you must type `YES` to confirm (anything else stops)
