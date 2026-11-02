@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Home Assistant auf einem PC installieren</title>
-<meta name="description" content="Home Assistant auf einem PC installieren">
+<title>Home Assistant auf einem PC installieren — Schritt für Schritt</title>
+<meta name="description" content="Eine einfache Anleitung für Einsteiger, um Home Assistant mit dem geführten USB-Stick auf einen übrigen PC zu bringen.">
 <style>
   :root {
     --bg: #fbfcfd;
@@ -32,46 +32,51 @@
     }
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--fg);
-    font: 17.5px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font: 18px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
-  .wrap { max-width: 44rem; margin: 0 auto; padding: 0 1.25rem; }
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.25rem; }
   a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
   a:hover { text-decoration-thickness: 2px; }
 
   header.top { border-bottom: 1px solid var(--line); background: var(--card); }
   header.top .wrap {
-    display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem;
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem;
     align-items: baseline; justify-content: space-between;
-    padding-top: 0.8rem; padding-bottom: 0.8rem;
+    padding-top: 0.85rem; padding-bottom: 0.85rem;
   }
-  header.top .name { font-weight: 650; font-size: 0.95rem; }
-  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.88rem; }
-  ul.langs {
-    list-style: none; display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem;
-    margin: 0; padding: 0; font-size: 0.85rem;
-  }
-  ul.langs a { text-decoration: none; color: var(--muted); }
-  ul.langs a:hover { color: var(--accent); text-decoration: underline; }
-  ul.langs [aria-current="page"] { color: var(--fg); font-weight: 650; }
+  header.top .name { font-weight: 650; font-size: 0.95rem; letter-spacing: -0.01em; }
+  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; }
 
-  .hero { padding: 2.5rem 0 0.5rem; }
-  h1 { font-size: clamp(1.7rem, 4.5vw, 2.3rem); line-height: 1.18; letter-spacing: -0.02em; margin: 0 0 1rem; }
-  .lede { font-size: 1.05rem; margin: 0 0 0.9rem; }
+  ul.langbar {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 0.1rem 0.6rem;
+    margin: 0; padding: 0; font-size: 0.8rem;
+  }
+  ul.langbar a { text-decoration: none; color: var(--muted); }
+  ul.langbar a:hover { color: var(--accent); text-decoration: underline; }
+  ul.langbar [aria-current="page"] { color: var(--fg); font-weight: 650; }
+
+  .hero { padding: 2.75rem 0 0.5rem; }
+  h1 {
+    font-size: clamp(1.8rem, 4.5vw, 2.4rem);
+    line-height: 1.18; letter-spacing: -0.02em; margin: 0 0 1rem;
+  }
+  .lede { font-size: 1.08rem; margin: 0 0 1rem; }
+  .lede strong { font-weight: 650; }
 
   h2 {
-    font-size: 1.25rem; letter-spacing: -0.01em;
-    margin: 2.3rem 0 0.9rem; padding-bottom: 0.5rem;
+    font-size: 1.3rem; letter-spacing: -0.01em;
+    margin: 2.5rem 0 0.9rem; padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--line);
   }
   p { margin: 0 0 1rem; }
 
   .notice {
-    margin: 1.4rem 0 0; padding: 1rem 1.15rem;
+    margin: 1.5rem 0 0; padding: 1rem 1.15rem;
     background: var(--warn-bg); border: 1px solid var(--warn-line);
     border-radius: var(--radius);
   }
@@ -82,29 +87,37 @@
 
   ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
   ol.steps > li {
-    counter-increment: s; position: relative;
-    background: var(--card); border: 1px solid var(--line);
+    counter-increment: s;
+    background: var(--card);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 1rem 1.2rem 1rem 3.4rem; margin: 0 0 0.9rem;
+    padding: 1.1rem 1.25rem 1.1rem 3.6rem;
+    margin: 0 0 1rem;
+    position: relative;
   }
   ol.steps > li::before {
-    content: counter(s); position: absolute; left: 1rem; top: 0.95rem;
-    width: 1.7rem; height: 1.7rem; border-radius: 50%;
+    content: counter(s);
+    position: absolute; left: 1.1rem; top: 1.05rem;
+    width: 1.75rem; height: 1.75rem; border-radius: 50%;
     background: var(--accent-soft); color: var(--accent);
-    font-size: 0.9rem; font-weight: 700; display: grid; place-items: center;
+    font-size: 0.95rem; font-weight: 700;
+    display: grid; place-items: center;
   }
-  ol.steps h3 { font-size: 1rem; margin: 0 0 0.3rem; }
-  ol.steps p { margin: 0; font-size: 0.96rem; }
+  ol.steps h3 { font-size: 1.05rem; margin: 0 0 0.35rem; letter-spacing: -0.01em; }
+  ol.steps p { margin: 0 0 0.5rem; font-size: 0.97rem; }
+  ol.steps p:last-child { margin-bottom: 0; }
+  ol.steps .hint { color: var(--muted); font-size: 0.92rem; margin: 0; }
 
-  dl.faq { margin: 0; }
-  dl.faq dt { font-weight: 650; margin-top: 1rem; }
-  dl.faq dd { margin: 0.2rem 0 0; }
-
-  footer {
-    margin-top: 3rem; border-top: 1px solid var(--line);
-    padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
+  ul.langs {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin: 0 0 1rem; padding: 0;
   }
-  footer p { margin: 0.4rem 0; }
+  ul.langs li {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 0.35rem 0.85rem; font-size: 0.95rem;
+  }
+  ul.langs li:first-child { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
   .btn {
     display: inline-block; margin: 0.35rem 0 0.6rem;
     background: #0a7ea4; color: #fff;
@@ -115,6 +128,23 @@
   @media (prefers-color-scheme: dark) {
     .btn { background: #4cc2e6; color: #10161c; }
   }
+
+  .next {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 1.25rem 1.35rem;
+  }
+  .next ol { margin: 0; padding-left: 1.25rem; }
+  .next ol li { margin: 0.55rem 0; }
+
+  .faq { margin: 0; }
+  .faq dt { font-weight: 650; margin-top: 1.1rem; }
+  .faq dd { margin: 0.25rem 0 0; }
+
+  footer {
+    margin-top: 3.5rem; border-top: 1px solid var(--line);
+    padding: 1.5rem 0 2.5rem; color: var(--muted); font-size: 0.88rem;
+  }
+  footer p { margin: 0.4rem 0; }
 </style>
 </head>
 <body>
@@ -123,12 +153,12 @@
   <div class="wrap">
     <span class="name">haos-isoinstall</span>
     <nav>
-      <a href="#need">Das brauchst du</a>
-      <a href="#steps">Schritt für Schritt</a>
-      <a href="#first">Erster Start</a>
-      <a href="#problem">Wenn etwas klemmt</a>
+      <a href="#need">Was du brauchst</a>
+      <a href="#steps">Die Schritte</a>
+      <a href="#next">Erster Start</a>
+      <a href="#help">Wenn es nicht klappt</a>
     </nav>
-    <ul class="langs">
+    <ul class="langbar">
       <li><a href="./" hreflang="en">English</a></li>
       <li><a href="da.html" hreflang="da">Dansk</a></li>
       <li><a href="cs.html" hreflang="cs">Čeština</a></li>
@@ -151,76 +181,143 @@
 
   <div class="hero">
     <h1>Home Assistant auf einem PC installieren</h1>
-    <p class="lede">Home Assistant steuert dein Smart Home von einem Computer in deinem eigenen Haus. Es läuft weiter, wenn das Internet ausfällt, und deine Daten bleiben bei dir.</p>
-    <p class="lede">Diese Anleitung führt vom Download bis zum ersten Start. Du brauchst kein Linux-Wissen und musst keinen Befehl eintippen.</p>
+    <p class="lede">Home Assistant ist ein kostenloses Programm, das dein smartes Zuhause steuert — Licht, Heizung, Sensoren — von einem Computer in deinem eigenen Haus. Es läuft weiter, wenn das Internet ausfällt, und deine Daten bleiben bei dir.</p>
+    <p class="lede">Diese Seite zeigt dir, wie du es auf einen alten PC bringst. Du musst nichts über Linux wissen und tippst keinen einzigen Befehl. Du erstellst einen USB-Stick, der Stick stellt dir ein paar Fragen, und den Rest macht er selbst.</p>
 
     <div class="notice">
-      <strong>Die Festplatte des Computers wird vollständig gelöscht.</strong>
-      Alles darauf wird gelöscht und kann nicht wiederhergestellt werden. Nimm einen Rechner, den du entbehren kannst — nie deinen Alltags-PC.
+      <strong>Der PC, den du benutzt, wird komplett geleert.</strong>
+      Alles auf seiner Festplatte wird gelöscht und lässt sich nicht zurückholen. Nimm einen Computer, den du nicht mehr brauchst — niemals deinen Alltags-PC. Wenn etwas darauf liegt, das du behalten willst, kopiere es vorher auf eine andere Festplatte.
     </div>
   </div>
 
-  <h2 id="need">Das brauchst du</h2>
+  <h2 id="need">Was du brauchst</h2>
   <ul class="need">
-    <li>Einen Rechner, den du entbehren kannst (Intel oder AMD), der im UEFI-Modus startet. Er wird zu deiner Home-Assistant-Maschine.</li>
-    <li>Einen USB-Stick mit 2 GB oder mehr.</li>
-    <li>Internet — außer du hast die Datei schon auf einem Stick.</li>
-    <li>Etwa eine halbe Stunde. Das meiste ist Warten.</li>
+    <li><strong>Ein übriger PC.</strong> Irgendein normaler Desktop, Mini-PC oder Laptop der letzten zehn Jahre mit Intel- oder AMD-Prozessor. Er wird gelöscht und nur noch für Home Assistant verwendet.</li>
+    <li><strong>Ein USB-Stick</strong>, um den es nicht schade ist, 2 GB oder mehr.</li>
+    <li><strong>Eine Internetverbindung</strong> — es sei denn, du hast das Home Assistant OS-Abbild schon auf einem Stick; dann brauchst du gar kein Netz. Ein Kabel vom PC zum Router ist am ersten Tag am einfachsten; WLAN richtest du später in Home Assistant selbst ein.</li>
+    <li><strong>Etwa eine halbe Stunde.</strong> Das meiste ist Warten, nicht Arbeit.</li>
   </ul>
+  <p class="hint" style="color: var(--muted); font-size: 0.92rem;">
+    Das hier gilt für einen normalen PC. Ein Raspberry Pi oder ein anderes kleines Board braucht eine andere Datei — sieh dafür auf der <a href="https://www.home-assistant.io/installation/">offiziellen Installationsseite</a> nach.
+  </p>
 
-  <h2 id="steps">Schritt für Schritt</h2>
+  <h2 id="steps">Die Schritte</h2>
+
   <ol class="steps">
+
     <li>
-      <h3>Datei herunterladen</h3>
-      <p>Auf der Releases-Seite lädst du die Datei, die auf .iso endet (etwa 470 MB). Du wählst keine Version: der Stick holt selbst die neueste.</p>
+      <h3>Die Datei herunterladen</h3>
+      <p>Es ist eine einzige Datei von etwa 490 MB. Du musst keine Version auswählen: Der Stick holt beim Installieren selbst das neueste Home Assistant.</p>
       <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">ISO-Datei herunterladen</a></p>
+      <p class="hint">Auf der Releases-Seite lädst du die Datei herunter, die auf <strong>.iso</strong> endet. Die andere Datei daneben kannst du ignorieren.</p>
     </li>
+
     <li>
       <h3>Auf den USB-Stick schreiben</h3>
-      <p>Nimm Etcher: Datei wählen, Stick wählen, Flash drücken. Zieh die Datei nicht wie ein Bild auf den Stick.</p>
+      <p>Steck den Stick in deinen normalen Computer und nimm das kostenlose Programm <a href="https://etcher.balena.io/">Etcher</a>. Öffne es, wähle die Datei, die du gerade heruntergeladen hast, wähle den Stick und klicke auf <strong>Flash</strong>.</p>
+      <p class="hint">Zieh die Datei nicht wie ein Foto auf den Stick. Ein so vorbereiteter Stick startet den Computer nicht.</p>
     </li>
+
     <li>
-      <h3>Zwei Einstellungen ändern</h3>
-      <p>Beim Start F2 oder Entf drücken. Secure Boot ausschalten und den SATA-Modus auf AHCI stellen. Speichern und beenden.</p>
+      <h3>Zwei Einstellungen am PC ändern</h3>
+      <p>Starte den PC neu und tippe beim Hochfahren <strong>F2</strong> (oder <strong>Entf</strong>). Es erscheint ein Einstellungsbildschirm — der, den der Hersteller BIOS oder Setup nennt.</p>
+      <p>Suche <strong>Secure Boot</strong> und schalte es <strong>aus</strong>. Suche dann den <strong>SATA-Modus</strong> (er kann Storage oder SATA-Konfiguration heißen) und stelle ihn auf <strong>AHCI</strong>. Speichern und beenden.</p>
+      <p class="hint">Mach dir um die anderen Einstellungen keine Sorgen. Nur diese zwei zählen, und du kannst nichts kaputt machen, indem du nachsiehst.</p>
     </li>
+
     <li>
-      <h3>Vom Stick starten</h3>
-      <p>Stick stecken lassen und den PC einschalten. Startet er sein altes System, drücke F12 und wähle den USB-Stick.</p>
+      <h3>Den PC vom Stick starten</h3>
+      <p>Lass den Stick stecken und schalte den PC ein. Startet er stattdessen sein altes System, starte ihn neu und tippe beim Booten <strong>F12</strong> oder <strong>F10</strong>, dann wähle den USB-Stick aus der Liste.</p>
     </li>
+
     <li>
       <h3>Die Fragen beantworten</h3>
-      <p>Sprache (14 Sprachen, die Tastatur folgt), woher die Datei kommen soll, Netzwerk und welche Platte gelöscht werden darf — YES eintippen.</p>
+      <p>Der Stick startet ein kleines Menü. Wähle deine Sprache — die passende Tastatur wird für dich eingestellt. Dann fragt er, woher Home Assistant kommen soll: Er kann die neueste Version für dich herunterladen oder eine Datei nutzen, die du schon auf einem Stick hast (dieser Weg braucht gar kein Internet). Danach fragt er, wie der PC angeschlossen ist, und zuletzt, auf welche Festplatte installiert werden soll.</p>
+      <p class="hint">Auf keine Festplatte wird geschrieben, bevor du bestätigst. Lies die Liste der Festplatten genau: Die wird gelöscht.</p>
     </li>
+
     <li>
-      <h3>Warten, dann Stick abziehen</h3>
-      <p>Er lädt und prüft die Datei, schreibt sie und bietet am Ende an, die Platte zurückzulesen und zu vergleichen. Sag ja. Zieh den Stick ab, wenn er meldet, dass er fertig ist.</p>
+      <h3>Warten und den Stick abziehen</h3>
+      <p>Die Installation lädt Home Assistant herunter, prüft den Download und schreibt ihn auf die Festplatte. Sie zeigt dir, was sie tut. Das dauert je nach Internet fünf bis zwanzig Minuten.</p>
+      <p>Am Ende fragt sie, ob sie prüfen soll, ob alles richtig geschrieben wurde. <strong>Sag ja.</strong> Sie liest die Festplatte zurück und vergleicht sie mit dem, was sie gerade geschrieben hat. Das dauert ein bis drei Minuten, und so fällt eine verschlissene Platte oder ein lockerer Stecker jetzt auf — statt als Computer, der nur noch einen schwarzen Bildschirm zeigt.</p>
+      <p>Wenn sie sagt, dass sie fertig ist, zieh den USB-Stick ab und lass den PC neu starten.</p>
     </li>
+
   </ol>
 
-  <h2 id="first">Erster Start</h2>
-  <ul class="need">
-    <li>Verbinde den PC mit einem Kabel am Router und schalte ihn ein.</li>
-    <li>Öffne http://homeassistant.local — „Preparing Home Assistant“ kann zwanzig Minuten dauern.</li>
-    <li>Erstelle dein Konto und schreib das Passwort auf: es lässt sich nicht wiederherstellen.</li>
+  <h2 id="languages">Die Sprachen, die du wählen kannst</h2>
+  <p>Das Menü und seine Meldungen gibt es in den vierzehn Sprachen der Länder mit den meisten Home Assistant-Installationen. Wenn du eine wählst, wird die Tastatur gleich mit eingestellt:</p>
+  <ul class="langs">
+    <li>Englisch</li>
+    <li>Dänisch</li>
+    <li>Tschechisch</li>
+    <li>Niederländisch</li>
+    <li>Finnisch</li>
+    <li>Französisch</li>
+    <li>Deutsch</li>
+    <li>Italienisch</li>
+    <li>Norwegisch</li>
+    <li>Polnisch</li>
+    <li>Portugiesisch</li>
+    <li>Russisch</li>
+    <li>Spanisch</li>
+    <li>Schwedisch</li>
   </ul>
+  <p class="hint" style="color: var(--muted); font-size: 0.92rem;">
+    Du benutzt eine Tastatur aus einem anderen Land — eine britische zum Beispiel? Die letzte Zeile im Sprachmenü stellt die Tastatur allein ein, ohne die Sprache zu wechseln.
+  </p>
 
-  <h2 id="problem">Wenn etwas klemmt</h2>
+  <h2 id="next">Der erste Start von Home Assistant</h2>
+
+  <div class="next">
+    <ol>
+      <li>
+        Verbinde den PC mit einem Kabel mit dem Router und schalte ihn ein.
+      </li>
+      <li>
+        Öffne auf deinem Handy oder deinem normalen Computer — im selben Netzwerk — <a href="http://homeassistant.local/">http://homeassistant.local</a> im Browser.
+      </li>
+      <li>
+        Du siehst <strong>Preparing Home Assistant</strong>. Das kann zwanzig Minuten oder länger dauern. Es hat sich nicht aufgehängt; lass es in Ruhe und komm später wieder.
+      </li>
+      <li>
+        Wenn der Begrüßungsbildschirm erscheint, wähle dein smartes Zuhause zu erstellen, und gib einen Namen, einen Benutzernamen und ein Passwort ein. Schreib das Passwort sicher auf: Es lässt sich nicht wiederherstellen.
+      </li>
+      <li>
+        Stelle ein, wo dein Zuhause liegt, schließe ab, und du bist drin. Von dort fügst du deine Geräte unter <strong>Einstellungen</strong> hinzu.
+      </li>
+    </ol>
+  </div>
+
+  <h2 id="help">Wenn es nicht klappt</h2>
   <dl class="faq">
-    <dt>Der PC startet sein altes System</dt>
-    <dd>Neu starten, F12 drücken und den Stick wählen. Steht er nicht in der Liste, schreib den Stick mit Etcher neu.</dd>
-    <dt>Der Bildschirm bleibt schwarz</dt>
-    <dd>Prüfe in den Einstellungen, dass Secure Boot aus ist, lass den Stick stecken und versuch es erneut.</dd>
-    <dt>Es wird keine Platte gefunden</dt>
-    <dd>Der Speicher steht vermutlich auf RAID statt AHCI. Ändere das und starte neu.</dd>
-    <dt>Die Adresse öffnet nicht</dt>
-    <dd>Probiere http://homeassistant.local:8123, oder die Adresse des PCs aus dem Router mit :8123.</dd>
+    <dt>Der PC startet sein altes System statt des Sticks</dt>
+    <dd>Starte ihn neu und tippe beim Booten F12 oder F10, dann wähle den USB-Stick. Steht er nicht in der Liste, schreib ihn noch einmal mit Etcher — die Datei muss von einem Programm geschrieben werden, nicht kopiert.</dd>
+
+    <dt>Der Bildschirm bleibt nach dem Start schwarz</dt>
+    <dd>Geh zurück in den Einstellungsbildschirm (Schritt 3) und prüfe, dass Secure Boot aus ist. Lass den Stick stecken und versuch es noch einmal.</dd>
+
+    <dt>Es heißt, die Festplatte stimme nicht mit dem Geschriebenen überein</dt>
+    <dd>Dann stimmt etwas mit der Platte, ihrem Kabel oder dem Speicher nicht — nicht mit dem Download. Starte den PC nicht von dieser Platte. Führe die Installation erneut aus, und wenn es dasselbe sagt, nimm eine andere Platte.</dd>
+
+    <dt>Der Installer findet keine Festplatte</dt>
+    <dd>Der Speicher des PCs steht wahrscheinlich auf RAID statt auf AHCI. Ändere die Einstellung und starte den Stick neu.</dd>
+
+    <dt>Die Adresse öffnet sich nicht im Browser</dt>
+    <dd>Manche Router blockieren den Namen. Probiere zuerst <code>http://homeassistant.local:8123</code>; klappt auch das nicht, such die Adresse des PCs in der Geräteliste deines Routers und öffne <code>http://diese-adresse:8123</code>.</dd>
+
+    <dt>Es steht seit langem "Preparing Home Assistant" da</dt>
+    <dd>Das ist bei einer langsamen Verbindung oder einer alten Platte normal. Es lädt Home Assistant herunter. Gib ihm eine halbe Stunde.</dd>
+
+    <dt>Mit Home Assistant selbst stimmt etwas nicht</dt>
+    <dd>Frag in der <a href="https://community.home-assistant.io/">Home Assistant-Community</a>. Dieser Installer bringt nur das Programm auf die Platte.</dd>
   </dl>
 
 </main>
 
 <footer>
   <div class="wrap">
-    <p>Inoffizielles Projekt, nicht verbunden mit der Open Home Foundation, Nabu Casa oder dem Home-Assistant-Projekt. Mit KI-Unterstützung geschrieben, MIT-Lizenz, keine Garantie und kein Support.</p>
+    <p><strong>haos-isoinstall</strong> ist ein inoffizielles Projekt, nicht verbunden mit der Open Home Foundation, Nabu Casa oder dem Home Assistant-Projekt. Es wurde mit KI-Unterstützung geschrieben und von automatischen Tests geprüft, nicht von einem Support-Team. MIT-Lizenz, keine Garantie und kein Support.</p>
     <p>
       <a href="https://github.com/cronner/haos-isoinstall/releases">Quellcode und Releases</a> ·
       <a href="https://github.com/cronner/haos-isoinstall/blob/main/README.md">Technisches Handbuch</a> ·

@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Instalace Home Assistant na počítač</title>
-<meta name="description" content="Instalace Home Assistant na počítač">
+<title>Instalace Home Assistant na počítač — krok za krokem</title>
+<meta name="description" content="Jednoduchý návod pro začátečníky, jak dostat Home Assistant na volný počítač pomocí USB flash disku, který vás provede.">
 <style>
   :root {
     --bg: #fbfcfd;
@@ -32,46 +32,51 @@
     }
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--fg);
-    font: 17.5px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font: 18px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
-  .wrap { max-width: 44rem; margin: 0 auto; padding: 0 1.25rem; }
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.25rem; }
   a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
   a:hover { text-decoration-thickness: 2px; }
 
   header.top { border-bottom: 1px solid var(--line); background: var(--card); }
   header.top .wrap {
-    display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem;
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem;
     align-items: baseline; justify-content: space-between;
-    padding-top: 0.8rem; padding-bottom: 0.8rem;
+    padding-top: 0.85rem; padding-bottom: 0.85rem;
   }
-  header.top .name { font-weight: 650; font-size: 0.95rem; }
-  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.88rem; }
-  ul.langs {
-    list-style: none; display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem;
-    margin: 0; padding: 0; font-size: 0.85rem;
-  }
-  ul.langs a { text-decoration: none; color: var(--muted); }
-  ul.langs a:hover { color: var(--accent); text-decoration: underline; }
-  ul.langs [aria-current="page"] { color: var(--fg); font-weight: 650; }
+  header.top .name { font-weight: 650; font-size: 0.95rem; letter-spacing: -0.01em; }
+  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; }
 
-  .hero { padding: 2.5rem 0 0.5rem; }
-  h1 { font-size: clamp(1.7rem, 4.5vw, 2.3rem); line-height: 1.18; letter-spacing: -0.02em; margin: 0 0 1rem; }
-  .lede { font-size: 1.05rem; margin: 0 0 0.9rem; }
+  ul.langbar {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 0.1rem 0.6rem;
+    margin: 0; padding: 0; font-size: 0.8rem;
+  }
+  ul.langbar a { text-decoration: none; color: var(--muted); }
+  ul.langbar a:hover { color: var(--accent); text-decoration: underline; }
+  ul.langbar [aria-current="page"] { color: var(--fg); font-weight: 650; }
+
+  .hero { padding: 2.75rem 0 0.5rem; }
+  h1 {
+    font-size: clamp(1.8rem, 4.5vw, 2.4rem);
+    line-height: 1.18; letter-spacing: -0.02em; margin: 0 0 1rem;
+  }
+  .lede { font-size: 1.08rem; margin: 0 0 1rem; }
+  .lede strong { font-weight: 650; }
 
   h2 {
-    font-size: 1.25rem; letter-spacing: -0.01em;
-    margin: 2.3rem 0 0.9rem; padding-bottom: 0.5rem;
+    font-size: 1.3rem; letter-spacing: -0.01em;
+    margin: 2.5rem 0 0.9rem; padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--line);
   }
   p { margin: 0 0 1rem; }
 
   .notice {
-    margin: 1.4rem 0 0; padding: 1rem 1.15rem;
+    margin: 1.5rem 0 0; padding: 1rem 1.15rem;
     background: var(--warn-bg); border: 1px solid var(--warn-line);
     border-radius: var(--radius);
   }
@@ -82,29 +87,37 @@
 
   ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
   ol.steps > li {
-    counter-increment: s; position: relative;
-    background: var(--card); border: 1px solid var(--line);
+    counter-increment: s;
+    background: var(--card);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 1rem 1.2rem 1rem 3.4rem; margin: 0 0 0.9rem;
+    padding: 1.1rem 1.25rem 1.1rem 3.6rem;
+    margin: 0 0 1rem;
+    position: relative;
   }
   ol.steps > li::before {
-    content: counter(s); position: absolute; left: 1rem; top: 0.95rem;
-    width: 1.7rem; height: 1.7rem; border-radius: 50%;
+    content: counter(s);
+    position: absolute; left: 1.1rem; top: 1.05rem;
+    width: 1.75rem; height: 1.75rem; border-radius: 50%;
     background: var(--accent-soft); color: var(--accent);
-    font-size: 0.9rem; font-weight: 700; display: grid; place-items: center;
+    font-size: 0.95rem; font-weight: 700;
+    display: grid; place-items: center;
   }
-  ol.steps h3 { font-size: 1rem; margin: 0 0 0.3rem; }
-  ol.steps p { margin: 0; font-size: 0.96rem; }
+  ol.steps h3 { font-size: 1.05rem; margin: 0 0 0.35rem; letter-spacing: -0.01em; }
+  ol.steps p { margin: 0 0 0.5rem; font-size: 0.97rem; }
+  ol.steps p:last-child { margin-bottom: 0; }
+  ol.steps .hint { color: var(--muted); font-size: 0.92rem; margin: 0; }
 
-  dl.faq { margin: 0; }
-  dl.faq dt { font-weight: 650; margin-top: 1rem; }
-  dl.faq dd { margin: 0.2rem 0 0; }
-
-  footer {
-    margin-top: 3rem; border-top: 1px solid var(--line);
-    padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
+  ul.langs {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin: 0 0 1rem; padding: 0;
   }
-  footer p { margin: 0.4rem 0; }
+  ul.langs li {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 0.35rem 0.85rem; font-size: 0.95rem;
+  }
+  ul.langs li:first-child { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
   .btn {
     display: inline-block; margin: 0.35rem 0 0.6rem;
     background: #0a7ea4; color: #fff;
@@ -115,6 +128,23 @@
   @media (prefers-color-scheme: dark) {
     .btn { background: #4cc2e6; color: #10161c; }
   }
+
+  .next {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 1.25rem 1.35rem;
+  }
+  .next ol { margin: 0; padding-left: 1.25rem; }
+  .next ol li { margin: 0.55rem 0; }
+
+  .faq { margin: 0; }
+  .faq dt { font-weight: 650; margin-top: 1.1rem; }
+  .faq dd { margin: 0.25rem 0 0; }
+
+  footer {
+    margin-top: 3.5rem; border-top: 1px solid var(--line);
+    padding: 1.5rem 0 2.5rem; color: var(--muted); font-size: 0.88rem;
+  }
+  footer p { margin: 0.4rem 0; }
 </style>
 </head>
 <body>
@@ -124,11 +154,11 @@
     <span class="name">haos-isoinstall</span>
     <nav>
       <a href="#need">Co budete potřebovat</a>
-      <a href="#steps">Krok za krokem</a>
-      <a href="#first">První spuštění</a>
-      <a href="#problem">Když se něco nedaří</a>
+      <a href="#steps">Postup</a>
+      <a href="#next">První spuštění</a>
+      <a href="#help">Když to nefunguje</a>
     </nav>
-    <ul class="langs">
+    <ul class="langbar">
       <li><a href="./" hreflang="en">English</a></li>
       <li><a href="da.html" hreflang="da">Dansk</a></li>
       <li><span aria-current="page">Čeština</span></li>
@@ -151,76 +181,143 @@
 
   <div class="hero">
     <h1>Instalace Home Assistant na počítač</h1>
-    <p class="lede">Home Assistant řídí vaši chytrou domácnost z počítače u vás doma. Funguje i tehdy, když internet nefunguje, a vaše data zůstávají u vás.</p>
-    <p class="lede">Tento návod vede od stažení k prvnímu spuštění. Nemusíte umět Linux ani psát žádné příkazy.</p>
+    <p class="lede">Home Assistant je bezplatný program, který řídí vaši chytrou domácnost — světla, topení, senzory — z počítače u vás doma. Funguje dál, když internet nefunguje, a vaše data zůstávají u vás.</p>
+    <p class="lede">Tato stránka ukazuje, jak ho dostat na starý počítač. Nemusíte nic vědět o Linuxu a nenapíšete ani jeden příkaz. Připravíte jeden USB flash disk, ten se vás na pár věcí zeptá a zbytek udělá sám.</p>
 
     <div class="notice">
-      <strong>Disk počítače bude zcela vymazán.</strong>
-      Všechno na něm se nenávratně ztratí. Použijte počítač, který můžete oželet — nikdy ten, který používáte denně.
+      <strong>Počítač, který použijete, bude úplně vymazán.</strong>
+      Všechno na jeho disku se smaže a už to nepůjde vrátit. Použijte počítač, který už nepotřebujete — nikdy ten, na kterém běžně pracujete. Pokud na něm máte něco, co chcete zachovat, zkopírujte to nejdřív na jiný disk.
     </div>
   </div>
 
   <h2 id="need">Co budete potřebovat</h2>
   <ul class="need">
-    <li>Počítač, který můžete oželet (Intel nebo AMD), schopný startu v režimu UEFI. Stane se vaším strojem s Home Assistantem.</li>
-    <li>USB flash disk s kapacitou 2 GB a více.</li>
-    <li>Internet — pokud už soubor nemáte na flash disku.</li>
-    <li>Asi půl hodiny. Většinu času se čeká.</li>
+    <li><strong>Volný počítač.</strong> Jakýkoli běžný stolní počítač, mini PC nebo notebook z posledních deseti let s procesorem Intel nebo AMD. Bude vymazán a bude sloužit jen Home Assistantu.</li>
+    <li><strong>USB flash disk</strong>, u kterého vám nevadí, že se smaže, 2 GB nebo víc.</li>
+    <li><strong>Připojení k internetu</strong> — pokud už nemáte obraz Home Assistant OS na flash disku, pak internet nepotřebujete vůbec. Kabel z počítače do routeru je první den nejjednodušší; Wi-Fi nastavíte později přímo v Home Assistantu.</li>
+    <li><strong>Asi půl hodiny.</strong> Většinu času se čeká, nepracuje.</li>
   </ul>
+  <p class="hint" style="color: var(--muted); font-size: 0.92rem;">
+    Tohle platí pro běžný počítač. Raspberry Pi nebo jiná malá deska používá jiný soubor — pro ty se podívejte na <a href="https://www.home-assistant.io/installation/">oficiální stránku instalace</a>.
+  </p>
 
-  <h2 id="steps">Krok za krokem</h2>
+  <h2 id="steps">Postup</h2>
+
   <ol class="steps">
+
     <li>
       <h3>Stáhněte soubor</h3>
-      <p>Na stránce vydání vezměte soubor končící na .iso (asi 470 MB). Verzi nevybíráte: flash disk si stáhne tu nejnovější sám.</p>
+      <p>Je to jediný soubor o velikosti asi 490 MB. Nemusíte vybírat verzi: flash disk si při instalaci sám stáhne nejnovější Home Assistant.</p>
       <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Stáhnout soubor ISO</a></p>
+      <p class="hint">Na stránce releases stáhněte soubor, který končí na <strong>.iso</strong>. Druhý soubor vedle můžete ignorovat.</p>
     </li>
+
     <li>
       <h3>Zapište ho na USB flash disk</h3>
-      <p>Použijte Etcher: vyberte soubor, vyberte disk a stiskněte Flash. Nepřetahujte soubor na disk jako fotografii.</p>
+      <p>Připojte flash disk ke svému běžnému počítači a použijte bezplatný program <a href="https://etcher.balena.io/">Etcher</a>. Otevřete ho, vyberte soubor, který jste právě stáhli, vyberte flash disk a klikněte na <strong>Flash</strong>.</p>
+      <p class="hint">Nepřetahujte soubor na flash disk jako fotografii. Takto připravený disk počítač nespustí.</p>
     </li>
+
     <li>
-      <h3>Změňte dvě nastavení</h3>
-      <p>Při startu stiskněte F2 nebo Del. Vypněte Secure Boot a nastavte režim SATA na AHCI. Uložte a ukončete.</p>
+      <h3>Změňte dvě nastavení v počítači</h3>
+      <p>Restartujte počítač a při startu stiskněte <strong>F2</strong> (nebo <strong>Del</strong>). Objeví se obrazovka nastavení — ta, které výrobce říká BIOS nebo Setup.</p>
+      <p>Najděte <strong>Secure Boot</strong> a vypněte ho. Pak najděte <strong>režim SATA</strong> (může se jmenovat Storage nebo konfigurace SATA) a nastavte ho na <strong>AHCI</strong>. Uložte a ukončete.</p>
+      <p class="hint">Ostatní nastavení neřešte. Záleží jen na těchto dvou a pouhým pohledem nic nerozbijete.</p>
     </li>
+
     <li>
-      <h3>Spusťte z flash disku</h3>
-      <p>Nechte disk zastrčený a zapněte počítač. Pokud naběhne starý systém, stiskněte F12 a vyberte USB flash disk.</p>
+      <h3>Spusťte počítač z flash disku</h3>
+      <p>Nechte flash disk zapojený a zapněte počítač. Pokud spustí svůj starý systém, restartujte ho a při startu stiskněte <strong>F12</strong> nebo <strong>F10</strong>, pak vyberte flash disk ze seznamu.</p>
     </li>
+
     <li>
       <h3>Odpovězte na otázky</h3>
-      <p>Jazyk (14 možností, klávesnice se nastaví sama), odkud má soubor přijít, síť a který disk se smí vymazat — napište YES.</p>
+      <p>Flash disk spustí malou nabídku. Vyberte jazyk — správná klávesnice se nastaví sama. Potom se zeptá, odkud má Home Assistant vzít: může stáhnout nejnovější verzi, nebo použít soubor, který už na flash disku máte (tato cesta nepotřebuje internet vůbec). Pak se zeptá, jak je počítač připojený, a nakonec na který disk instalovat.</p>
+      <p class="hint">Na disk se nic nezapíše, dokud nepotvrdíte. Přečtěte si seznam disků pozorně: ten disk se smaže.</p>
     </li>
+
     <li>
-      <h3>Počkejte a vyjměte disk</h3>
-      <p>Stáhne a zkontroluje soubor, zapíše ho a nakonec nabídne přečíst disk zpět a porovnat. Řekněte ano. Vyjměte disk, až oznámí, že je hotovo.</p>
+      <h3>Počkejte a vyjměte flash disk</h3>
+      <p>Instalace stáhne Home Assistant, zkontroluje stažení a zapíše ho na disk. Ukazuje, co dělá. Trvá to pět až dvacet minut podle rychlosti internetu.</p>
+      <p>Na konci se zeptá, zda má ověřit, že se všechno zapsalo správně. <strong>Řekněte ano.</strong> Přečte disk zpět a porovná ho s tím, co právě zapsal. Trvá to jednu až tři minuty a právě tak se opotřebený disk nebo uvolněný kabel projeví teď — místo toho, aby se počítač spouštěl do černé obrazovky.</p>
+      <p>Až řekne, že je hotovo, vyjměte USB flash disk a nechte počítač restartovat.</p>
     </li>
+
   </ol>
 
-  <h2 id="first">První spuštění</h2>
-  <ul class="need">
-    <li>Připojte počítač kabelem k routeru a zapněte ho.</li>
-    <li>Otevřete http://homeassistant.local — „Preparing Home Assistant“ může trvat dvacet minut.</li>
-    <li>Vytvořte účet a poznamenejte si heslo: nelze ho obnovit.</li>
+  <h2 id="languages">Jazyky, které si můžete vybrat</h2>
+  <p>Nabídka a její hlášky existují ve čtrnácti jazycích zemí, kde je Home Assistant nejvíc rozšířený. Když některý vyberete, klávesnice se nastaví zároveň:</p>
+  <ul class="langs">
+    <li>Angličtina</li>
+    <li>Dánština</li>
+    <li>Čeština</li>
+    <li>Nizozemština</li>
+    <li>Finština</li>
+    <li>Francouzština</li>
+    <li>Němčina</li>
+    <li>Italština</li>
+    <li>Norština</li>
+    <li>Polština</li>
+    <li>Portugalština</li>
+    <li>Ruština</li>
+    <li>Španělština</li>
+    <li>Švédština</li>
   </ul>
+  <p class="hint" style="color: var(--muted); font-size: 0.92rem;">
+    Používáte klávesnici z jiné země — třeba britskou? Poslední řádek nabídky jazyků nastaví klávesnici samostatně, bez změny jazyka.
+  </p>
 
-  <h2 id="problem">Když se něco nedaří</h2>
+  <h2 id="next">První spuštění Home Assistant</h2>
+
+  <div class="next">
+    <ol>
+      <li>
+        Připojte počítač kabelem k routeru a zapněte ho.
+      </li>
+      <li>
+        Na telefonu nebo na běžném počítači — ve stejné síti — otevřete v prohlížeči <a href="http://homeassistant.local/">http://homeassistant.local</a>.
+      </li>
+      <li>
+        Uvidíte <strong>Preparing Home Assistant</strong>. Může to trvat dvacet minut i déle. Není zaseknutý; nechte ho být a vraťte se později.
+      </li>
+      <li>
+        Až se objeví uvítací obrazovka, zvolte vytvoření své chytré domácnosti a vyplňte jméno, uživatelské jméno a heslo. Heslo si někam bezpečně poznamenejte: nejde obnovit.
+      </li>
+      <li>
+        Nastavte, kde se váš domov nachází, dokončete to a jste uvnitř. Odtud přidáváte zařízení v <strong>Nastavení</strong>.
+      </li>
+    </ol>
+  </div>
+
+  <h2 id="help">Když to nefunguje</h2>
   <dl class="faq">
-    <dt>Počítač spouští starý systém</dt>
-    <dd>Restartujte, stiskněte F12 a vyberte flash disk. Pokud v seznamu není, zapište ho znovu v Etcheru.</dd>
-    <dt>Obrazovka zůstává černá</dt>
-    <dd>Zkontrolujte v nastavení, že je Secure Boot vypnutý, nechte disk zastrčený a zkuste to znovu.</dd>
-    <dt>Nenajde žádný disk</dt>
-    <dd>Úložiště je pravděpodobně v režimu RAID místo AHCI. Změňte to a začněte znovu.</dd>
-    <dt>Adresa se neotevírá</dt>
-    <dd>Zkuste http://homeassistant.local:8123, nebo adresu počítače z routeru s :8123.</dd>
+    <dt>Počítač spustí svůj starý systém místo flash disku</dt>
+    <dd>Restartujte ho a při startu stiskněte F12 nebo F10, pak vyberte flash disk. Pokud v seznamu není, zapište ho znovu pomocí Etcheru — soubor musí zapsat program, ne kopírování.</dd>
+
+    <dt>Obrazovka zůstane po zapnutí počítače černá</dt>
+    <dd>Vraťte se do nastavení (krok 3) a zkontrolujte, že Secure Boot je vypnutý. Nechte flash disk zapojený a zkuste to znovu.</dd>
+
+    <dt>Instalace hlásí, že disk nesouhlasí s tím, co zapsala</dt>
+    <dd>Pak je něco v nepořádku s diskem, jeho kabelem nebo pamětí — ne se staženým souborem. Nespouštějte počítač z toho disku. Spusťte instalaci znovu, a pokud řekne totéž, použijte jiný disk.</dd>
+
+    <dt>Instalace nenajde žádný disk</dt>
+    <dd>Úložiště počítače je pravděpodobně nastavené na RAID místo AHCI. Změňte to nastavení a spusťte flash disk znovu.</dd>
+
+    <dt>Adresa se v prohlížeči neotevře</dt>
+    <dd>Některé routery to jméno blokují. Zkuste nejdřív <code>http://homeassistant.local:8123</code>, a když to také nepomůže, najděte adresu počítače v seznamu připojených zařízení routeru a otevřete <code>http://ta-adresa:8123</code>.</dd>
+
+    <dt>Dlouho se zobrazuje "Preparing Home Assistant"</dt>
+    <dd>To je normální u pomalého připojení nebo starého disku. Stahuje Home Assistant. Dejte mu půl hodiny.</dd>
+
+    <dt>Něco je špatně se samotným Home Assistantem</dt>
+    <dd>Zeptejte se v <a href="https://community.home-assistant.io/">komunitě Home Assistant</a>. Tento instalátor jen dostane program na disk.</dd>
   </dl>
 
 </main>
 
 <footer>
   <div class="wrap">
-    <p>Neoficiální projekt, bez spojení s Open Home Foundation, Nabu Casa nebo projektem Home Assistant. Napsáno s pomocí AI, licence MIT, bez záruky a bez podpory.</p>
+    <p><strong>haos-isoinstall</strong> je neoficiální projekt, nespojený s Open Home Foundation, Nabu Casa ani s projektem Home Assistant. Vznikl s pomocí AI a ověřily ho automatické testy, ne tým podpory. Licence MIT, bez záruky a bez podpory.</p>
     <p>
       <a href="https://github.com/cronner/haos-isoinstall/releases">Zdrojový kód a vydání</a> ·
       <a href="https://github.com/cronner/haos-isoinstall/blob/main/README.md">Technický manuál</a> ·

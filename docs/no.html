@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Installer Home Assistant på en PC</title>
-<meta name="description" content="Installer Home Assistant på en PC">
+<title>Installer Home Assistant på en pc — steg for steg</title>
+<meta name="description" content="En enkel og nybegynnervennlig guide til å legge Home Assistant på en pc du har til overs, med USB-pinnen som guider deg.">
 <style>
   :root {
     --bg: #fbfcfd;
@@ -32,46 +32,51 @@
     }
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--fg);
-    font: 17.5px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font: 18px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
-  .wrap { max-width: 44rem; margin: 0 auto; padding: 0 1.25rem; }
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.25rem; }
   a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
   a:hover { text-decoration-thickness: 2px; }
 
   header.top { border-bottom: 1px solid var(--line); background: var(--card); }
   header.top .wrap {
-    display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem;
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem;
     align-items: baseline; justify-content: space-between;
-    padding-top: 0.8rem; padding-bottom: 0.8rem;
+    padding-top: 0.85rem; padding-bottom: 0.85rem;
   }
-  header.top .name { font-weight: 650; font-size: 0.95rem; }
-  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.88rem; }
-  ul.langs {
-    list-style: none; display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem;
-    margin: 0; padding: 0; font-size: 0.85rem;
-  }
-  ul.langs a { text-decoration: none; color: var(--muted); }
-  ul.langs a:hover { color: var(--accent); text-decoration: underline; }
-  ul.langs [aria-current="page"] { color: var(--fg); font-weight: 650; }
+  header.top .name { font-weight: 650; font-size: 0.95rem; letter-spacing: -0.01em; }
+  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; }
 
-  .hero { padding: 2.5rem 0 0.5rem; }
-  h1 { font-size: clamp(1.7rem, 4.5vw, 2.3rem); line-height: 1.18; letter-spacing: -0.02em; margin: 0 0 1rem; }
-  .lede { font-size: 1.05rem; margin: 0 0 0.9rem; }
+  ul.langbar {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 0.1rem 0.6rem;
+    margin: 0; padding: 0; font-size: 0.8rem;
+  }
+  ul.langbar a { text-decoration: none; color: var(--muted); }
+  ul.langbar a:hover { color: var(--accent); text-decoration: underline; }
+  ul.langbar [aria-current="page"] { color: var(--fg); font-weight: 650; }
+
+  .hero { padding: 2.75rem 0 0.5rem; }
+  h1 {
+    font-size: clamp(1.8rem, 4.5vw, 2.4rem);
+    line-height: 1.18; letter-spacing: -0.02em; margin: 0 0 1rem;
+  }
+  .lede { font-size: 1.08rem; margin: 0 0 1rem; }
+  .lede strong { font-weight: 650; }
 
   h2 {
-    font-size: 1.25rem; letter-spacing: -0.01em;
-    margin: 2.3rem 0 0.9rem; padding-bottom: 0.5rem;
+    font-size: 1.3rem; letter-spacing: -0.01em;
+    margin: 2.5rem 0 0.9rem; padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--line);
   }
   p { margin: 0 0 1rem; }
 
   .notice {
-    margin: 1.4rem 0 0; padding: 1rem 1.15rem;
+    margin: 1.5rem 0 0; padding: 1rem 1.15rem;
     background: var(--warn-bg); border: 1px solid var(--warn-line);
     border-radius: var(--radius);
   }
@@ -82,29 +87,37 @@
 
   ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
   ol.steps > li {
-    counter-increment: s; position: relative;
-    background: var(--card); border: 1px solid var(--line);
+    counter-increment: s;
+    background: var(--card);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 1rem 1.2rem 1rem 3.4rem; margin: 0 0 0.9rem;
+    padding: 1.1rem 1.25rem 1.1rem 3.6rem;
+    margin: 0 0 1rem;
+    position: relative;
   }
   ol.steps > li::before {
-    content: counter(s); position: absolute; left: 1rem; top: 0.95rem;
-    width: 1.7rem; height: 1.7rem; border-radius: 50%;
+    content: counter(s);
+    position: absolute; left: 1.1rem; top: 1.05rem;
+    width: 1.75rem; height: 1.75rem; border-radius: 50%;
     background: var(--accent-soft); color: var(--accent);
-    font-size: 0.9rem; font-weight: 700; display: grid; place-items: center;
+    font-size: 0.95rem; font-weight: 700;
+    display: grid; place-items: center;
   }
-  ol.steps h3 { font-size: 1rem; margin: 0 0 0.3rem; }
-  ol.steps p { margin: 0; font-size: 0.96rem; }
+  ol.steps h3 { font-size: 1.05rem; margin: 0 0 0.35rem; letter-spacing: -0.01em; }
+  ol.steps p { margin: 0 0 0.5rem; font-size: 0.97rem; }
+  ol.steps p:last-child { margin-bottom: 0; }
+  ol.steps .hint { color: var(--muted); font-size: 0.92rem; margin: 0; }
 
-  dl.faq { margin: 0; }
-  dl.faq dt { font-weight: 650; margin-top: 1rem; }
-  dl.faq dd { margin: 0.2rem 0 0; }
-
-  footer {
-    margin-top: 3rem; border-top: 1px solid var(--line);
-    padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
+  ul.langs {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin: 0 0 1rem; padding: 0;
   }
-  footer p { margin: 0.4rem 0; }
+  ul.langs li {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 0.35rem 0.85rem; font-size: 0.95rem;
+  }
+  ul.langs li:first-child { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
   .btn {
     display: inline-block; margin: 0.35rem 0 0.6rem;
     background: #0a7ea4; color: #fff;
@@ -115,6 +128,23 @@
   @media (prefers-color-scheme: dark) {
     .btn { background: #4cc2e6; color: #10161c; }
   }
+
+  .next {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 1.25rem 1.35rem;
+  }
+  .next ol { margin: 0; padding-left: 1.25rem; }
+  .next ol li { margin: 0.55rem 0; }
+
+  .faq { margin: 0; }
+  .faq dt { font-weight: 650; margin-top: 1.1rem; }
+  .faq dd { margin: 0.25rem 0 0; }
+
+  footer {
+    margin-top: 3.5rem; border-top: 1px solid var(--line);
+    padding: 1.5rem 0 2.5rem; color: var(--muted); font-size: 0.88rem;
+  }
+  footer p { margin: 0.4rem 0; }
 </style>
 </head>
 <body>
@@ -123,12 +153,12 @@
   <div class="wrap">
     <span class="name">haos-isoinstall</span>
     <nav>
-      <a href="#need">Dette trenger du</a>
+      <a href="#need">Det trenger du</a>
       <a href="#steps">Steg for steg</a>
-      <a href="#first">Første oppstart</a>
-      <a href="#problem">Hvis noe krangler</a>
+      <a href="#next">Første oppstart</a>
+      <a href="#help">Hvis det ikke virker</a>
     </nav>
-    <ul class="langs">
+    <ul class="langbar">
       <li><a href="./" hreflang="en">English</a></li>
       <li><a href="da.html" hreflang="da">Dansk</a></li>
       <li><a href="cs.html" hreflang="cs">Čeština</a></li>
@@ -150,79 +180,146 @@
 <main class="wrap">
 
   <div class="hero">
-    <h1>Installer Home Assistant på en PC</h1>
-    <p class="lede">Home Assistant styrer det smarte hjemmet ditt fra en datamaskin i ditt eget hus. Det virker når internettet ikke gjør det, og dataene blir hos deg.</p>
-    <p class="lede">Denne guiden går fra nedlasting til første oppstart. Du trenger ikke kunne noe om Linux, og du skriver ingen kommandoer.</p>
+    <h1>Installer Home Assistant på en pc</h1>
+    <p class="lede">Home Assistant er et gratis program som styrer det smarte hjemmet ditt — lyset, varmen, sensorene — fra en datamaskin i ditt eget hus. Det fortsetter å virke når internettet ikke gjør det, og dataene dine blir hos deg.</p>
+    <p class="lede">Denne siden viser hvordan du legger det på en gammel pc. Du trenger ikke å kunne noe om Linux, og du kommer ikke til å skrive en eneste kommando. Du lager én USB-pinne, pinnen stiller deg noen spørsmål, og så gjør den resten.</p>
 
     <div class="notice">
-      <strong>Datamaskinens disk blir tømt helt.</strong>
-      Alt på den slettes og kan ikke gjenskapes. Bruk en maskin du kan avse — aldri den du bruker til daglig.
+      <strong>Pc-en du bruker blir tømt helt.</strong>
+      Alt på disken slettes og kan ikke hentes tilbake. Bruk en datamaskin du ikke trenger lenger — aldri den du bruker til daglig. Har du noe på den du vil beholde, kopierer du det til en annen disk først.
     </div>
   </div>
 
-  <h2 id="need">Dette trenger du</h2>
+  <h2 id="need">Det trenger du</h2>
   <ul class="need">
-    <li>En maskin du kan avse (Intel eller AMD) som starter i UEFI-modus. Den blir din Home Assistant-maskin.</li>
-    <li>En USB-pinne på 2 GB eller mer.</li>
-    <li>Internett — med mindre du allerede har filen på en pinne.</li>
-    <li>Omtrent en halvtime. Det meste er venting.</li>
+    <li><strong>En pc du kan avse.</strong> Enhver vanlig stasjonær, mini-pc eller bærbar fra de siste ti årene med Intel- eller AMD-prosessor. Den blir slettet og brukt bare til Home Assistant.</li>
+    <li><strong>En USB-pinne</strong> du ikke er redd for å slette, på 2 GB eller mer.</li>
+    <li><strong>En internettforbindelse</strong> — med mindre du allerede har Home Assistant OS-filen på en pinne, for da trenger du ikke nett i det hele tatt. En kabel fra pc-en til ruteren er det enkleste den første dagen; Wi-Fi kan du sette opp senere inne i Home Assistant.</li>
+    <li><strong>Omtrent en halvtime.</strong> Det meste er venting, ikke arbeid.</li>
   </ul>
+  <p class="hint" style="color: var(--muted); font-size: 0.92rem;">
+    Dette gjelder en vanlig pc. En Raspberry Pi eller et annet lite kort bruker en annen fil — se <a href="https://www.home-assistant.io/installation/">den offisielle installasjonssiden</a> for dem.
+  </p>
 
   <h2 id="steps">Steg for steg</h2>
+
   <ol class="steps">
+
     <li>
       <h3>Last ned filen</h3>
-      <p>På releases-siden tar du filen som slutter på .iso (cirka 470 MB). Du velger ingen versjon: pinnen henter den nyeste selv.</p>
+      <p>Det er én enkelt fil på cirka 490 MB. Du trenger ikke velge versjon: pinnen henter den nyeste Home Assistant selv når den installerer.</p>
       <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Last ned ISO-filen</a></p>
+      <p class="hint">På releases-siden laster du ned filen som slutter på <strong>.iso</strong>. Den andre filen ved siden av kan du se bort fra.</p>
     </li>
+
     <li>
       <h3>Skriv den til USB-pinnen</h3>
-      <p>Bruk Etcher: velg filen, velg pinnen, trykk Flash. Ikke dra filen over på pinnen som et bilde.</p>
+      <p>Sett pinnen i den vanlige datamaskinen din, og bruk det gratis programmet <a href="https://etcher.balena.io/">Etcher</a>. Åpne det, velg filen du nettopp lastet ned, velg pinnen, og trykk <strong>Flash</strong>.</p>
+      <p class="hint">Ikke dra filen over på pinnen som om det var et bilde. En pinne laget slik starter ikke datamaskinen.</p>
     </li>
+
     <li>
-      <h3>Endre to innstillinger</h3>
-      <p>Trykk F2 eller Del ved oppstart. Slå av Secure Boot og sett SATA-modus til AHCI. Lagre og avslutt.</p>
+      <h3>Endre to innstillinger på pc-en</h3>
+      <p>Start pc-en på nytt, og trykk <strong>F2</strong> (eller <strong>Del</strong>) mens den starter. Det kommer opp en innstillingsskjerm — den produsenten kaller BIOS eller Setup.</p>
+      <p>Finn <strong>Secure Boot</strong>, og slå det <strong>av</strong>. Finn så <strong>SATA-modus</strong> (den kan hete Storage eller SATA-konfigurasjon), og sett den til <strong>AHCI</strong>. Lagre, og avslutt.</p>
+      <p class="hint">Du trenger ikke bry deg om de andre innstillingene. Det er disse to som betyr noe, og du kan ikke ødelegge noe ved å se deg rundt.</p>
     </li>
+
     <li>
-      <h3>Start fra pinnen</h3>
-      <p>La pinnen sitte og slå på maskinen. Starter den sitt gamle system, trykk F12 og velg USB-pinnen.</p>
+      <h3>Start pc-en fra pinnen</h3>
+      <p>La pinnen stå i, og slå pc-en på. Starter den det gamle systemet i stedet, starter du på nytt og trykker <strong>F12</strong> eller <strong>F10</strong> mens den booter, og velger USB-pinnen fra listen.</p>
     </li>
+
     <li>
       <h3>Svar på spørsmålene</h3>
-      <p>Språk (14 mulige, tastaturet følger med), hvor filen skal komme fra, nettverket og hvilken disk som kan slettes — skriv YES.</p>
+      <p>Pinnen starter en liten meny. Velg språket ditt — riktig tastatur blir valgt for deg. Så spør den hvor Home Assistant skal komme fra: den kan hente den nyeste versjonen for deg, eller bruke en fil du allerede har på en pinne (den veien trenger ikke internett i det hele tatt). Etter det spør den hvordan pc-en er koblet til, og til slutt hvilken disk den skal installeres på.</p>
+      <p class="hint">Ingenting blir skrevet til en disk før du bekrefter. Les disklisten nøye: det er den disken som blir slettet.</p>
     </li>
+
     <li>
       <h3>Vent, og ta ut pinnen</h3>
-      <p>Den henter og sjekker filen, skriver den, og tilbyr til slutt å lese disken tilbake og sammenligne. Si ja. Ta ut pinnen når den sier at den er ferdig.</p>
+      <p>Installasjonen henter Home Assistant, sjekker nedlastingen og skriver den til disken. Den viser deg hva den gjør. Det tar mellom fem og tjue minutter, avhengig av internettet ditt.</p>
+      <p>Til slutt spør den om den skal sjekke at alt ble skrevet riktig. <strong>Si ja.</strong> Den leser disken tilbake og sammenligner med det den nettopp skrev. Det tar ett til tre minutter, og det er slik en slitt disk eller en løs kabel blir oppdaget nå — i stedet for som en datamaskin som starter til en svart skjerm.</p>
+      <p>Når den sier at den er ferdig, tar du ut USB-pinnen og lar pc-en starte på nytt.</p>
     </li>
+
   </ol>
 
-  <h2 id="first">Første oppstart</h2>
-  <ul class="need">
-    <li>Koble maskinen til ruteren med en kabel, og slå den på.</li>
-    <li>Åpne http://homeassistant.local — «Preparing Home Assistant» kan ta tjue minutter.</li>
-    <li>Lag kontoen din, og skriv ned passordet: det kan ikke gjenopprettes.</li>
+  <h2 id="languages">Språkene du kan velge</h2>
+  <p>Menyen og meldingene finnes på de fjorten språkene som brukes i landene med flest Home Assistant-installasjoner. Når du velger ett av dem, blir tastaturet satt opp samtidig:</p>
+  <ul class="langs">
+    <li>Engelsk</li>
+    <li>Dansk</li>
+    <li>Tsjekkisk</li>
+    <li>Nederlandsk</li>
+    <li>Finsk</li>
+    <li>Fransk</li>
+    <li>Tysk</li>
+    <li>Italiensk</li>
+    <li>Norsk</li>
+    <li>Polsk</li>
+    <li>Portugisisk</li>
+    <li>Russisk</li>
+    <li>Spansk</li>
+    <li>Svensk</li>
   </ul>
+  <p class="hint" style="color: var(--muted); font-size: 0.92rem;">
+    Bruker du et tastatur fra et annet land — et britisk, for eksempel? Den siste linjen i språkmenyen setter tastaturet alene, uten å bytte språk.
+  </p>
 
-  <h2 id="problem">Hvis noe krangler</h2>
+  <h2 id="next">Første oppstart av Home Assistant</h2>
+
+  <div class="next">
+    <ol>
+      <li>
+        Koble pc-en til ruteren med en kabel, og slå den på.
+      </li>
+      <li>
+        På telefonen eller den vanlige datamaskinen din — koblet til samme nett — åpner du <a href="http://homeassistant.local/">http://homeassistant.local</a> i en nettleser.
+      </li>
+      <li>
+        Du ser <strong>Preparing Home Assistant</strong>. Det kan ta tjue minutter eller mer. Den har ikke frosset; la den stå og kom tilbake.
+      </li>
+      <li>
+        Når velkomstskjermen kommer, velger du å opprette ditt smarte hjem og fyller inn et navn, et brukernavn og et passord. Skriv ned passordet på et trygt sted: det kan ikke gjenopprettes.
+      </li>
+      <li>
+        Sett hvor hjemmet ditt er, fullfør, og du er inne. Derfra legger du til enhetene dine under <strong>Innstillinger</strong>.
+      </li>
+    </ol>
+  </div>
+
+  <h2 id="help">Hvis det ikke virker</h2>
   <dl class="faq">
-    <dt>Maskinen starter sitt gamle system</dt>
-    <dd>Start på nytt, trykk F12 og velg pinnen. Står den ikke i listen, skriv den på nytt med Etcher.</dd>
-    <dt>Skjermen er svart</dt>
-    <dd>Sjekk i innstillingene at Secure Boot er slått av, la pinnen sitte og prøv igjen.</dd>
-    <dt>Den finner ingen disk</dt>
-    <dd>Lagringen er trolig satt til RAID i stedet for AHCI. Endre det og start på nytt.</dd>
-    <dt>Adressen åpner ikke</dt>
-    <dd>Prøv http://homeassistant.local:8123, eller maskinens adresse fra ruteren med :8123.</dd>
+    <dt>Pc-en starter det gamle systemet i stedet for pinnen</dt>
+    <dd>Start på nytt, og trykk F12 eller F10 mens den booter, og velg så USB-pinnen. Står pinnen ikke på listen, skriver du den på nytt med Etcher — filen må skrives av et program, ikke kopieres.</dd>
+
+    <dt>Skjermen blir stående svart etter at pc-en starter</dt>
+    <dd>Gå inn i innstillingene igjen (steg 3), og sjekk at Secure Boot er slått av. La pinnen stå i, og prøv igjen.</dd>
+
+    <dt>Den sier at disken ikke stemmer med det den skrev</dt>
+    <dd>Da er det noe galt med disken, kabelen eller minnet — ikke med nedlastingen. Ikke start pc-en fra den disken. Kjør installasjonen på nytt, og sier den det samme, bruker du en annen disk.</dd>
+
+    <dt>Installasjonen sier at den ikke finner noen disk</dt>
+    <dd>Lagringen på pc-en er sannsynligvis satt til RAID i stedet for AHCI. Endre den innstillingen, og start pinnen igjen.</dd>
+
+    <dt>Adressen åpner seg ikke i nettleseren</dt>
+    <dd>Noen rutere blokkerer navnet. Prøv først <code>http://homeassistant.local:8123</code>, og virker ikke det heller, finner du pc-ens adresse i ruterens liste over tilkoblede enheter og åpner <code>http://den-adressen:8123</code>.</dd>
+
+    <dt>Det har stått "Preparing Home Assistant" lenge</dt>
+    <dd>Det er normalt på en treg forbindelse eller en gammel disk. Den laster ned Home Assistant. Gi den en halvtime.</dd>
+
+    <dt>Det er noe galt med Home Assistant selv</dt>
+    <dd>Spør i <a href="https://community.home-assistant.io/">Home Assistant-fellesskapet</a>. Denne installasjonen legger bare programmet på disken.</dd>
   </dl>
 
 </main>
 
 <footer>
   <div class="wrap">
-    <p>Uoffisielt prosjekt, uten tilknytning til Open Home Foundation, Nabu Casa eller Home Assistant-prosjektet. Skrevet med AI-hjelp, MIT-lisens, ingen garanti og ingen støtte.</p>
+    <p><strong>haos-isoinstall</strong> er et uoffisielt prosjekt uten tilknytning til Open Home Foundation, Nabu Casa eller Home Assistant-prosjektet. Det er skrevet med AI-hjelp og sjekket av automatiske tester, ikke av et supportteam. MIT-lisens, ingen garanti og ingen support.</p>
     <p>
-      <a href="https://github.com/cronner/haos-isoinstall/releases">Kildekode og utgivelser</a> ·
+      <a href="https://github.com/cronner/haos-isoinstall/releases">Kilde og utgivelser</a> ·
       <a href="https://github.com/cronner/haos-isoinstall/blob/main/README.md">Teknisk manual</a> ·
       <a href="https://www.home-assistant.io/">Home Assistant</a>
     </p>

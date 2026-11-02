@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Zainstaluj Home Assistant na komputerze</title>
-<meta name="description" content="Zainstaluj Home Assistant na komputerze">
+<title>Home Assistant na komputerze — krok po kroku</title>
+<meta name="description" content="Prosty poradnik dla początkujących: jak wgrać Home Assistant na zapasowy komputer za pomocą pendrive'a, który prowadzi za rękę.">
 <style>
   :root {
     --bg: #fbfcfd;
@@ -32,46 +32,51 @@
     }
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--fg);
-    font: 17.5px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font: 18px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
-  .wrap { max-width: 44rem; margin: 0 auto; padding: 0 1.25rem; }
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.25rem; }
   a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
   a:hover { text-decoration-thickness: 2px; }
 
   header.top { border-bottom: 1px solid var(--line); background: var(--card); }
   header.top .wrap {
-    display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem;
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem;
     align-items: baseline; justify-content: space-between;
-    padding-top: 0.8rem; padding-bottom: 0.8rem;
+    padding-top: 0.85rem; padding-bottom: 0.85rem;
   }
-  header.top .name { font-weight: 650; font-size: 0.95rem; }
-  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.88rem; }
-  ul.langs {
-    list-style: none; display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem;
-    margin: 0; padding: 0; font-size: 0.85rem;
-  }
-  ul.langs a { text-decoration: none; color: var(--muted); }
-  ul.langs a:hover { color: var(--accent); text-decoration: underline; }
-  ul.langs [aria-current="page"] { color: var(--fg); font-weight: 650; }
+  header.top .name { font-weight: 650; font-size: 0.95rem; letter-spacing: -0.01em; }
+  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; }
 
-  .hero { padding: 2.5rem 0 0.5rem; }
-  h1 { font-size: clamp(1.7rem, 4.5vw, 2.3rem); line-height: 1.18; letter-spacing: -0.02em; margin: 0 0 1rem; }
-  .lede { font-size: 1.05rem; margin: 0 0 0.9rem; }
+  ul.langbar {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 0.1rem 0.6rem;
+    margin: 0; padding: 0; font-size: 0.8rem;
+  }
+  ul.langbar a { text-decoration: none; color: var(--muted); }
+  ul.langbar a:hover { color: var(--accent); text-decoration: underline; }
+  ul.langbar [aria-current="page"] { color: var(--fg); font-weight: 650; }
+
+  .hero { padding: 2.75rem 0 0.5rem; }
+  h1 {
+    font-size: clamp(1.8rem, 4.5vw, 2.4rem);
+    line-height: 1.18; letter-spacing: -0.02em; margin: 0 0 1rem;
+  }
+  .lede { font-size: 1.08rem; margin: 0 0 1rem; }
+  .lede strong { font-weight: 650; }
 
   h2 {
-    font-size: 1.25rem; letter-spacing: -0.01em;
-    margin: 2.3rem 0 0.9rem; padding-bottom: 0.5rem;
+    font-size: 1.3rem; letter-spacing: -0.01em;
+    margin: 2.5rem 0 0.9rem; padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--line);
   }
   p { margin: 0 0 1rem; }
 
   .notice {
-    margin: 1.4rem 0 0; padding: 1rem 1.15rem;
+    margin: 1.5rem 0 0; padding: 1rem 1.15rem;
     background: var(--warn-bg); border: 1px solid var(--warn-line);
     border-radius: var(--radius);
   }
@@ -82,29 +87,37 @@
 
   ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
   ol.steps > li {
-    counter-increment: s; position: relative;
-    background: var(--card); border: 1px solid var(--line);
+    counter-increment: s;
+    background: var(--card);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 1rem 1.2rem 1rem 3.4rem; margin: 0 0 0.9rem;
+    padding: 1.1rem 1.25rem 1.1rem 3.6rem;
+    margin: 0 0 1rem;
+    position: relative;
   }
   ol.steps > li::before {
-    content: counter(s); position: absolute; left: 1rem; top: 0.95rem;
-    width: 1.7rem; height: 1.7rem; border-radius: 50%;
+    content: counter(s);
+    position: absolute; left: 1.1rem; top: 1.05rem;
+    width: 1.75rem; height: 1.75rem; border-radius: 50%;
     background: var(--accent-soft); color: var(--accent);
-    font-size: 0.9rem; font-weight: 700; display: grid; place-items: center;
+    font-size: 0.95rem; font-weight: 700;
+    display: grid; place-items: center;
   }
-  ol.steps h3 { font-size: 1rem; margin: 0 0 0.3rem; }
-  ol.steps p { margin: 0; font-size: 0.96rem; }
+  ol.steps h3 { font-size: 1.05rem; margin: 0 0 0.35rem; letter-spacing: -0.01em; }
+  ol.steps p { margin: 0 0 0.5rem; font-size: 0.97rem; }
+  ol.steps p:last-child { margin-bottom: 0; }
+  ol.steps .hint { color: var(--muted); font-size: 0.92rem; margin: 0; }
 
-  dl.faq { margin: 0; }
-  dl.faq dt { font-weight: 650; margin-top: 1rem; }
-  dl.faq dd { margin: 0.2rem 0 0; }
-
-  footer {
-    margin-top: 3rem; border-top: 1px solid var(--line);
-    padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
+  ul.langs {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin: 0 0 1rem; padding: 0;
   }
-  footer p { margin: 0.4rem 0; }
+  ul.langs li {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 0.35rem 0.85rem; font-size: 0.95rem;
+  }
+  ul.langs li:first-child { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
   .btn {
     display: inline-block; margin: 0.35rem 0 0.6rem;
     background: #0a7ea4; color: #fff;
@@ -115,6 +128,23 @@
   @media (prefers-color-scheme: dark) {
     .btn { background: #4cc2e6; color: #10161c; }
   }
+
+  .next {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 1.25rem 1.35rem;
+  }
+  .next ol { margin: 0; padding-left: 1.25rem; }
+  .next ol li { margin: 0.55rem 0; }
+
+  .faq { margin: 0; }
+  .faq dt { font-weight: 650; margin-top: 1.1rem; }
+  .faq dd { margin: 0.25rem 0 0; }
+
+  footer {
+    margin-top: 3.5rem; border-top: 1px solid var(--line);
+    padding: 1.5rem 0 2.5rem; color: var(--muted); font-size: 0.88rem;
+  }
+  footer p { margin: 0.4rem 0; }
 </style>
 </head>
 <body>
@@ -124,11 +154,11 @@
     <span class="name">haos-isoinstall</span>
     <nav>
       <a href="#need">Czego potrzebujesz</a>
-      <a href="#steps">Krok po kroku</a>
-      <a href="#first">Pierwsze uruchomienie</a>
-      <a href="#problem">Jeśli coś nie działa</a>
+      <a href="#steps">Kroki</a>
+      <a href="#next">Pierwsze uruchomienie</a>
+      <a href="#help">Jeśli nie działa</a>
     </nav>
-    <ul class="langs">
+    <ul class="langbar">
       <li><a href="./" hreflang="en">English</a></li>
       <li><a href="da.html" hreflang="da">Dansk</a></li>
       <li><a href="cs.html" hreflang="cs">Čeština</a></li>
@@ -151,76 +181,143 @@
 
   <div class="hero">
     <h1>Zainstaluj Home Assistant na komputerze</h1>
-    <p class="lede">Home Assistant steruje inteligentnym domem z komputera w twoim własnym domu. Działa, gdy internet nie działa, a twoje dane zostają u ciebie.</p>
-    <p class="lede">Ten przewodnik prowadzi od pobrania do pierwszego uruchomienia. Nie musisz znać Linuxa ani wpisywać żadnych poleceń.</p>
+    <p class="lede">Home Assistant to darmowy program, który steruje twoim inteligentnym domem — światłem, ogrzewaniem, czujnikami — z komputera w twoim własnym domu. Działa dalej, gdy nie ma internetu, a twoje dane zostają u ciebie.</p>
+    <p class="lede">Ta strona pokazuje, jak wgrać go na stary komputer. Nie musisz znać Linuksa i nie wpiszesz ani jednego polecenia. Przygotowujesz jeden pendrive, pendrive zadaje ci kilka pytań i resztę robi sam.</p>
 
     <div class="notice">
-      <strong>Dysk komputera zostanie całkowicie wyczyszczony.</strong>
-      Wszystko na nim przepada i nie da się tego odzyskać. Użyj komputera, którego możesz się pozbyć — nigdy swojego codziennego.
+      <strong>Komputer, którego użyjesz, zostanie całkowicie wyczyszczony.</strong>
+      Wszystko na jego dysku zostanie usunięte i nie da się tego odzyskać. Użyj komputera, którego już nie potrzebujesz — nigdy swojego codziennego. Jeśli masz na nim coś, co chcesz zachować, skopiuj to najpierw na inny dysk.
     </div>
   </div>
 
   <h2 id="need">Czego potrzebujesz</h2>
   <ul class="need">
-    <li>Komputera, którego możesz się pozbyć (Intel lub AMD), startującego w trybie UEFI. Zostanie twoją maszyną Home Assistant.</li>
-    <li>Pendrive'a 2 GB lub większego.</li>
-    <li>Internetu — chyba że plik masz już na pendrive.</li>
-    <li>Około pół godziny. Większość to czekanie.</li>
+    <li><strong>Zapasowy komputer.</strong> Dowolny zwykły desktop, mini PC lub laptop z ostatnich dziesięciu lat z procesorem Intel lub AMD. Zostanie wyczyszczony i będzie służył tylko do Home Assistant.</li>
+    <li><strong>Pendrive</strong>, którego nie żal ci wyczyścić, 2 GB lub więcej.</li>
+    <li><strong>Połączenie z internetem</strong> — chyba że masz już obraz Home Assistant OS na pendrive'ie; wtedy internet nie jest potrzebny w ogóle. Kabel od komputera do routera jest najprostszy pierwszego dnia; Wi-Fi ustawisz później w samym Home Assistant.</li>
+    <li><strong>Około pół godziny.</strong> Najwięcej czasu zajmuje czekanie, nie praca.</li>
   </ul>
+  <p class="hint" style="color: var(--muted); font-size: 0.92rem;">
+    To dotyczy zwykłego komputera. Raspberry Pi i inne małe płytki używają innego pliku — zobacz <a href="https://www.home-assistant.io/installation/">oficjalną stronę instalacji</a>.
+  </p>
 
-  <h2 id="steps">Krok po kroku</h2>
+  <h2 id="steps">Kroki</h2>
+
   <ol class="steps">
+
     <li>
       <h3>Pobierz plik</h3>
-      <p>Na stronie wydań weź plik kończący się na .iso (około 470 MB). Nie wybierasz wersji: pendrive sam pobierze najnowszą.</p>
+      <p>To jeden plik o rozmiarze około 490 MB. Nie musisz wybierać wersji: pendrive sam pobierze najnowszą wersję Home Assistant podczas instalacji.</p>
       <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Pobierz plik ISO</a></p>
+      <p class="hint">Na stronie releases pobierz plik kończący się na <strong>.iso</strong>. Drugi plik obok możesz zignorować.</p>
     </li>
+
     <li>
       <h3>Zapisz go na pendrive</h3>
-      <p>Użyj Etchera: wybierz plik, wybierz pendrive, naciśnij Flash. Nie przeciągaj pliku na pendrive jak zdjęcia.</p>
+      <p>Podłącz pendrive do swojego zwykłego komputera i użyj darmowego programu <a href="https://etcher.balena.io/">Etcher</a>. Otwórz go, wybierz plik, który właśnie pobrałeś, wybierz pendrive i kliknij <strong>Flash</strong>.</p>
+      <p class="hint">Nie przeciągaj pliku na pendrive jak zdjęcia. Pendrive przygotowany w ten sposób nie uruchomi komputera.</p>
     </li>
+
     <li>
-      <h3>Zmień dwa ustawienia</h3>
-      <p>Przy starcie naciśnij F2 lub Del. Wyłącz Secure Boot i ustaw tryb SATA na AHCI. Zapisz i wyjdź.</p>
+      <h3>Zmień dwa ustawienia w komputerze</h3>
+      <p>Uruchom komputer ponownie i naciśnij <strong>F2</strong> (lub <strong>Del</strong>), gdy się włącza. Pojawi się ekran ustawień — ten, który producent nazywa BIOS lub Setup.</p>
+      <p>Znajdź <strong>Secure Boot</strong> i wyłącz go. Potem znajdź <strong>tryb SATA</strong> (może nazywać się Storage lub konfiguracja SATA) i ustaw go na <strong>AHCI</strong>. Zapisz i wyjdź.</p>
+      <p class="hint">Nie przejmuj się pozostałymi ustawieniami. Znaczenie mają tylko te dwa, a samo patrzenie niczego nie psuje.</p>
     </li>
+
     <li>
-      <h3>Uruchom z pendrive</h3>
-      <p>Zostaw pendrive i włącz komputer. Jeśli uruchomi stary system, naciśnij F12 i wybierz pendrive.</p>
+      <h3>Uruchom komputer z pendrive'a</h3>
+      <p>Zostaw pendrive w porcie i włącz komputer. Jeśli uruchomi swój stary system, zrestartuj go i naciśnij <strong>F12</strong> lub <strong>F10</strong> podczas startu, a potem wybierz pendrive z listy.</p>
     </li>
+
     <li>
       <h3>Odpowiedz na pytania</h3>
-      <p>Język (14 możliwości, klawiatura sama się ustawi), skąd ma pochodzić plik, sieć i który dysk można usunąć — wpisz YES.</p>
+      <p>Pendrive uruchamia małe menu. Wybierz język — właściwa klawiatura ustawi się sama. Potem pyta, skąd ma wziąć Home Assistant: może pobrać najnowszą wersję albo użyć pliku, który masz już na pendrive'ie (ta droga nie wymaga internetu). Następnie pyta, jak komputer jest podłączony, a na końcu na którym dysku zainstalować.</p>
+      <p class="hint">Niczego nie zapisuje się na dysku, dopóki nie potwierdzisz. Przeczytaj uważnie listę dysków: to ten dysk zostanie wyczyszczony.</p>
     </li>
+
     <li>
       <h3>Poczekaj i wyjmij pendrive</h3>
-      <p>Pobiera i sprawdza plik, zapisuje go, a na końcu proponuje odczytać dysk i porównać. Powiedz tak. Wyjmij pendrive, gdy zgłosi, że skończył.</p>
+      <p>Instalacja pobiera Home Assistant, sprawdza pobranie i zapisuje go na dysku. Pokazuje, co robi. Trwa to od pięciu do dwudziestu minut, w zależności od internetu.</p>
+      <p>Na końcu pyta, czy sprawdzić, czy wszystko zostało zapisane poprawnie. <strong>Powiedz tak.</strong> Odczytuje dysk i porównuje go z tym, co właśnie zapisał. Trwa to od jednej do trzech minut i właśnie tak zużyty dysk albo luźny kabel wychodzi na jaw teraz — a nie jako komputer, który uruchamia się do czarnego ekranu.</p>
+      <p>Kiedy powie, że skończył, wyjmij pendrive i pozwól komputerowi się zrestartować.</p>
     </li>
+
   </ol>
 
-  <h2 id="first">Pierwsze uruchomienie</h2>
-  <ul class="need">
-    <li>Podłącz komputer kablem do routera i włącz go.</li>
-    <li>Otwórz http://homeassistant.local — „Preparing Home Assistant” może potrwać dwadzieścia minut.</li>
-    <li>Załóż konto i zapisz hasło: nie da się go odzyskać.</li>
+  <h2 id="languages">Języki do wyboru</h2>
+  <p>Menu i jego komunikaty są dostępne w czternastu językach krajów, w których Home Assistant jest najczęściej instalowany. Gdy wybierzesz jeden, klawiatura ustawi się jednocześnie:</p>
+  <ul class="langs">
+    <li>Angielski</li>
+    <li>Duński</li>
+    <li>Czeski</li>
+    <li>Niderlandzki</li>
+    <li>Fiński</li>
+    <li>Francuski</li>
+    <li>Niemiecki</li>
+    <li>Włoski</li>
+    <li>Norweski</li>
+    <li>Polski</li>
+    <li>Portugalski</li>
+    <li>Rosyjski</li>
+    <li>Hiszpański</li>
+    <li>Szwedzki</li>
   </ul>
+  <p class="hint" style="color: var(--muted); font-size: 0.92rem;">
+    Używasz klawiatury z innego kraju — na przykład brytyjskiej? Ostatnia linia menu języków ustawia samą klawiaturę, bez zmiany języka.
+  </p>
 
-  <h2 id="problem">Jeśli coś nie działa</h2>
+  <h2 id="next">Pierwsze uruchomienie Home Assistant</h2>
+
+  <div class="next">
+    <ol>
+      <li>
+        Podłącz komputer kablem do routera i włącz go.
+      </li>
+      <li>
+        Na telefonie albo zwykłym komputerze — w tej samej sieci — otwórz <a href="http://homeassistant.local/">http://homeassistant.local</a> w przeglądarce.
+      </li>
+      <li>
+        Zobaczysz <strong>Preparing Home Assistant</strong>. Może to potrwać dwadzieścia minut lub dłużej. To nie zawieszenie; zostaw go i wróć później.
+      </li>
+      <li>
+        Gdy pojawi się ekran powitalny, wybierz utworzenie swojego inteligentnego domu i podaj nazwę, nazwę użytkownika i hasło. Zapisz hasło w bezpiecznym miejscu: nie da się go odzyskać.
+      </li>
+      <li>
+        Wskaż, gdzie znajduje się twój dom, zakończ — i już jesteś w środku. Od tego miejsca dodajesz urządzenia w <strong>Ustawieniach</strong>.
+      </li>
+    </ol>
+  </div>
+
+  <h2 id="help">Jeśli nie działa</h2>
   <dl class="faq">
-    <dt>Komputer uruchamia stary system</dt>
-    <dd>Zrestartuj, naciśnij F12 i wybierz pendrive. Jeśli go nie ma na liście, zapisz go ponownie Etcherem.</dd>
-    <dt>Ekran pozostaje czarny</dt>
-    <dd>Sprawdź w ustawieniach, czy Secure Boot jest wyłączony, zostaw pendrive i spróbuj ponownie.</dd>
-    <dt>Nie znajduje żadnego dysku</dt>
-    <dd>Dysk jest prawdopodobnie w trybie RAID zamiast AHCI. Zmień to i zacznij od nowa.</dd>
-    <dt>Adres się nie otwiera</dt>
-    <dd>Spróbuj http://homeassistant.local:8123 albo adresu komputera z routera z :8123.</dd>
+    <dt>Komputer uruchamia stary system zamiast pendrive'a</dt>
+    <dd>Zrestartuj go i naciśnij F12 lub F10 podczas startu, a potem wybierz pendrive. Jeśli nie ma go na liście, zapisz go ponownie w Etcherze — plik musi zostać zapisany przez program, a nie skopiowany.</dd>
+
+    <dt>Ekran pozostaje czarny po włączeniu komputera</dt>
+    <dd>Wróć do ekranu ustawień (krok 3) i sprawdź, czy Secure Boot jest wyłączony. Zostaw pendrive w porcie i spróbuj jeszcze raz.</dd>
+
+    <dt>Instalacja mówi, że dysk nie zgadza się z tym, co zapisała</dt>
+    <dd>Wtedy coś jest nie tak z dyskiem, jego kablem albo pamięcią — nie z pobranym plikiem. Nie uruchamiaj komputera z tego dysku. Powtórz instalację, a jeśli powie to samo, użyj innego dysku.</dd>
+
+    <dt>Instalacja nie znajduje żadnego dysku</dt>
+    <dd>Pamięć komputera jest prawdopodobnie ustawiona na RAID zamiast AHCI. Zmień to ustawienie i uruchom pendrive jeszcze raz.</dd>
+
+    <dt>Adres nie otwiera się w przeglądarce</dt>
+    <dd>Niektóre routery blokują tę nazwę. Spróbuj najpierw <code>http://homeassistant.local:8123</code>, a jeśli to też nie działa, znajdź adres komputera na liście podłączonych urządzeń routera i otwórz <code>http://ten-adres:8123</code>.</dd>
+
+    <dt>Od dawna widnieje "Preparing Home Assistant"</dt>
+    <dd>To normalne przy wolnym łączu albo starym dysku. Pobiera Home Assistant. Daj mu pół godziny.</dd>
+
+    <dt>Coś nie działa w samym Home Assistant</dt>
+    <dd>Zapytaj na <a href="https://community.home-assistant.io/">społeczności Home Assistant</a>. Ten instalator tylko wgrywa program na dysk.</dd>
   </dl>
 
 </main>
 
 <footer>
   <div class="wrap">
-    <p>Projekt nieoficjalny, niezwiązany z Open Home Foundation, Nabu Casa ani projektem Home Assistant. Napisany z pomocą AI, licencja MIT, bez gwarancji i wsparcia.</p>
+    <p><strong>haos-isoinstall</strong> to nieoficjalny projekt, niezwiązany z Open Home Foundation, Nabu Casa ani z projektem Home Assistant. Powstał z pomocą AI i został sprawdzony przez automatyczne testy, a nie przez zespół wsparcia. Licencja MIT, bez gwarancji i bez wsparcia.</p>
     <p>
       <a href="https://github.com/cronner/haos-isoinstall/releases">Kod i wydania</a> ·
       <a href="https://github.com/cronner/haos-isoinstall/blob/main/README.md">Instrukcja techniczna</a> ·

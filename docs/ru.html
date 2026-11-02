@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Установка Home Assistant на ПК</title>
-<meta name="description" content="Установка Home Assistant на ПК">
+<title>Установка Home Assistant на компьютер — шаг за шагом</title>
+<meta name="description" content="Простое руководство для начинающих: как поставить Home Assistant на свободный компьютер с помощью USB-флешки, которая ведёт вас за руку.">
 <style>
   :root {
     --bg: #fbfcfd;
@@ -32,46 +32,51 @@
     }
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--fg);
-    font: 17.5px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font: 18px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
-  .wrap { max-width: 44rem; margin: 0 auto; padding: 0 1.25rem; }
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.25rem; }
   a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
   a:hover { text-decoration-thickness: 2px; }
 
   header.top { border-bottom: 1px solid var(--line); background: var(--card); }
   header.top .wrap {
-    display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem;
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem;
     align-items: baseline; justify-content: space-between;
-    padding-top: 0.8rem; padding-bottom: 0.8rem;
+    padding-top: 0.85rem; padding-bottom: 0.85rem;
   }
-  header.top .name { font-weight: 650; font-size: 0.95rem; }
-  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.88rem; }
-  ul.langs {
-    list-style: none; display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem;
-    margin: 0; padding: 0; font-size: 0.85rem;
-  }
-  ul.langs a { text-decoration: none; color: var(--muted); }
-  ul.langs a:hover { color: var(--accent); text-decoration: underline; }
-  ul.langs [aria-current="page"] { color: var(--fg); font-weight: 650; }
+  header.top .name { font-weight: 650; font-size: 0.95rem; letter-spacing: -0.01em; }
+  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; }
 
-  .hero { padding: 2.5rem 0 0.5rem; }
-  h1 { font-size: clamp(1.7rem, 4.5vw, 2.3rem); line-height: 1.18; letter-spacing: -0.02em; margin: 0 0 1rem; }
-  .lede { font-size: 1.05rem; margin: 0 0 0.9rem; }
+  ul.langbar {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 0.1rem 0.6rem;
+    margin: 0; padding: 0; font-size: 0.8rem;
+  }
+  ul.langbar a { text-decoration: none; color: var(--muted); }
+  ul.langbar a:hover { color: var(--accent); text-decoration: underline; }
+  ul.langbar [aria-current="page"] { color: var(--fg); font-weight: 650; }
+
+  .hero { padding: 2.75rem 0 0.5rem; }
+  h1 {
+    font-size: clamp(1.8rem, 4.5vw, 2.4rem);
+    line-height: 1.18; letter-spacing: -0.02em; margin: 0 0 1rem;
+  }
+  .lede { font-size: 1.08rem; margin: 0 0 1rem; }
+  .lede strong { font-weight: 650; }
 
   h2 {
-    font-size: 1.25rem; letter-spacing: -0.01em;
-    margin: 2.3rem 0 0.9rem; padding-bottom: 0.5rem;
+    font-size: 1.3rem; letter-spacing: -0.01em;
+    margin: 2.5rem 0 0.9rem; padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--line);
   }
   p { margin: 0 0 1rem; }
 
   .notice {
-    margin: 1.4rem 0 0; padding: 1rem 1.15rem;
+    margin: 1.5rem 0 0; padding: 1rem 1.15rem;
     background: var(--warn-bg); border: 1px solid var(--warn-line);
     border-radius: var(--radius);
   }
@@ -82,29 +87,37 @@
 
   ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
   ol.steps > li {
-    counter-increment: s; position: relative;
-    background: var(--card); border: 1px solid var(--line);
+    counter-increment: s;
+    background: var(--card);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 1rem 1.2rem 1rem 3.4rem; margin: 0 0 0.9rem;
+    padding: 1.1rem 1.25rem 1.1rem 3.6rem;
+    margin: 0 0 1rem;
+    position: relative;
   }
   ol.steps > li::before {
-    content: counter(s); position: absolute; left: 1rem; top: 0.95rem;
-    width: 1.7rem; height: 1.7rem; border-radius: 50%;
+    content: counter(s);
+    position: absolute; left: 1.1rem; top: 1.05rem;
+    width: 1.75rem; height: 1.75rem; border-radius: 50%;
     background: var(--accent-soft); color: var(--accent);
-    font-size: 0.9rem; font-weight: 700; display: grid; place-items: center;
+    font-size: 0.95rem; font-weight: 700;
+    display: grid; place-items: center;
   }
-  ol.steps h3 { font-size: 1rem; margin: 0 0 0.3rem; }
-  ol.steps p { margin: 0; font-size: 0.96rem; }
+  ol.steps h3 { font-size: 1.05rem; margin: 0 0 0.35rem; letter-spacing: -0.01em; }
+  ol.steps p { margin: 0 0 0.5rem; font-size: 0.97rem; }
+  ol.steps p:last-child { margin-bottom: 0; }
+  ol.steps .hint { color: var(--muted); font-size: 0.92rem; margin: 0; }
 
-  dl.faq { margin: 0; }
-  dl.faq dt { font-weight: 650; margin-top: 1rem; }
-  dl.faq dd { margin: 0.2rem 0 0; }
-
-  footer {
-    margin-top: 3rem; border-top: 1px solid var(--line);
-    padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
+  ul.langs {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin: 0 0 1rem; padding: 0;
   }
-  footer p { margin: 0.4rem 0; }
+  ul.langs li {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 0.35rem 0.85rem; font-size: 0.95rem;
+  }
+  ul.langs li:first-child { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
   .btn {
     display: inline-block; margin: 0.35rem 0 0.6rem;
     background: #0a7ea4; color: #fff;
@@ -115,6 +128,23 @@
   @media (prefers-color-scheme: dark) {
     .btn { background: #4cc2e6; color: #10161c; }
   }
+
+  .next {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 1.25rem 1.35rem;
+  }
+  .next ol { margin: 0; padding-left: 1.25rem; }
+  .next ol li { margin: 0.55rem 0; }
+
+  .faq { margin: 0; }
+  .faq dt { font-weight: 650; margin-top: 1.1rem; }
+  .faq dd { margin: 0.25rem 0 0; }
+
+  footer {
+    margin-top: 3.5rem; border-top: 1px solid var(--line);
+    padding: 1.5rem 0 2.5rem; color: var(--muted); font-size: 0.88rem;
+  }
+  footer p { margin: 0.4rem 0; }
 </style>
 </head>
 <body>
@@ -124,11 +154,11 @@
     <span class="name">haos-isoinstall</span>
     <nav>
       <a href="#need">Что понадобится</a>
-      <a href="#steps">Шаг за шагом</a>
-      <a href="#first">Первый запуск</a>
-      <a href="#problem">Если что-то не работает</a>
+      <a href="#steps">Шаги</a>
+      <a href="#next">Первый запуск</a>
+      <a href="#help">Если не работает</a>
     </nav>
-    <ul class="langs">
+    <ul class="langbar">
       <li><a href="./" hreflang="en">English</a></li>
       <li><a href="da.html" hreflang="da">Dansk</a></li>
       <li><a href="cs.html" hreflang="cs">Čeština</a></li>
@@ -150,79 +180,146 @@
 <main class="wrap">
 
   <div class="hero">
-    <h1>Установка Home Assistant на ПК</h1>
-    <p class="lede">Home Assistant управляет умным домом с компьютера у вас дома. Он работает, даже когда интернета нет, а ваши данные остаются с вами.</p>
-    <p class="lede">Это руководство ведёт от загрузки до первого запуска. Знать Linux не нужно, и никаких команд вводить не придётся.</p>
+    <h1>Установка Home Assistant на компьютер</h1>
+    <p class="lede">Home Assistant — бесплатная программа, которая управляет вашим умным домом: светом, отоплением, датчиками — с компьютера у вас дома. Она продолжает работать, когда интернета нет, а данные остаются у вас.</p>
+    <p class="lede">Эта страница показывает, как поставить её на старый компьютер. Вам не нужно ничего знать о Linux, и вы не наберёте ни одной команды. Вы делаете одну USB-флешку, флешка задаёт несколько вопросов и делает всё остальное сама.</p>
 
     <div class="notice">
-      <strong>Диск компьютера будет полностью очищен.</strong>
-      Всё на нём будет стёрто без возможности восстановления. Используйте компьютер, который не жалко, — никогда не свой повседневный.
+      <strong>Компьютер, который вы используете, будет полностью очищен.</strong>
+      Всё на его диске будет удалено без возможности восстановления. Возьмите компьютер, который вам больше не нужен, — никогда не тот, на котором вы работаете каждый день. Если на нём есть что-то нужное, сначала скопируйте это на другой диск.
     </div>
   </div>
 
   <h2 id="need">Что понадобится</h2>
   <ul class="need">
-    <li>Компьютер, который не жалко (Intel или AMD), с загрузкой в режиме UEFI. Он станет вашей машиной Home Assistant.</li>
-    <li>USB-флешка на 2 ГБ или больше.</li>
-    <li>Интернет — если только файла ещё нет на флешке.</li>
-    <li>Около получаса. Большая часть — ожидание.</li>
+    <li><strong>Свободный компьютер.</strong> Любой обычный настольный компьютер, мини-ПК или ноутбук последних десяти лет с процессором Intel или AMD. Он будет очищен и станет только машиной для Home Assistant.</li>
+    <li><strong>USB-флешка</strong>, которую не жалко стереть, от 2 ГБ.</li>
+    <li><strong>Подключение к интернету</strong> — если только у вас уже нет образа Home Assistant OS на флешке; тогда интернет вообще не нужен. Кабель от компьютера к роутеру — самый простой вариант в первый день; Wi-Fi можно настроить позже в самом Home Assistant.</li>
+    <li><strong>Примерно полчаса.</strong> Большая часть времени — ожидание, а не работа.</li>
   </ul>
+  <p class="hint" style="color: var(--muted); font-size: 0.92rem;">
+    Это для обычного компьютера. Raspberry Pi или другая маленькая плата используют другой файл — для них смотрите <a href="https://www.home-assistant.io/installation/">официальную страницу установки</a>.
+  </p>
 
-  <h2 id="steps">Шаг за шагом</h2>
+  <h2 id="steps">Шаги</h2>
+
   <ol class="steps">
+
     <li>
       <h3>Скачайте файл</h3>
-      <p>На странице релизов возьмите файл, который заканчивается на .iso (около 470 МБ). Версию выбирать не нужно: флешка сама скачает свежую.</p>
+      <p>Это один файл размером около 490 МБ. Версию выбирать не нужно: при установке флешка сама скачает самый свежий Home Assistant.</p>
       <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Скачать ISO-файл</a></p>
+      <p class="hint">На странице releases скачайте файл, который заканчивается на <strong>.iso</strong>. Второй файл рядом можно не трогать.</p>
     </li>
+
     <li>
       <h3>Запишите его на флешку</h3>
-      <p>Используйте Etcher: выберите файл, выберите флешку, нажмите Flash. Не перетаскивайте файл на флешку, как картинку.</p>
+      <p>Вставьте флешку в свой обычный компьютер и откройте бесплатную программу <a href="https://etcher.balena.io/">Etcher</a>. Выберите только что скачанный файл, выберите флешку и нажмите <strong>Flash</strong>.</p>
+      <p class="hint">Не перетаскивайте файл на флешку, как фотографию. Флешка, подготовленная так, компьютер не загрузит.</p>
     </li>
+
     <li>
-      <h3>Измените две настройки</h3>
-      <p>При включении нажмите F2 или Del. Отключите Secure Boot и поставьте режим SATA в AHCI. Сохраните и выйдите.</p>
+      <h3>Измените две настройки в компьютере</h3>
+      <p>Перезагрузите компьютер и нажмите <strong>F2</strong> (или <strong>Del</strong>) во время запуска. Появится экран настроек — тот, который производитель называет BIOS или Setup.</p>
+      <p>Найдите <strong>Secure Boot</strong> и <strong>отключите</strong> его. Затем найдите <strong>режим SATA</strong> (он может называться Storage или настройки SATA) и поставьте <strong>AHCI</strong>. Сохраните и выйдите.</p>
+      <p class="hint">Об остальных настройках не беспокойтесь. Важны только эти две, и испортить ничего нельзя, если просто посмотреть.</p>
     </li>
+
     <li>
-      <h3>Загрузитесь с флешки</h3>
-      <p>Оставьте флешку и включите компьютер. Если загрузится старая система, нажмите F12 и выберите USB-флешку.</p>
+      <h3>Загрузите компьютер с флешки</h3>
+      <p>Оставьте флешку в компьютере и включите его. Если он загрузит свою старую систему, перезагрузите и нажмите <strong>F12</strong> или <strong>F10</strong> во время загрузки, затем выберите флешку из списка.</p>
     </li>
+
     <li>
       <h3>Ответьте на вопросы</h3>
-      <p>Язык (14 вариантов, раскладка подставится сама), откуда взять файл, сеть и какой диск можно стереть — введите YES.</p>
+      <p>Флешка запускает небольшое меню. Выберите язык — нужная раскладка клавиатуры установится сама. Затем она спросит, откуда взять Home Assistant: можно скачать последнюю версию или использовать файл, который уже лежит на флешке (этому пути интернет не нужен совсем). После этого она спросит, как подключён компьютер, и наконец, на какой диск ставить систему.</p>
+      <p class="hint">На диск ничего не записывается, пока вы не подтвердите. Внимательно прочитайте список дисков: именно этот диск будет очищен.</p>
     </li>
+
     <li>
       <h3>Подождите и выньте флешку</h3>
-      <p>Он скачает и проверит файл, запишет его и в конце предложит прочитать диск обратно и сравнить. Ответьте да. Выньте флешку, когда он сообщит, что готово.</p>
+      <p>Установка скачивает Home Assistant, проверяет загрузку и записывает его на диск. Она показывает, что делает. Это занимает от пяти до двадцати минут в зависимости от интернета.</p>
+      <p>В конце она спрашивает, проверять ли, что всё записалось правильно. <strong>Скажите да.</strong> Она читает диск обратно и сравнивает с тем, что только что записала. Это занимает от одной до трёх минут, и именно так изношенный диск или плохо вставленный кабель обнаруживаются сейчас — а не в виде компьютера, который загружается в чёрный экран.</p>
+      <p>Когда она сообщит, что закончила, выньте флешку и дайте компьютеру перезагрузиться.</p>
     </li>
+
   </ol>
 
-  <h2 id="first">Первый запуск</h2>
-  <ul class="need">
-    <li>Подключите компьютер к роутеру кабелем и включите его.</li>
-    <li>Откройте http://homeassistant.local — «Preparing Home Assistant» может занять двадцать минут.</li>
-    <li>Создайте учётную запись и запишите пароль: восстановить его нельзя.</li>
+  <h2 id="languages">Языки, которые можно выбрать</h2>
+  <p>Меню и его сообщения есть на четырнадцати языках стран, где Home Assistant устанавливают чаще всего. Когда вы выбираете язык, раскладка клавиатуры настраивается сразу:</p>
+  <ul class="langs">
+    <li>Английский</li>
+    <li>Датский</li>
+    <li>Чешский</li>
+    <li>Нидерландский</li>
+    <li>Финский</li>
+    <li>Французский</li>
+    <li>Немецкий</li>
+    <li>Итальянский</li>
+    <li>Норвежский</li>
+    <li>Польский</li>
+    <li>Португальский</li>
+    <li>Русский</li>
+    <li>Испанский</li>
+    <li>Шведский</li>
   </ul>
+  <p class="hint" style="color: var(--muted); font-size: 0.92rem;">
+    Пользуетесь клавиатурой другой страны — например, британской? Последняя строка меню языков настраивает только клавиатуру, не меняя язык.
+  </p>
 
-  <h2 id="problem">Если что-то не работает</h2>
+  <h2 id="next">Первый запуск Home Assistant</h2>
+
+  <div class="next">
+    <ol>
+      <li>
+        Соедините компьютер с роутером кабелем и включите его.
+      </li>
+      <li>
+        На телефоне или обычном компьютере — в той же сети — откройте в браузере <a href="http://homeassistant.local/">http://homeassistant.local</a>.
+      </li>
+      <li>
+        Вы увидите <strong>Preparing Home Assistant</strong>. Это может занять двадцать минут или больше. Он не завис: оставьте его и вернитесь позже.
+      </li>
+      <li>
+        Когда появится экран приветствия, выберите создание своего умного дома и заполните имя, имя пользователя и пароль. Запишите пароль в надёжном месте: восстановить его нельзя.
+      </li>
+      <li>
+        Укажите, где находится ваш дом, завершите — и вы внутри. Дальше устройства добавляются в разделе <strong>Настройки</strong>.
+      </li>
+    </ol>
+  </div>
+
+  <h2 id="help">Если не работает</h2>
   <dl class="faq">
-    <dt>Компьютер загружает старую систему</dt>
-    <dd>Перезагрузитесь, нажмите F12 и выберите флешку. Если её нет в списке, запишите её заново в Etcher.</dd>
-    <dt>Экран остаётся чёрным</dt>
-    <dd>Проверьте в настройках, что Secure Boot отключён, оставьте флешку и попробуйте снова.</dd>
-    <dt>Не находит ни одного диска</dt>
-    <dd>Скорее всего, накопитель в режиме RAID, а не AHCI. Измените это и начните заново.</dd>
-    <dt>Адрес не открывается</dt>
-    <dd>Попробуйте http://homeassistant.local:8123 или адрес компьютера из роутера с :8123.</dd>
+    <dt>Компьютер загружает старую систему вместо флешки</dt>
+    <dd>Перезагрузите и нажмите F12 или F10 во время загрузки, затем выберите флешку. Если её нет в списке, запишите её снова через Etcher — файл должна записать программа, а не копирование.</dd>
+
+    <dt>После включения компьютер показывает чёрный экран</dt>
+    <dd>Вернитесь в настройки (шаг 3) и проверьте, что Secure Boot отключён. Оставьте флешку в компьютере и попробуйте снова.</dd>
+
+    <dt>Установка говорит, что диск не совпадает с тем, что записано</dt>
+    <dd>Значит, проблема в диске, его кабеле или памяти, а не в скачанном файле. Не загружайте компьютер с этого диска. Запустите установку снова, и если она скажет то же самое, возьмите другой диск.</dd>
+
+    <dt>Установка не находит диск</dt>
+    <dd>Скорее всего, в компьютере включён режим RAID вместо AHCI. Измените настройку и снова загрузитесь с флешки.</dd>
+
+    <dt>Адрес не открывается в браузере</dt>
+    <dd>Некоторые роутеры блокируют это имя. Сначала попробуйте <code>http://homeassistant.local:8123</code>, а если и это не выйдет, найдите адрес компьютера в списке подключённых устройств роутера и откройте <code>http://этот-адрес:8123</code>.</dd>
+
+    <dt>На экране давно написано "Preparing Home Assistant"</dt>
+    <dd>Это нормально при медленном соединении или старом диске. Он скачивает Home Assistant. Дайте ему полчаса.</dd>
+
+    <dt>Что-то не так с самим Home Assistant</dt>
+    <dd>Спросите в <a href="https://community.home-assistant.io/">сообществе Home Assistant</a>. Этот установщик только записывает программу на диск.</dd>
   </dl>
 
 </main>
 
 <footer>
   <div class="wrap">
-    <p>Неофициальный проект, не связанный с Open Home Foundation, Nabu Casa или проектом Home Assistant. Написан с помощью ИИ, лицензия MIT, без гарантий и поддержки.</p>
+    <p><strong>haos-isoinstall</strong> — неофициальный проект, не связанный с Open Home Foundation, Nabu Casa или проектом Home Assistant. Он написан с помощью ИИ и проверен автоматическими тестами, а не командой поддержки. Лицензия MIT, без гарантий и без поддержки.</p>
     <p>
-      <a href="https://github.com/cronner/haos-isoinstall/releases">Код и релизы</a> ·
+      <a href="https://github.com/cronner/haos-isoinstall/releases">Исходный код и релизы</a> ·
       <a href="https://github.com/cronner/haos-isoinstall/blob/main/README.md">Техническое руководство</a> ·
       <a href="https://www.home-assistant.io/">Home Assistant</a>
     </p>

@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Home Assistant op een pc installeren</title>
-<meta name="description" content="Home Assistant op een pc installeren">
+<title>Home Assistant op een pc installeren — stap voor stap</title>
+<meta name="description" content="Een eenvoudige handleiding voor beginners om Home Assistant met de begeleide USB-stick op een reserve-pc te zetten.">
 <style>
   :root {
     --bg: #fbfcfd;
@@ -32,46 +32,51 @@
     }
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--fg);
-    font: 17.5px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font: 18px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
-  .wrap { max-width: 44rem; margin: 0 auto; padding: 0 1.25rem; }
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.25rem; }
   a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
   a:hover { text-decoration-thickness: 2px; }
 
   header.top { border-bottom: 1px solid var(--line); background: var(--card); }
   header.top .wrap {
-    display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem;
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem;
     align-items: baseline; justify-content: space-between;
-    padding-top: 0.8rem; padding-bottom: 0.8rem;
+    padding-top: 0.85rem; padding-bottom: 0.85rem;
   }
-  header.top .name { font-weight: 650; font-size: 0.95rem; }
-  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.88rem; }
-  ul.langs {
-    list-style: none; display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem;
-    margin: 0; padding: 0; font-size: 0.85rem;
-  }
-  ul.langs a { text-decoration: none; color: var(--muted); }
-  ul.langs a:hover { color: var(--accent); text-decoration: underline; }
-  ul.langs [aria-current="page"] { color: var(--fg); font-weight: 650; }
+  header.top .name { font-weight: 650; font-size: 0.95rem; letter-spacing: -0.01em; }
+  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; }
 
-  .hero { padding: 2.5rem 0 0.5rem; }
-  h1 { font-size: clamp(1.7rem, 4.5vw, 2.3rem); line-height: 1.18; letter-spacing: -0.02em; margin: 0 0 1rem; }
-  .lede { font-size: 1.05rem; margin: 0 0 0.9rem; }
+  ul.langbar {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 0.1rem 0.6rem;
+    margin: 0; padding: 0; font-size: 0.8rem;
+  }
+  ul.langbar a { text-decoration: none; color: var(--muted); }
+  ul.langbar a:hover { color: var(--accent); text-decoration: underline; }
+  ul.langbar [aria-current="page"] { color: var(--fg); font-weight: 650; }
+
+  .hero { padding: 2.75rem 0 0.5rem; }
+  h1 {
+    font-size: clamp(1.8rem, 4.5vw, 2.4rem);
+    line-height: 1.18; letter-spacing: -0.02em; margin: 0 0 1rem;
+  }
+  .lede { font-size: 1.08rem; margin: 0 0 1rem; }
+  .lede strong { font-weight: 650; }
 
   h2 {
-    font-size: 1.25rem; letter-spacing: -0.01em;
-    margin: 2.3rem 0 0.9rem; padding-bottom: 0.5rem;
+    font-size: 1.3rem; letter-spacing: -0.01em;
+    margin: 2.5rem 0 0.9rem; padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--line);
   }
   p { margin: 0 0 1rem; }
 
   .notice {
-    margin: 1.4rem 0 0; padding: 1rem 1.15rem;
+    margin: 1.5rem 0 0; padding: 1rem 1.15rem;
     background: var(--warn-bg); border: 1px solid var(--warn-line);
     border-radius: var(--radius);
   }
@@ -82,29 +87,37 @@
 
   ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
   ol.steps > li {
-    counter-increment: s; position: relative;
-    background: var(--card); border: 1px solid var(--line);
+    counter-increment: s;
+    background: var(--card);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 1rem 1.2rem 1rem 3.4rem; margin: 0 0 0.9rem;
+    padding: 1.1rem 1.25rem 1.1rem 3.6rem;
+    margin: 0 0 1rem;
+    position: relative;
   }
   ol.steps > li::before {
-    content: counter(s); position: absolute; left: 1rem; top: 0.95rem;
-    width: 1.7rem; height: 1.7rem; border-radius: 50%;
+    content: counter(s);
+    position: absolute; left: 1.1rem; top: 1.05rem;
+    width: 1.75rem; height: 1.75rem; border-radius: 50%;
     background: var(--accent-soft); color: var(--accent);
-    font-size: 0.9rem; font-weight: 700; display: grid; place-items: center;
+    font-size: 0.95rem; font-weight: 700;
+    display: grid; place-items: center;
   }
-  ol.steps h3 { font-size: 1rem; margin: 0 0 0.3rem; }
-  ol.steps p { margin: 0; font-size: 0.96rem; }
+  ol.steps h3 { font-size: 1.05rem; margin: 0 0 0.35rem; letter-spacing: -0.01em; }
+  ol.steps p { margin: 0 0 0.5rem; font-size: 0.97rem; }
+  ol.steps p:last-child { margin-bottom: 0; }
+  ol.steps .hint { color: var(--muted); font-size: 0.92rem; margin: 0; }
 
-  dl.faq { margin: 0; }
-  dl.faq dt { font-weight: 650; margin-top: 1rem; }
-  dl.faq dd { margin: 0.2rem 0 0; }
-
-  footer {
-    margin-top: 3rem; border-top: 1px solid var(--line);
-    padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
+  ul.langs {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin: 0 0 1rem; padding: 0;
   }
-  footer p { margin: 0.4rem 0; }
+  ul.langs li {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 0.35rem 0.85rem; font-size: 0.95rem;
+  }
+  ul.langs li:first-child { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
   .btn {
     display: inline-block; margin: 0.35rem 0 0.6rem;
     background: #0a7ea4; color: #fff;
@@ -115,6 +128,23 @@
   @media (prefers-color-scheme: dark) {
     .btn { background: #4cc2e6; color: #10161c; }
   }
+
+  .next {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 1.25rem 1.35rem;
+  }
+  .next ol { margin: 0; padding-left: 1.25rem; }
+  .next ol li { margin: 0.55rem 0; }
+
+  .faq { margin: 0; }
+  .faq dt { font-weight: 650; margin-top: 1.1rem; }
+  .faq dd { margin: 0.25rem 0 0; }
+
+  footer {
+    margin-top: 3.5rem; border-top: 1px solid var(--line);
+    padding: 1.5rem 0 2.5rem; color: var(--muted); font-size: 0.88rem;
+  }
+  footer p { margin: 0.4rem 0; }
 </style>
 </head>
 <body>
@@ -124,11 +154,11 @@
     <span class="name">haos-isoinstall</span>
     <nav>
       <a href="#need">Wat je nodig hebt</a>
-      <a href="#steps">Stap voor stap</a>
-      <a href="#first">Eerste start</a>
-      <a href="#problem">Als het niet lukt</a>
+      <a href="#steps">De stappen</a>
+      <a href="#next">Eerste start</a>
+      <a href="#help">Als het niet lukt</a>
     </nav>
-    <ul class="langs">
+    <ul class="langbar">
       <li><a href="./" hreflang="en">English</a></li>
       <li><a href="da.html" hreflang="da">Dansk</a></li>
       <li><a href="cs.html" hreflang="cs">Čeština</a></li>
@@ -151,78 +181,145 @@
 
   <div class="hero">
     <h1>Home Assistant op een pc installeren</h1>
-    <p class="lede">Home Assistant bestuurt je slimme huis vanaf een computer in je eigen huis. Het blijft werken als internet uitvalt, en je gegevens blijven bij jou.</p>
-    <p class="lede">Deze gids loopt van het downloaden tot de eerste start. Je hoeft niets van Linux te weten en hoeft geen commando te typen.</p>
+    <p class="lede">Home Assistant is een gratis programma dat je slimme huis bestuurt — je lampen, je verwarming, je sensoren — vanaf een computer in je eigen huis. Het blijft werken als het internet uitvalt, en je gegevens blijven bij jou.</p>
+    <p class="lede">Deze pagina laat zien hoe je het op een oude pc zet. Je hoeft niets van Linux te weten en typt geen enkele opdracht. Je maakt één USB-stick, de stick stelt je een paar vragen, en de rest doet hij zelf.</p>
 
     <div class="notice">
-      <strong>De schijf van de computer wordt volledig gewist.</strong>
-      Alles erop wordt verwijderd en kan niet worden teruggehaald. Gebruik een pc die je kunt missen — nooit je dagelijkse machine.
+      <strong>De pc die je gebruikt wordt helemaal leeggemaakt.</strong>
+      Alles op de schijf wordt gewist en komt niet meer terug. Gebruik een computer die je niet meer nodig hebt — nooit je dagelijkse pc. Staat er iets op dat je wilt bewaren, kopieer het dan eerst naar een andere schijf.
     </div>
   </div>
 
   <h2 id="need">Wat je nodig hebt</h2>
   <ul class="need">
-    <li>Een pc die je kunt missen (Intel of AMD) die in UEFI-modus start. Die wordt je Home Assistant-machine.</li>
-    <li>Een USB-stick van 2 GB of meer.</li>
-    <li>Internet — tenzij je het bestand al op een stick hebt.</li>
-    <li>Ongeveer een half uur. Het meeste is wachten.</li>
+    <li><strong>Een pc die je kunt missen.</strong> Elke gewone desktop, mini-pc of laptop van de laatste tien jaar met een Intel- of AMD-processor. Hij wordt gewist en alleen voor Home Assistant gebruikt.</li>
+    <li><strong>Een USB-stick</strong> die je best mag wissen, 2 GB of groter.</li>
+    <li><strong>Een internetverbinding</strong> — tenzij je het Home Assistant OS-bestand al op een stick hebt, dan heb je helemaal geen internet nodig. Een kabel van de pc naar de router is de eerste dag het makkelijkst; wifi stel je later in Home Assistant zelf in.</li>
+    <li><strong>Ongeveer een half uur.</strong> Het meeste is wachten, niet werken.</li>
   </ul>
+  <p class="hint" style="color: var(--muted); font-size: 0.92rem;">
+    Dit gaat over een gewone pc. Een Raspberry Pi of een ander klein bord gebruikt een ander bestand — kijk daarvoor op de <a href="https://www.home-assistant.io/installation/">officiële installatiepagina</a>.
+  </p>
 
-  <h2 id="steps">Stap voor stap</h2>
+  <h2 id="steps">De stappen</h2>
+
   <ol class="steps">
+
     <li>
       <h3>Het bestand downloaden</h3>
-      <p>Op de releases-pagina neem je het bestand dat op .iso eindigt (ongeveer 470 MB). Je kiest geen versie: de stick haalt zelf de nieuwste.</p>
+      <p>Het is één bestand van ongeveer 490 MB. Je hoeft geen versie te kiezen: de stick haalt bij het installeren zelf de nieuwste Home Assistant op.</p>
       <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Download het ISO-bestand</a></p>
+      <p class="hint">Op de releases-pagina download je het bestand dat op <strong>.iso</strong> eindigt. Het andere bestand ernaast kun je negeren.</p>
     </li>
+
     <li>
-      <h3>Naar de USB-stick schrijven</h3>
-      <p>Gebruik Etcher: kies het bestand, de stick, druk op Flash. Sleep het bestand niet als een foto naar de stick.</p>
+      <h3>Het op de USB-stick schrijven</h3>
+      <p>Steek de stick in je gewone computer en gebruik het gratis programma <a href="https://etcher.balena.io/">Etcher</a>. Open het, kies het bestand dat je net hebt gedownload, kies de stick en klik op <strong>Flash</strong>.</p>
+      <p class="hint">Sleep het bestand niet naar de stick zoals een foto. Een stick die zo is gemaakt, start de computer niet.</p>
     </li>
+
     <li>
-      <h3>Twee instellingen aanpassen</h3>
-      <p>Druk bij het starten op F2 of Del. Zet Secure Boot uit en zet de SATA-modus op AHCI. Opslaan en afsluiten.</p>
+      <h3>Twee instellingen op de pc aanpassen</h3>
+      <p>Start de pc opnieuw en tik op <strong>F2</strong> (of <strong>Del</strong>) terwijl hij opstart. Er verschijnt een instellingenscherm — degene die de fabrikant BIOS of Setup noemt.</p>
+      <p>Zoek <strong>Secure Boot</strong> en zet het <strong>uit</strong>. Zoek daarna de <strong>SATA-modus</strong> (die kan Storage of SATA-configuratie heten) en zet die op <strong>AHCI</strong>. Opslaan en afsluiten.</p>
+      <p class="hint">Maak je geen zorgen over de andere instellingen. Alleen deze twee zijn belangrijk, en je kunt niets kapotmaken door te kijken.</p>
     </li>
+
     <li>
-      <h3>Vanaf de stick starten</h3>
-      <p>Laat de stick zitten en zet de pc aan. Start hij zijn oude systeem, druk dan op F12 en kies de USB-stick.</p>
+      <h3>De pc vanaf de stick starten</h3>
+      <p>Laat de stick zitten en zet de pc aan. Start hij zijn oude systeem, start hem dan opnieuw en tik tijdens het opstarten op <strong>F12</strong> of <strong>F10</strong>, en kies de USB-stick uit de lijst.</p>
     </li>
+
     <li>
       <h3>De vragen beantwoorden</h3>
-      <p>Taal (14 talen, het toetsenbord volgt), waar het bestand vandaan komt, het netwerk en welke schijf gewist mag worden — typ YES.</p>
+      <p>De stick start een klein menu. Kies je taal — het juiste toetsenbord wordt voor je gekozen. Daarna vraagt hij waar Home Assistant vandaan moet komen: hij kan de nieuwste versie voor je downloaden, of een bestand gebruiken dat je al op een stick hebt (die weg heeft helemaal geen internet nodig). Dan vraagt hij hoe de pc is aangesloten, en tot slot op welke schijf er geïnstalleerd moet worden.</p>
+      <p class="hint">Er wordt niets naar een schijf geschreven voordat je bevestigt. Lees de lijst met schijven goed: die schijf wordt gewist.</p>
     </li>
+
     <li>
       <h3>Wachten en de stick eruit halen</h3>
-      <p>Hij haalt het bestand op, controleert het, schrijft het en biedt op het eind aan om de schijf terug te lezen en te vergelijken. Zeg ja. Haal de stick eruit als hij meldt dat hij klaar is.</p>
+      <p>De installatie haalt Home Assistant op, controleert de download en schrijft hem naar de schijf. Hij laat zien wat hij doet. Dat duurt vijf tot twintig minuten, afhankelijk van je internet.</p>
+      <p>Aan het eind vraagt hij of hij moet controleren of alles goed is geschreven. <strong>Zeg ja.</strong> Hij leest de schijf terug en vergelijkt die met wat hij net heeft geschreven. Dat duurt een tot drie minuten, en zo komt een versleten schijf of een losse kabel nu aan het licht — in plaats van als een computer die opstart naar een zwart scherm.</p>
+      <p>Als hij zegt dat hij klaar is, haal je de USB-stick eruit en laat je de pc opnieuw opstarten.</p>
     </li>
+
   </ol>
 
-  <h2 id="first">Eerste start</h2>
-  <ul class="need">
-    <li>Sluit de pc met een kabel op de router aan en zet hem aan.</li>
-    <li>Open http://homeassistant.local — “Preparing Home Assistant” kan twintig minuten duren.</li>
-    <li>Maak je account en schrijf het wachtwoord op: het is niet te herstellen.</li>
+  <h2 id="languages">De talen die je kunt kiezen</h2>
+  <p>Het menu en de meldingen zijn er in de veertien talen van de landen met de meeste Home Assistant-installaties. Als je er een kiest, wordt het toetsenbord meteen mee ingesteld:</p>
+  <ul class="langs">
+    <li>Engels</li>
+    <li>Deens</li>
+    <li>Tsjechisch</li>
+    <li>Nederlands</li>
+    <li>Fins</li>
+    <li>Frans</li>
+    <li>Duits</li>
+    <li>Italiaans</li>
+    <li>Noors</li>
+    <li>Pools</li>
+    <li>Portugees</li>
+    <li>Russisch</li>
+    <li>Spaans</li>
+    <li>Zweeds</li>
   </ul>
+  <p class="hint" style="color: var(--muted); font-size: 0.92rem;">
+    Gebruik je een toetsenbord uit een ander land — een Brits, bijvoorbeeld? De laatste regel van het talenmenu stelt het toetsenbord apart in, zonder de taal te veranderen.
+  </p>
 
-  <h2 id="problem">Als het niet lukt</h2>
+  <h2 id="next">De eerste start van Home Assistant</h2>
+
+  <div class="next">
+    <ol>
+      <li>
+        Sluit de pc met een kabel aan op de router en zet hem aan.
+      </li>
+      <li>
+        Open op je telefoon of je gewone computer — in hetzelfde netwerk — <a href="http://homeassistant.local/">http://homeassistant.local</a> in een browser.
+      </li>
+      <li>
+        Je ziet <strong>Preparing Home Assistant</strong>. Dat kan twintig minuten of langer duren. Hij is niet vastgelopen; laat hem met rust en kom later terug.
+      </li>
+      <li>
+        Als het welkomstscherm verschijnt, kies je om je slimme huis aan te maken en vul je een naam, een gebruikersnaam en een wachtwoord in. Schrijf het wachtwoord veilig op: het kan niet worden hersteld.
+      </li>
+      <li>
+        Stel in waar je huis staat, rond af, en je bent binnen. Vanaf daar voeg je je apparaten toe onder <strong>Instellingen</strong>.
+      </li>
+    </ol>
+  </div>
+
+  <h2 id="help">Als het niet lukt</h2>
   <dl class="faq">
-    <dt>De pc start zijn oude systeem</dt>
-    <dd>Herstart, druk op F12 en kies de stick. Staat hij er niet bij, schrijf de stick dan opnieuw met Etcher.</dd>
-    <dt>Het scherm blijft zwart</dt>
-    <dd>Controleer in de instellingen dat Secure Boot uit staat, laat de stick zitten en probeer opnieuw.</dd>
-    <dt>Er wordt geen schijf gevonden</dt>
-    <dd>De opslag staat waarschijnlijk op RAID in plaats van AHCI. Zet dat om en start opnieuw.</dd>
-    <dt>Het adres opent niet</dt>
-    <dd>Probeer http://homeassistant.local:8123, of het adres van de pc uit de router met :8123.</dd>
+    <dt>De pc start zijn oude systeem in plaats van de stick</dt>
+    <dd>Start opnieuw en tik tijdens het opstarten op F12 of F10, en kies dan de USB-stick. Staat hij niet in de lijst, schrijf hem dan opnieuw met Etcher — het bestand moet door een programma geschreven worden, niet gekopieerd.</dd>
+
+    <dt>Het scherm blijft zwart nadat de pc start</dt>
+    <dd>Ga terug naar het instellingenscherm (stap 3) en controleer of Secure Boot uit staat. Laat de stick zitten en probeer het opnieuw.</dd>
+
+    <dt>Hij zegt dat de schijf niet overeenkomt met wat er is geschreven</dt>
+    <dd>Dan is er iets mis met de schijf, de kabel of het geheugen — niet met de download. Start de pc niet vanaf die schijf. Doe de installatie opnieuw, en zegt hij hetzelfde, gebruik dan een andere schijf.</dd>
+
+    <dt>De installatie vindt geen schijf</dt>
+    <dd>De opslag van de pc staat waarschijnlijk op RAID in plaats van AHCI. Wijzig die instelling en start de stick opnieuw.</dd>
+
+    <dt>Het adres opent niet in mijn browser</dt>
+    <dd>Sommige routers blokkeren die naam. Probeer eerst <code>http://homeassistant.local:8123</code>, en lukt dat ook niet, zoek dan het adres van de pc in de lijst met verbonden apparaten van je router en open <code>http://dat-adres:8123</code>.</dd>
+
+    <dt>Er staat al lang "Preparing Home Assistant"</dt>
+    <dd>Dat is normaal bij een langzame verbinding of een oude schijf. Hij haalt Home Assistant op. Geef hem een half uur.</dd>
+
+    <dt>Er is iets mis met Home Assistant zelf</dt>
+    <dd>Vraag het in de <a href="https://community.home-assistant.io/">Home Assistant-community</a>. Deze installer zet alleen het programma op de schijf.</dd>
   </dl>
 
 </main>
 
 <footer>
   <div class="wrap">
-    <p>Onofficieel project, niet verbonden aan de Open Home Foundation, Nabu Casa of het Home Assistant-project. Geschreven met hulp van AI, MIT-licentie, geen garantie en geen ondersteuning.</p>
+    <p><strong>haos-isoinstall</strong> is een onofficieel project, niet verbonden aan de Open Home Foundation, Nabu Casa of het Home Assistant-project. Het is geschreven met hulp van AI en gecontroleerd door automatische tests, niet door een supportteam. MIT-licentie, geen garantie en geen support.</p>
     <p>
-      <a href="https://github.com/cronner/haos-isoinstall/releases">Broncode en releases</a> ·
+      <a href="https://github.com/cronner/haos-isoinstall/releases">Bron en releases</a> ·
       <a href="https://github.com/cronner/haos-isoinstall/blob/main/README.md">Technische handleiding</a> ·
       <a href="https://www.home-assistant.io/">Home Assistant</a>
     </p>
