@@ -65,6 +65,20 @@ The build takes **15 to 40 minutes** and produces
 `haos-installer-iso/live-image-amd64.hybrid.iso` (~450 MB). The script starts
 from a clean folder on every run.
 
+Both published images come from this one script. The only difference is the
+config baked into it, so one build tells you nothing about the other:
+
+```bash
+sudo ./build-iso.sh                # the plain image: every question asked
+sudo ./build-iso.sh unattended     # erases the disk it picks, no questions
+```
+
+The unattended variant installs `haos-installer.cfg.unattended` as
+`/etc/haos-installer.cfg` inside the image, and puts the same file on the ISO
+surface where it can be read before booting. It is checked before any medium,
+because a config stick left in a port should not redirect an image meant to run
+with nobody present.
+
 The boot timeouts that were applied are displayed **within the first seconds**:
 if the list is empty, there is no point waiting for the end.
 
@@ -132,6 +146,12 @@ uncomment two lines. Where it sits it cannot be edited: a written stick exposes
 the partition that carries the live system as iso9660, which is read-only, and
 Windows will not even reformat such a stick -- the installer offers to do it at
 the end of a run, which is the only way it becomes writable again.
+
+**Or boot the unattended image.** Build it as above and boot it with a single
+32 GB disk attached: no question should appear at all, and the log should name
+`/etc/haos-installer.cfg` as the config it read. That is the fastest check that
+the baked file survived the build -- the plain image would show the template on
+the ISO root instead, and that one sets nothing.
 
 A second stick is the obvious carrier, but one stick can do: on a Ventoy stick,
 or any stick with a FAT32/exFAT data partition beside the image, the config is

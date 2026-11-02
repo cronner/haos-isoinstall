@@ -288,6 +288,48 @@ for v in $(grep -oE '\$\{?(CFG_[A-Z_]+|UNATTENDED)\b' "$SRC" | tr -d '${' | sort
 done
 [ -n "$DECLS" ] || ko "no declarations extracted from $SRC"
 
+# ---- 16. the unattended image carries a config inside the image ------------
+# It cannot sit at the ISO root: find_config() skips the iso9660 partition, since
+# that one carries the live system. So the build puts it in the chroot and the
+# search looks there first. Exercised against the real find_config(), with the
+# media search stubbed out (this runs on a developer machine, not a live ISO).
+STUB_FIND_CONFIG=$(declare -f find_config)
+eval "$(awk -v n=find_config '$0 ~ "^" n "\\(\\)\\{" {f=1} f{print} f&&/^}$/{exit}' "$SRC")"
+findmnt(){ case "$*" in *TARGET*) [ -n "$FINDMNT_TARGETS" ] && printf '%s\n' "$FINDMNT_TARGETS"; return 0 ;; esac; return 1; }
+mount(){ return 1; }
+
+reset
+printf 'UNATTENDED=yes\nWIPE=yes\n' > "$tmp/baked.cfg"
+printf 'UNATTENDED=yes\nWIPE=yes\nDISK=/dev/sdz\n' > "$tmp/haos-installer.cfg"
+HAOS_IMAGE_CFG="$tmp/baked.cfg"; FINDMNT_TARGETS="$tmp"; CFG_FILE=""
+find_config || ko 'the config built into the image was not found'
+[ "$CFG_FILE" = "$tmp/baked.cfg" ] \
+  || ko "a config stick must not override the image's own config (got '$CFG_FILE')"
+
+CFG_FILE=""; HAOS_IMAGE_CFG="$tmp/nope.cfg"
+find_config || ko 'the medium search broke once the baked config was absent'
+[ "$CFG_FILE" = "$tmp/haos-installer.cfg" ] \
+  || ko "a mounted medium is not searched (got '$CFG_FILE')"
+
+eval "$STUB_FIND_CONFIG"           # load_config() above needs its fixed answer
+FINDMNT_TARGETS=""
+
+# The file the unattended build installs must ask for exactly that and nothing
+# else: an unexpected DISK= or IMAGE= would aim the image at other hardware.
+reset
+[ -f haos-installer.cfg.unattended ] || ko 'haos-installer.cfg.unattended is missing'
+parse_config_file haos-installer.cfg.unattended
+[ "$CFG_UNATTENDED" = yes ] || ko 'the unattended image does not ask for unattended'
+[ "$CFG_WIPE" = yes ] || ko 'the unattended image does not carry the consent'
+rest="$CFG_DISK$CFG_IMAGE$CFG_LANG$CFG_KEYMAP$CFG_POWEROFF$CFG_STREAM$CFG_FORMAT"
+[ -z "$rest" ] || ko "the unattended image sets more than it should: '$rest'"
+
+grep -q 'HAOS_VARIANT' build-iso.sh || ko 'build-iso.sh has no variant switch'
+grep -q 'haos-installer.cfg.unattended' build-iso.sh \
+  || ko 'build-iso.sh does not use the unattended config'
+grep -q 'includes.chroot/etc/haos-installer.cfg' build-iso.sh \
+  || ko 'build-iso.sh does not bake the config into the image'
+
 rm -rf "$tmp"
 
 if [ "$fail" -ne 0 ]; then

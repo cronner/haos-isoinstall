@@ -28,6 +28,16 @@ jobs:
     # --privileged is required: live-build needs the loop devices and chroot.
     runs-on: ubuntu-24.04
     timeout-minutes: 40
+    # Two images from the same code: 'normal' asks every question, 'unattended'
+    # carries UNATTENDED=yes and WIPE=yes and erases the disk it picks without
+    # asking. They differ in one config file, so they are built and tested the
+    # same way and named apart. fail-fast off: one broken variant must not hide
+    # whether the other still builds.
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [normal, unattended]
+    name: build (${{ matrix.variant }})
     container:
       image: debian:trixie
       options: --privileged
@@ -67,11 +77,15 @@ jobs:
           ls /usr/share/debootstrap/scripts/ | grep -E 'trixie|bookworm' || true
 
       - name: Build the ISO
+        env:
+          HAOS_VARIANT: ${{ matrix.variant }}
         run: |
           chmod +x build-iso.sh haos-installer.sh
           bash ./build-iso.sh
 
       - name: Check the ISO's UEFI conformance
+        env:
+          VARIANT: ${{ matrix.variant }}
         run: |
           set -x
           ISO=$(ls haos-installer-iso/live-image-*.iso | head -1)
@@ -110,11 +124,29 @@ jobs:
             || { echo "ERROR: no LICENSE at the root of the ISO"; exit 1; }
           echo "OK: licence is on the ISO surface"
 
-          # 3) Partition table, for the record in the build logs. We expect two:
+          # 3) The config on the ISO surface must match the variant. It is the
+          #     one file the two images differ in, and a mix-up here would hand
+          #     someone who asked for questions an image that erases a disk.
+          #     Read from the raw image on purpose: the chroot copy sits inside
+          #     filesystem.squashfs, where a plain search cannot see it.
+          if [ "$VARIANT" = unattended ]; then
+            grep -aq '^WIPE=yes' "$ISO" \
+              || { echo "ERROR: unattended image has no active WIPE=yes on its surface"; exit 1; }
+            echo "OK: unattended image carries the active config"
+          else
+            grep -aq '^#WIPE=yes' "$ISO" \
+              || { echo "ERROR: normal image is missing the inert template"; exit 1; }
+            if grep -aq '^WIPE=yes' "$ISO"; then
+              echo "ERROR: normal image carries an ACTIVE WIPE=yes"; exit 1
+            fi
+            echo "OK: normal image carries the inert template only"
+          fi
+
+          # 4) Partition table, for the record in the build logs. We expect two:
           #    the ISO9660 and the ESP. No log partition, see the note in build-iso.sh.
           fdisk -l "$ISO" | tail -6
 
-          # 4) BIOS boot: the El Torito entry is only produced by live-build's
+          # 5) BIOS boot: the El Torito entry is only produced by live-build's
           #    default (--bootloaders is not passed). We check it so that a
           #    live-build change cannot make it disappear silently.
           if command -v xorriso >/dev/null; then
@@ -123,10 +155,16 @@ jobs:
 
       - name: Rename and compute the SHA256
         id: iso
+        env:
+          VARIANT: ${{ matrix.variant }}
         run: |
           ISO=$(ls haos-installer-iso/live-image-*.iso | head -1)
           REF=$(echo "${GITHUB_REF_NAME:-manual}" | tr '/' '-')
-          NAME="haos-isoinstall-${REF}-amd64.iso"
+          # The plain name stays what it always was, so the familiar download is
+          # still the safe one; only the unattended image gets a suffix.
+          SUFFIX=""
+          if [ "$VARIANT" = unattended ]; then SUFFIX="-unattended"; fi   # not &&: 'bash -e'
+          NAME="haos-isoinstall-${REF}${SUFFIX}-amd64.iso"
           mv "$ISO" "$NAME"
           sha256sum "$NAME" > "$NAME.sha256"
           echo "name=$NAME" >> "$GITHUB_OUTPUT"
@@ -155,6 +193,16 @@ jobs:
           body: |
             Guided **Home Assistant OS** installer, as a bootable USB image for
             x86-64 PCs and VMs. Built from `${{ github.sha }}`.
+
+            **Two images, one installer:**
+
+            * the plain `amd64` image asks every question before it touches a
+              disk. Start here.
+            * the `unattended` image asks nothing and **erases the disk it picks
+              as soon as it boots.** Same wizard underneath, reading a config
+              built into the image (`UNATTENDED=yes`, `WIPE=yes`). With one
+              eligible disk it takes that one; with several it stops instead of
+              guessing. Boot it only on the machine you mean to wipe.
 
             **14 languages**, each with its keyboard layout applied automatically:
             English, Danish, Czech, Dutch, Finnish, French, German, Italian,

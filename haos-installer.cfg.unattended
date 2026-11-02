@@ -1,0 +1,20 @@
+# Configuration for haos-installer.sh -- the one BUILT INTO the unattended ISO
+# (haos-isoinstall-<ref>-unattended-amd64.iso).
+#
+# This is not the template you are meant to edit; haos-installer.cfg.example is.
+# This is the file the unattended image itself runs with, and the two lines at
+# the bottom are what make it unattended: no question is asked, and WIPE=yes
+# stands in for the typed consent the wizard would otherwise demand. A machine
+# booted from that image therefore loses the disk it picks, with no confirmation
+# anywhere on screen.
+#
+# That is the whole point of the variant, and the reason it is a separate
+# download from the normal image. The build copies this file to the ISO surface
+# too, so it can be read before anything is booted.
+#
+# DISK is left out on purpose. With one eligible disk the installer takes it;
+# with two or more it stops and logs which ones it saw instead of guessing. Add
+# DISK=/dev/sda (or /dev/nvme0n1) to choose one, and LANG=/POWEROFF= if wanted:
+# every key in haos-installer.cfg.example works here as well.
+UNATTENDED=yes
+WIPE=yes

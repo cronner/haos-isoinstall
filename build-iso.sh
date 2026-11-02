@@ -11,6 +11,19 @@ set -euo pipefail
 
 WORK="haos-installer-iso"
 [[ -f haos-installer.sh ]] || { echo "haos-installer.sh missing from the current folder"; exit 1; }
+
+# Which image to build. The two differ in ONE file: the configuration the image
+# runs with. 'normal' asks every question and can never erase anything on its
+# own; 'unattended' carries UNATTENDED=yes and WIPE=yes and starts erasing the
+# disk it picks as soon as the boot finishes. Same code, same ISO otherwise, so
+# there is one installer to maintain and two ways to run it.
+# Either way of asking, because 'sudo ./build-iso.sh unattended' is what a person
+# at a keyboard will type, while HAOS_VARIANT is what a CI job can export.
+VARIANT="${HAOS_VARIANT:-${1:-normal}}"
+case "$VARIANT" in
+  normal|unattended) ;;
+  *) echo "variant must be normal or unattended (got '$VARIANT')"; exit 1 ;;
+esac
 # The ISO is a copy of this script, so the MIT notice has to travel with it.
 [[ -f LICENSE ]] || { echo "LICENSE missing from the current folder"; exit 1; }
 [[ $EUID -eq 0 ]] || { echo "Run as root (live-build requires it)."; exit 1; }
@@ -106,14 +119,32 @@ done
 mkdir -p config/includes.binary
 cp "$DOCSRC/LICENSE" config/includes.binary/LICENSE
 
-# The unattended config, as a template on the ISO surface: every key commented
-# out, so it does nothing until someone copies it to a stick and edits it. It
-# belongs on the surface rather than in the chroot because the chroot copy is
-# unreachable until the live system is up, and by then the questions have
-# already started. Under the real name, so copying the file to a stick is the
-# whole procedure -- the installer finds it and reports that it sets nothing.
-if [ -f "$DOCSRC/haos-installer.cfg.example" ]; then
+# The unattended configuration. On the normal image it is the template on the
+# ISO surface: every key commented out, so it does nothing until someone copies
+# it to a stick and edits it. Under the real name, so copying the file to a
+# stick is the whole procedure -- the installer finds it and reports that it sets
+# nothing.
+#
+# The unattended image instead has a live config, and it has to sit INSIDE the
+# chroot: find_config() skips the iso9660 partition, since that one carries the
+# live system, so a config at the ISO root is readable but never read. The same
+# file also goes to the ISO root, so it can be read before it is booted.
+mkdir -p config/includes.chroot/etc
+if [ "$VARIANT" = unattended ]; then
+  [[ -f "$DOCSRC/haos-installer.cfg.unattended" ]] \
+    || { echo "haos-installer.cfg.unattended missing from the current folder"; exit 1; }
+  cp "$DOCSRC/haos-installer.cfg.unattended" config/includes.chroot/etc/haos-installer.cfg
+  cp "$DOCSRC/haos-installer.cfg.unattended" config/includes.binary/haos-installer.cfg
+  echo ">>> Variant: unattended -- this image erases a disk without asking."
+else
+  [[ -f "$DOCSRC/haos-installer.cfg.example" ]] \
+    || { echo "haos-installer.cfg.example missing from the current folder"; exit 1; }
   cp "$DOCSRC/haos-installer.cfg.example" config/includes.binary/haos-installer.cfg
+  echo ">>> Variant: normal -- every question asked, nothing erased unasked."
+fi
+# The template always rides along, so the keys can be looked up in a live system
+# even when the active config is the baked one.
+if [[ -f "$DOCSRC/haos-installer.cfg.example" ]]; then
   cp "$DOCSRC/haos-installer.cfg.example" "$DOCDIR/haos-installer.cfg.example"
 fi
 
@@ -122,8 +153,12 @@ fi
 # report says WHICH build produced it.
 REF=$(echo "${GITHUB_SHA:-}" | cut -c1-7)
 [ -n "$REF" ] || REF=$(git rev-parse --short=7 HEAD 2>/dev/null || echo local)
-mkdir -p config/includes.chroot/etc
-printf 'build %s %s\n' "$(date -u +%Y-%m-%d)" "$REF" > config/includes.chroot/etc/haos-installer-build
+# The variant is part of the stamp: a log or a bug report has to say which of
+# the two images produced it, or the first question is always "which ISO?".
+VARIANT_NOTE=""
+if [ "$VARIANT" = unattended ]; then VARIANT_NOTE=" unattended"; fi   # not &&: 'set -e'
+printf 'build %s %s%s\n' "$(date -u +%Y-%m-%d)" "$REF" "$VARIANT_NOTE" \
+  > config/includes.chroot/etc/haos-installer-build
 
 # --- NetworkManager manages every interface (otherwise it conflicts with live-config) ---
 mkdir -p config/includes.chroot/etc/NetworkManager/conf.d
@@ -217,6 +252,6 @@ ISO=$(ls -1 live-image-*.iso 2>/dev/null | head -1)
 # The installer now offers to reformat the whole stick as FAT32 and drop the log
 # onto it, which also makes it reusable -- Windows cannot reformat an Etcher-written
 # stick on its own.
-echo ">>> ISO: $ISO  ($(du -h "$ISO" | cut -f1))"
+echo ">>> ISO: $ISO  ($(du -h "$ISO" | cut -f1))  variant=$VARIANT"
 echo ">>> Partitions:"
 fdisk -l "$ISO" 2>/dev/null | tail -6 || true

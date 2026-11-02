@@ -1888,6 +1888,14 @@ cfg_candidate(){
 find_config(){
   local m p pk fs
   CFG_EMPTY=""
+  # A config built into the image itself, which is what the unattended ISO is:
+  # two images, one Installer, one of them with this file in /etc. It is checked
+  # BEFORE any medium so that a config stick left in a port cannot quietly
+  # redirect an image whose whole purpose is to run without anyone present; the
+  # kernel command line still wins, because it is applied after this. Overridable
+  # so tests/unattended.sh can point it at a file without touching /etc.
+  cfg_candidate "${HAOS_IMAGE_CFG:-/etc/haos-installer.cfg}" && return 0
+
   while read -r m; do
     [ -n "$m" ] || continue
     cfg_candidate "$m/haos-installer.cfg" && return 0

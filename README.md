@@ -380,8 +380,15 @@ versions, and an already-mounted stick.
 For a machine with no screen and no keyboard attached — a mini-PC in a cupboard,
 or a VM you would rather rebuild than click through. It is **opt-in twice**: the
 wizard runs as usual unless something asks for unattended mode, and even then it
-refuses to erase a disk unless `WIPE=yes` was written down. Booting this ISO and
-pressing Enter still gives you the normal wizard.
+refuses to erase a disk unless `WIPE=yes` was written down. Booting the plain
+image and pressing Enter still gives you the normal wizard.
+
+Two images are built from the same code. The plain one asks everything;
+`haos-isoinstall-<ref>-unattended-amd64.iso` has `UNATTENDED=yes` and `WIPE=yes`
+in a config baked into the image, so it starts erasing the disk it picks as soon
+as it boots. With one eligible disk it takes that one; with several it stops and
+logs which ones it saw instead of guessing. **Boot it only on the machine you
+mean to wipe**, and use the plain image to try the mode in the usual way.
 
 There are two ways to ask for it:
 
@@ -403,6 +410,11 @@ On a USB stick that leaves three ways: a data partition on the same stick
 (Ventoy, or a stick partitioned by hand) with the file in its root -- the
 installer searches the boot stick's own partitions, but never the iso9660 one; a
 second stick, as above; or the kernel command line, which needs nothing prepared.
+
+On the unattended image the baked config is the one that counts: a stick left in
+a port must not be able to redirect an image whose whole purpose is to run with
+nobody in front of it. The kernel command line still wins over both, so
+`haos.disk=` at the boot menu overrides even the baked file.
 
 The file is plain text, one `KEY=value` per line, `#` starts a comment, and a
 file saved on Windows with CRLF line endings is fine:
