@@ -11,6 +11,8 @@ set -euo pipefail
 
 WORK="haos-installer-iso"
 [[ -f haos-installer.sh ]] || { echo "haos-installer.sh missing from the current folder"; exit 1; }
+# The ISO is a copy of this script, so the MIT notice has to travel with it.
+[[ -f LICENSE ]] || { echo "LICENSE missing from the current folder"; exit 1; }
 [[ $EUID -eq 0 ]] || { echo "Run as root (live-build requires it)."; exit 1; }
 
 SRC="$(pwd)/haos-installer.sh"
@@ -84,6 +86,17 @@ EOF
 # --- Guided wizard ---
 mkdir -p config/includes.chroot/usr/local/bin
 cp "$SRC" config/includes.chroot/usr/local/bin/haos-installer.sh
+
+# --- Licence and guides, inside the image ---
+# Anyone who boots this ISO holds a copy of an MIT-licensed work; the notice goes
+# where it can be read without unpacking anything. The guides ride along for the
+# same reason (and so the credits stay attached to the copy).
+DOCDIR=config/includes.chroot/usr/local/share/doc/haos-isoinstall
+mkdir -p "$DOCDIR"
+cp LICENSE "$DOCDIR/LICENSE"
+for f in README.md BUILDING.md; do
+  if [ -f "$f" ]; then cp "$f" "$DOCDIR/$f"; fi
+done
 
 # --- Build stamp: the ISO carries no version string of its own. The
 # installer shows it on the welcome screen and logs it, so that a bug

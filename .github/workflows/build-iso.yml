@@ -102,6 +102,11 @@ jobs:
             || { echo "ERROR: /EFI/boot/bootx64.efi not found in the ISO"; exit 1; }
           echo "OK: UEFI-conformant ISO (ESP + bootx64.efi)"
 
+          # 2b) The MIT notice must be inside the artefact, not only in the repo.
+          echo "$LIST" | grep -q 'usr/local/share/doc/haos-isoinstall/LICENSE' \
+            || { echo "ERROR: the licence is not inside the ISO"; exit 1; }
+          echo "OK: licence and guides are inside the ISO"
+
           # 3) Partition table, for the record in the build logs. We expect two:
           #    the ISO9660 and the ESP. No log partition, see the note in build-iso.sh.
           fdisk -l "$ISO" | tail -6
