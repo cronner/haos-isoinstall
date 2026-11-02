@@ -32,9 +32,15 @@ jobs:
       - name: Staging-medium selection
         run: bash tests/stage.sh
 
+      # An image the user brings must never be written for the wrong board: the
+      # file name decides whether it is offered at all, and that decision, plus
+      # the media scan, is tested rather than reviewed.
+      - name: Offline image discovery
+        run: bash tests/image.sh
+
       - name: ShellCheck
         run: |
           # Warnings stay informative so that style does not break anything;
           # only real errors block.
-          shellcheck -S warning build-iso.sh haos-installer.sh tests/strings.sh tests/stage.sh || true
-          shellcheck -S error build-iso.sh haos-installer.sh tests/strings.sh tests/stage.sh
+          shellcheck -S warning build-iso.sh haos-installer.sh tests/strings.sh tests/stage.sh tests/image.sh || true
+          shellcheck -S error build-iso.sh haos-installer.sh tests/strings.sh tests/stage.sh tests/image.sh

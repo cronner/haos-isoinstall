@@ -49,6 +49,14 @@ fr)
   S_SB_UNK="À VÉRIFIER (état indéterminé)"
   S_WELCOME="Bienvenue.\n\nCet outil installe la dernière version de Home Assistant OS\nsur ce PC, sans ligne de commande.\n\nÉTAT DES PRÉREQUIS :\n  Démarrage   : %s\n  Secure Boot : %s\n\nUn « À VÉRIFIER » signifie que Home Assistant risque de ne\npas démarrer après l'installation. Cela se corrige dans le\nBIOS (touche Suppr/F2 au démarrage). Rien n'est bloqué :\ntu peux continuer quand même.\n\nÀ l'étape du disque, TOUT le disque choisi sera effacé."
   S_NET_ETH="Recherche d'une connexion filaire (Ethernet)..."
+  S_SRC_ASK="D'où doit venir l'image ?\n\nLe téléchargement demande une connexion Internet.\nUne image sur clé USB ne demande aucun réseau."
+  S_SRC_DL="Télécharger la dernière version"
+  S_SRC_USE="Utiliser une image sur clé USB"
+  S_IMG_SCAN="Recherche d'images Home Assistant OS sur les\nclés connectées..."
+  S_IMG_NONE="Aucune image utilisable trouvée.\n\nLe fichier doit s'appeler\n  haos_generic-x86-64-<version>.img.xz\n\nFichiers trouvés mais inutilisables ici :\n%s\n\nBranchez une clé contenant la bonne image, ou\nrevenez en arrière pour la télécharger."
+  S_IMG_PICK="Quelle image faut-il écrire sur le disque ?"
+  S_IMG_CHECK="Vérification des sommes .xz de l'image..."
+  S_IMG_BAD="Cette image n'a pas pu être vérifiée :\n%s\n\n%s\n\nElle est abîmée, incomplète, ou ce n'est pas\nvraiment un fichier .img.xz. Rien n'a été écrit\nsur aucun disque."
   S_LAN_ASK="Aucune connexion réseau.\n\nBranchez un câble Ethernet (LAN) sur le PC, puis choisissez\nRéessayer.\n\nSans réseau, l'image ne peut pas être téléchargée.\nRien n'a encore été écrit sur aucun disque."
   S_LAN_RETRY="Réessayer"
   S_LAN_WIFI="Utiliser le Wi-Fi"
@@ -138,6 +146,14 @@ de)
   S_SB_UNK="PRÜFEN (Status unklar)"
   S_WELCOME="Willkommen.\n\nDieses Werkzeug installiert die neueste Version von\nHome Assistant OS auf diesem PC, ohne Kommandozeile.\n\nVORAUSSETZUNGEN:\n  Startmodus  : %s\n  Secure Boot : %s\n\n„PRÜFEN“ heißt, dass Home Assistant nach der\nInstallation möglicherweise nicht startet. Das behebst\ndu im BIOS (Entf/F2 beim Einschalten). Nichts ist\ngesperrt: du kannst trotzdem weitermachen.\n\nBeim Schritt „Datenträger“ wird die gewählte Platte\nKOMPLETT gelöscht."
   S_NET_ETH="Suche nach einer Kabelverbindung (Ethernet)..."
+  S_SRC_ASK="Woher soll das Image kommen?\n\nHerunterladen braucht eine Internetverbindung.\nEin Image auf einem USB-Stick braucht kein Netz."
+  S_SRC_DL="Neueste Version herunterladen"
+  S_SRC_USE="Image von einem USB-Stick verwenden"
+  S_IMG_SCAN="Suche nach Home Assistant OS-Images auf den\nangeschlossenen Sticks..."
+  S_IMG_NONE="Kein brauchbares Image gefunden.\n\nDie Datei muss so heißen:\n  haos_generic-x86-64-<version>.img.xz\n\nGefundene, hier unbrauchbare Dateien:\n%s\n\nStecke einen Stick mit dem richtigen Image ein,\noder gehe zurück und lade es herunter."
+  S_IMG_PICK="Welches Image soll auf die Platte geschrieben werden?"
+  S_IMG_CHECK="Prüfe die .xz-Prüfsummen des Images..."
+  S_IMG_BAD="Dieses Image konnte nicht geprüft werden:\n%s\n\n%s\n\nEs ist beschädigt, unvollständig oder kein\nechtes .img.xz. Auf keine Platte wurde etwas\ngeschrieben."
   S_LAN_ASK="Keine Netzwerkverbindung.\n\nStecke ein Ethernet-(LAN-)Kabel in den PC und wähle dann\nErneut versuchen.\n\nOhne Netz kann das Image nicht geladen werden.\nAuf keine Platte wurde bisher geschrieben."
   S_LAN_RETRY="Erneut versuchen"
   S_LAN_WIFI="Stattdessen WLAN"
@@ -227,6 +243,14 @@ da)
   S_SB_UNK="TJEK DETTE (tilstand ukendt)"
   S_WELCOME="Velkommen.\n\nDette værktøj installerer den nyeste Home Assistant OS\npå denne PC, uden kommandolinje.\n\nKRAV:\n  Starttilstand : %s\n  Secure Boot   : %s\n\n»TJEK DETTE« betyder, at Home Assistant muligvis ikke\nstarter efter installationen. Det rettes i BIOS\n(Del/F2 ved opstart). Intet er blokeret: du kan fortsætte.\n\nVed disken bliver HELE den valgte disk slettet."
   S_NET_ETH="Søger efter en kabelforbindelse (Ethernet)..."
+  S_SRC_ASK="Hvor skal imaget komme fra?\n\nDownload kræver en internetforbindelse.\nEt image på en USB-pind kræver intet netværk."
+  S_SRC_DL="Hent den nyeste version"
+  S_SRC_USE="Brug et image på en USB-pind"
+  S_IMG_SCAN="Leder efter Home Assistant OS-imager på de\ntilsluttede pinde..."
+  S_IMG_NONE="Fandt intet brugbart image.\n\nFilen skal hedde\n  haos_generic-x86-64-<version>.img.xz\n\nFiler fundet, men ubrugelige her:\n%s\n\nSæt en pind i med det rigtige image, eller gå\ntilbage og hent det i stedet."
+  S_IMG_PICK="Hvilket image skal skrives til disken?"
+  S_IMG_CHECK="Kontrollerer imagets .xz-checksummer..."
+  S_IMG_BAD="Dette image kunne ikke verificeres:\n%s\n\n%s\n\nDet er beskadiget, ufuldstændigt eller ikke en\nrigtig .img.xz-fil. Der er intet skrevet til\nnogen disk."
   S_LAN_ASK="Ingen netværksforbindelse.\n\nSæt et Ethernet-(LAN-)kabel i PC'en, og vælg derefter\nPrøv igen.\n\nUden netværk kan imaget ikke hentes.\nDer er ikke skrevet noget til nogen disk endnu."
   S_LAN_RETRY="Prøv igen"
   S_LAN_WIFI="Brug Wi-Fi i stedet"
@@ -316,6 +340,14 @@ nl)
   S_SB_UNK="CONTROLEER DIT (status onbekend)"
   S_WELCOME="Welkom.\n\nDit hulpprogramma installeert de nieuwste Home Assistant OS\nop deze pc, zonder opdrachtregel.\n\nCONTROLE VAN DE VEREISTEN:\n  Opstartmodus : %s\n  Secure Boot  : %s\n\n\"CONTROLEER DIT\" betekent dat Home Assistant na de\ninstallatie mogelijk niet start. Los dit op in de BIOS\n(Del/F2 bij het aanzetten). Niets is geblokkeerd: je kunt\ndoorgaan.\n\nBij de schijfstap wordt de HELE gekozen schijf gewist."
   S_NET_ETH="Zoeken naar een bekabelde (Ethernet) verbinding..."
+  S_SRC_ASK="Waar moet de image vandaan komen?\n\nDownloaden vereist een internetverbinding.\nEen image op een USB-stick heeft geen netwerk nodig."
+  S_SRC_DL="Nieuwste versie downloaden"
+  S_SRC_USE="Image op een USB-stick gebruiken"
+  S_IMG_SCAN="Zoeken naar Home Assistant OS-images op de\naangesloten sticks..."
+  S_IMG_NONE="Geen bruikbare image gevonden.\n\nHet bestand moet heten\n  haos_generic-x86-64-<version>.img.xz\n\nBestanden gevonden, maar hier onbruikbaar:\n%s\n\nSluit een stick met de juiste image aan, of ga\nterug en download hem."
+  S_IMG_PICK="Welke image moet naar de schijf worden geschreven?"
+  S_IMG_CHECK="Controle van de .xz-controlesommen van de image..."
+  S_IMG_BAD="Deze image kon niet worden geverifieerd:\n%s\n\n%s\n\nHij is beschadigd, onvolledig of geen echt\n.img.xz-bestand. Er is niets naar een schijf\ngeschreven."
   S_LAN_ASK="Geen netwerkverbinding.\n\nSluit een Ethernetkabel (LAN) aan op de pc en kies\ndan Opnieuw.\n\nZonder netwerk kan de image niet worden gedownload.\nEr is nog niets naar een schijf geschreven."
   S_LAN_RETRY="Opnieuw"
   S_LAN_WIFI="Liever Wi-Fi"
@@ -405,6 +437,14 @@ es)
   S_SB_UNK="COMPRUEBA ESTO (estado desconocido)"
   S_WELCOME="Bienvenido.\n\nEsta herramienta instala la ultima version de Home Assistant OS\nen este PC, sin usar la linea de comandos.\n\nCOMPROBACION DE REQUISITOS:\n  Modo de arranque : %s\n  Secure Boot      : %s\n\n\"COMPRUEBA ESTO\" significa que Home Assistant podria no\narrancar tras la instalacion. Se corrige en la BIOS\n(Supr/F2 al encender). Nada esta bloqueado: puedes seguir.\n\nEn el paso del disco se borrara TODO el disco elegido."
   S_NET_ETH="Buscando una conexion por cable (Ethernet)..."
+  S_SRC_ASK="¿De dónde debe venir la imagen?\n\nDescargar requiere conexión a Internet. Una\nimagen en un lápiz USB no necesita red."
+  S_SRC_DL="Descargar la última versión"
+  S_SRC_USE="Usar una imagen de un lápiz USB"
+  S_IMG_SCAN="Buscando imágenes de Home Assistant OS en los\nlápices conectados..."
+  S_IMG_NONE="No se encontró ninguna imagen utilizable.\n\nEl archivo debe llamarse\n  haos_generic-x86-64-<version>.img.xz\n\nArchivos encontrados pero inutilizables aquí:\n%s\n\nConecta un lápiz con la imagen correcta, o\nvuelve atrás y descárgala."
+  S_IMG_PICK="¿Qué imagen se debe escribir en el disco?"
+  S_IMG_CHECK="Comprobando las sumas .xz de la imagen..."
+  S_IMG_BAD="No se pudo verificar esta imagen:\n%s\n\n%s\n\nEstá dañada, incompleta, o no es un archivo\n.img.xz de verdad. No se ha escrito nada en\nningún disco."
   S_LAN_ASK="Sin conexion de red.\n\nConecta un cable Ethernet (LAN) al PC y elige\nReintentar.\n\nSin red no se puede descargar la imagen.\nTodavia no se ha escrito nada en ningun disco."
   S_LAN_RETRY="Reintentar"
   S_LAN_WIFI="Usar Wi-Fi"
@@ -494,6 +534,14 @@ it)
   S_SB_UNK="CONTROLLA QUESTO (stato sconosciuto)"
   S_WELCOME="Benvenuto.\n\nQuesto strumento installa l'ultima versione di Home Assistant OS\nsu questo PC, senza riga di comando.\n\nVERIFICA DEI REQUISITI:\n  Modalita di avvio : %s\n  Secure Boot       : %s\n\n\"CONTROLLA QUESTO\" significa che Home Assistant potrebbe non\navviarsi dopo l'installazione. Si sistema nel BIOS\n(Canc/F2 all'accensione). Nulla e bloccato: puoi proseguire.\n\nAl passaggio del disco verra cancellato TUTTO il disco scelto."
   S_NET_ETH="Ricerca di una connessione via cavo (Ethernet)..."
+  S_SRC_ASK="Da dove deve arrivare l'immagine?\n\nIl download richiede una connessione Internet.\nUn'immagine su chiavetta non richiede rete."
+  S_SRC_DL="Scaricare l'ultima versione"
+  S_SRC_USE="Usare un'immagine su chiavetta USB"
+  S_IMG_SCAN="Ricerca di immagini Home Assistant OS sulle\nchiavette collegate..."
+  S_IMG_NONE="Nessuna immagine utilizzabile trovata.\n\nIl file deve chiamarsi\n  haos_generic-x86-64-<version>.img.xz\n\nFile trovati ma inutilizzabili qui:\n%s\n\nInserisci una chiavetta con l'immagine giusta,\no torna indietro e scaricala."
+  S_IMG_PICK="Quale immagine scrivere sul disco?"
+  S_IMG_CHECK="Controllo dei checksum .xz dell'immagine..."
+  S_IMG_BAD="Impossibile verificare questa immagine:\n%s\n\n%s\n\nE danneggiata, incompleta, o non e davvero un\nfile .img.xz. Non e stato scritto nulla su\nnessun disco."
   S_LAN_ASK="Nessuna connessione di rete.\n\nCollega un cavo Ethernet (LAN) al PC, poi scegli\nRiprova.\n\nSenza rete l'immagine non puo essere scaricata.\nNon e ancora stato scritto nulla su alcun disco."
   S_LAN_RETRY="Riprova"
   S_LAN_WIFI="Usa il Wi-Fi"
@@ -583,6 +631,14 @@ pl)
   S_SB_UNK="SPRAWDZ TO (stan nieznany)"
   S_WELCOME="Witaj.\n\nTo narzedzie instaluje najnowszy Home Assistant OS na tym\nkomputerze, bez uzywania wiersza polecen.\n\nSPRAWDZENIE WYMAGAN:\n  Tryb rozruchu : %s\n  Secure Boot   : %s\n\n\"SPRAWDZ TO\" oznacza, ze Home Assistant moze nie wystartowac\npo instalacji. Popraw to w BIOS-ie (Del/F2 przy wlaczaniu).\nNic nie jest zablokowane: mozesz kontynuowac.\n\nNa etapie dysku CALY wybrany dysk zostanie wyczyszczony."
   S_NET_ETH="Szukanie polaczenia przewodowego (Ethernet)..."
+  S_SRC_ASK="Skad ma pochodzic obraz?\n\nPobieranie wymaga polaczenia z internetem.\nObraz na pendrive nie wymaga sieci."
+  S_SRC_DL="Pobierz najnowsza wersje"
+  S_SRC_USE="Uzyj obrazu z pendrive'a"
+  S_IMG_SCAN="Szukam obrazow Home Assistant OS na\npodlaczonych pendrive'ach..."
+  S_IMG_NONE="Nie znaleziono uzytecznego obrazu.\n\nPlik musi nazywac sie\n  haos_generic-x86-64-<version>.img.xz\n\nZnalezione pliki, nieprzydatne tutaj:\n%s\n\nPodlacz pendrive z wlasciwym obrazem albo\nwroc i pobierz go."
+  S_IMG_PICK="Ktory obraz zapisac na dysku?"
+  S_IMG_CHECK="Sprawdzam sumy .xz obrazu..."
+  S_IMG_BAD="Nie udalo sie zweryfikowac tego obrazu:\n%s\n\n%s\n\nJest uszkodzony, niekompletny albo to nie jest\nplik .img.xz. Na zaden dysk nic nie zapisano."
   S_LAN_ASK="Brak polaczenia sieciowego.\n\nPodlacz kabel Ethernet (LAN) do komputera, a nastepnie\nwybierz PONOW.\n\nBez sieci nie da sie pobrac obrazu.\nNa zadnym dysku nic jeszcze nie zapisano."
   S_LAN_RETRY="Ponow"
   S_LAN_WIFI="Uzyj Wi-Fi"
@@ -672,6 +728,14 @@ sv)
   S_SB_UNK="KONTROLLERA DETTA (status okand)"
   S_WELCOME="Valkommen.\n\nDet har verktyget installerar senaste Home Assistant OS pa\ndenna dator, utan kommandorad.\n\nKONTROLL AV KRAV:\n  Startlage   : %s\n  Secure Boot : %s\n\n\"KONTROLLERA DETTA\" betyder att Home Assistant kanske inte\nstartar efter installationen. Atgarda i BIOS (Del/F2 vid\nuppstart). Inget ar blockerat: du kan fortsatta anda.\n\nI disksteget raderas HELA den disk du valjer."
   S_NET_ETH="Soker efter en tradbunden (Ethernet-)anslutning..."
+  S_SRC_ASK="Var ska avbildningen komma ifran?\n\nNedladdning kraver en internetanslutning.\nEn avbildning pa ett USB-minne kraver inget nat."
+  S_SRC_DL="Ladda ner senaste versionen"
+  S_SRC_USE="Anvand en avbildning pa ett USB-minne"
+  S_IMG_SCAN="Soker efter Home Assistant OS-avbildningar pa\nde anslutna minnena..."
+  S_IMG_NONE="Ingen anvandbar avbildning hittades.\n\nFilen maste heta\n  haos_generic-x86-64-<version>.img.xz\n\nFiler som hittades men inte gar att anvanda:\n%s\n\nSatt i ett minne med ratt avbildning, eller ga\ntillbaka och ladda ner den."
+  S_IMG_PICK="Vilken avbildning ska skrivas till disken?"
+  S_IMG_CHECK="Kontrollerar avbildningens .xz-kontrollsummor..."
+  S_IMG_BAD="Avbildningen kunde inte verifieras:\n%s\n\n%s\n\nDen ar skadad, ofullstandig eller inte en\nriktig .img.xz-fil. Inget har skrivits till\nnagon disk."
   S_LAN_ASK="Ingen natverksanslutning.\n\nAnslut en Ethernetkabel (LAN) till datorn och valj\nForsok igen.\n\nUtan natverk kan avbilden inte hamtas.\nInget har skrivits till nagon disk an."
   S_LAN_RETRY="Forsok igen"
   S_LAN_WIFI="Anvand Wi-Fi i stallet"
@@ -761,6 +825,14 @@ pt)
   S_SB_UNK="VERIFIQUE ISTO (estado desconhecido)"
   S_WELCOME="Bem-vindo.\n\nEsta ferramenta instala a versao mais recente do Home\nAssistant OS neste PC, sem linha de comandos.\n\nVERIFICACAO DOS REQUISITOS:\n  Modo de arranque : %s\n  Secure Boot      : %s\n\n\"VERIFIQUE ISTO\" significa que o Home Assistant pode nao\narrancar apos a instalacao. Corrija na BIOS (Del/F2 ao\nligar). Nada esta bloqueado: pode continuar.\n\nNo passo do disco, TODO o disco escolhido sera apagado."
   S_NET_ETH="A procurar uma ligacao por cabo (Ethernet)..."
+  S_SRC_ASK="De onde deve vir a imagem?\n\nTransferir exige ligacao a Internet. Uma\nimagem numa pen USB nao precisa de rede."
+  S_SRC_DL="Transferir a versao mais recente"
+  S_SRC_USE="Usar uma imagem numa pen USB"
+  S_IMG_SCAN="A procurar imagens do Home Assistant OS nas\npens ligadas..."
+  S_IMG_NONE="Nenhuma imagem utilizavel encontrada.\n\nO ficheiro tem de se chamar\n  haos_generic-x86-64-<version>.img.xz\n\nFicheiros encontrados mas inutilizaveis aqui:\n%s\n\nLiga uma pen com a imagem certa, ou volta\natras e transfere-a."
+  S_IMG_PICK="Que imagem deve ser escrita no disco?"
+  S_IMG_CHECK="A verificar as somas .xz da imagem..."
+  S_IMG_BAD="Nao foi possivel verificar esta imagem:\n%s\n\n%s\n\nEsta danificada, incompleta, ou nao e mesmo um\nficheiro .img.xz. Nada foi escrito em disco\nalgum."
   S_LAN_ASK="Sem ligacao de rede.\n\nLigue um cabo Ethernet (LAN) ao PC e escolha\nRepetir.\n\nSem rede nao e possivel descarregar a imagem.\nAinda nada foi escrito em nenhum disco."
   S_LAN_RETRY="Repetir"
   S_LAN_WIFI="Usar Wi-Fi"
@@ -850,6 +922,14 @@ ru)
   S_SB_UNK="ПРОВЕРЬТЕ ЭТО (состояние неизвестно)"
   S_WELCOME="Добро пожаловать.\n\nЭта программа устанавливает последнюю версию Home\nAssistant OS на этот компьютер, без командной строки.\n\nПРОВЕРКА ТРЕБОВАНИЙ:\n  Режим загрузки : %s\n  Secure Boot    : %s\n\n«ПРОВЕРЬТЕ ЭТО» значит, что Home Assistant может не\nзагрузиться после установки. Исправляется в BIOS\n(Del/F2 при включении). Ничего не заблокировано:\nможно продолжить.\n\nНа шаге с диском ВЕСЬ выбранный диск будет стёрт."
   S_NET_ETH="Поиск проводного подключения (Ethernet)..."
+  S_SRC_ASK="Откуда взять образ?\n\nЗагрузка требует подключения к интернету.\nОбраз на флешке не требует сети."
+  S_SRC_DL="Скачать последнюю версию"
+  S_SRC_USE="Использовать образ на флешке"
+  S_IMG_SCAN="Ищу образы Home Assistant OS на\nподключённых флешках..."
+  S_IMG_NONE="Подходящий образ не найден.\n\nФайл должен называться\n  haos_generic-x86-64-<version>.img.xz\n\nНайдены файлы, непригодные здесь:\n%s\n\nВставьте флешку с нужным образом или\nвернитесь и скачайте его."
+  S_IMG_PICK="Какой образ записать на диск?"
+  S_IMG_CHECK="Проверяю контрольные суммы .xz образа..."
+  S_IMG_BAD="Не удалось проверить этот образ:\n%s\n\n%s\n\nОн повреждён, неполон или это не файл\n.img.xz. На диск ничего не записано."
   S_LAN_ASK="Нет подключения к сети.\n\nПодключите кабель Ethernet (LAN) к компьютеру, затем\nвыберите Повторить.\n\nБез сети образ невозможно скачать.\nНа диски пока ничего не записано."
   S_LAN_RETRY="Повторить"
   S_LAN_WIFI="Использовать Wi-Fi"
@@ -939,6 +1019,14 @@ cs)
   S_SB_UNK="ZKONTROLUJTE (stav neznámý)"
   S_WELCOME="Vítejte.\n\nTento nástroj nainstaluje nejnovější Home Assistant OS\nna tento počítač, bez příkazové řádky.\n\nKONTROLA POŽADAVKŮ:\n  Režim spouštění : %s\n  Secure Boot     : %s\n\n„ZKONTROLUJTE“ znamená, že Home Assistant po instalaci\nnemusí naběhnout. Opravte to v BIOSu (Del/F2 při zapnutí).\nNic není zablokováno: můžete pokračovat.\n\nU kroku s diskem bude CELÝ vybraný disk smazán."
   S_NET_ETH="Hledání kabelového připojení (Ethernet)..."
+  S_SRC_ASK="Odkud má image pocházet?\n\nStahování vyžaduje připojení k internetu.\nImage na USB disku síť nepotřebuje."
+  S_SRC_DL="Stáhnout nejnovější verzi"
+  S_SRC_USE="Použít image na USB disku"
+  S_IMG_SCAN="Hledám image Home Assistant OS na\npřipojených USB discích..."
+  S_IMG_NONE="Nebyl nalezen žádný použitelný image.\n\nSoubor se musí jmenovat\n  haos_generic-x86-64-<version>.img.xz\n\nNalezené soubory, zde nepoužitelné:\n%s\n\nPřipojte USB disk se správným image, nebo se\nvrátte a stáhněte jej."
+  S_IMG_PICK="Který image zapsat na disk?"
+  S_IMG_CHECK="Kontrola kontrolních součtů .xz image..."
+  S_IMG_BAD="Tento image nelze ověřit:\n%s\n\n%s\n\nJe poškozený, neúplný, nebo to není skutečný\nsoubor .img.xz. Na žádný disk nebylo nic\nzapsáno."
   S_LAN_ASK="Žádné síťové připojení.\n\nPřipojte k počítači kabel Ethernet (LAN) a zvolte\nZkusit znovu.\n\nBez sítě nelze obraz stáhnout.\nNa žádný disk zatím nebylo nic zapsáno."
   S_LAN_RETRY="Zkusit znovu"
   S_LAN_WIFI="Použít Wi-Fi"
@@ -1028,6 +1116,14 @@ no)
   S_SB_UNK="SJEKK DETTE (status ukjent)"
   S_WELCOME="Velkommen.\n\nDette verktøyet installerer nyeste Home Assistant OS på\ndenne PC-en, uten kommandolinje.\n\nKONTROLL AV KRAV:\n  Oppstartsmodus : %s\n  Secure Boot    : %s\n\n\"SJEKK DETTE\" betyr at Home Assistant kanskje ikke starter\netter installasjonen. Rett det i BIOS (Del/F2 ved oppstart).\nIngenting er blokkert: du kan fortsette.\n\nI disksteget slettes HELE disken du velger."
   S_NET_ETH="Ser etter kablet (Ethernet) tilkobling..."
+  S_SRC_ASK="Hvor skal avbildningen komme fra?\n\nNedlasting krever internettforbindelse.\nEn avbildning pa en USB-pinne krever ikke nett."
+  S_SRC_DL="Last ned nyeste versjon"
+  S_SRC_USE="Bruk en avbildning pa en USB-pinne"
+  S_IMG_SCAN="Ser etter Home Assistant OS-avbildninger pa\nde tilkoblede pinnene..."
+  S_IMG_NONE="Fant ingen brukbar avbildning.\n\nFilen ma hete\n  haos_generic-x86-64-<version>.img.xz\n\nFiler funnet, men ubrukelige her:\n%s\n\nSett inn en pinne med riktig avbildning, eller\nga tilbake og last den ned."
+  S_IMG_PICK="Hvilken avbildning skal skrives til disken?"
+  S_IMG_CHECK="Sjekker .xz-kontrollsummene til avbildningen..."
+  S_IMG_BAD="Denne avbildningen kunne ikke verifiseres:\n%s\n\n%s\n\nDen er skadet, ufullstendig, eller ikke en\nordentlig .img.xz-fil. Ingenting er skrevet til\nnoen disk."
   S_LAN_ASK="Ingen nettverkstilkobling.\n\nKoble en Ethernet-kabel (LAN) til PC-en, og velg\nPrøv igjen.\n\nUten nettverk kan bildet ikke lastes ned.\nIngenting er skrevet til noen disk ennå."
   S_LAN_RETRY="Prøv igjen"
   S_LAN_WIFI="Bruk Wi-Fi i stedet"
@@ -1117,6 +1213,14 @@ fi)
   S_SB_UNK="TARKISTA TÄMÄ (tila tuntematon)"
   S_WELCOME="Tervetuloa.\n\nTämä työkalu asentaa uusimman Home Assistant OS:n tälle\ntietokoneelle ilman komentoriviä.\n\nVAATIMUSTEN TARKISTUS:\n  Käynnistystila : %s\n  Secure Boot    : %s\n\n\"TARKISTA TÄMÄ\" tarkoittaa, että Home Assistant ei\nvälttämättä käynnisty asennuksen jälkeen. Korjaa BIOSissa\n(Del/F2 käynnistyksen yhteydessä). Mikään ei ole estetty:\nvoit jatkaa.\n\nLevyvaiheessa KOKO valittu levy tyhjennetään."
   S_NET_ETH="Etsitään kaapeliyhteyttä (Ethernet)..."
+  S_SRC_ASK="Mistä levykuva tulee?\n\nLataus vaatii verkkoyhteyden. USB-muistilla\noleva levykuva ei vaadi verkkoa lainkaan."
+  S_SRC_DL="Lataa uusin versio"
+  S_SRC_USE="Käytä USB-muistilla olevaa levykuvaa"
+  S_IMG_SCAN="Etsin Home Assistant OS -levykuvia\nliitetyiltä muisteilta..."
+  S_IMG_NONE="Sopivaa levykuvaa ei löytynyt.\n\nTiedoston nimi pitää olla\n  haos_generic-x86-64-<version>.img.xz\n\nLöytyneet tiedostot, jotka eivät käy tässä:\n%s\n\nLiitä muisti, jossa on oikea levykuva, tai palaa\ntakaisin ja lataa se."
+  S_IMG_PICK="Mikä levykuva kirjoitetaan levylle?"
+  S_IMG_CHECK="Tarkistetaan levykuvan .xz-tarkistussummat..."
+  S_IMG_BAD="Tätä levykuvaa ei voitu tarkistaa:\n%s\n\n%s\n\nSe on vioittunut, puutteellinen tai ei oikea\n.img.xz-tiedosto. Mitään ei ole kirjoitettu\nyhdellekään levylle."
   S_LAN_ASK="Ei verkkoyhteyttä.\n\nKytke Ethernet-kaapeli (LAN) tietokoneeseen ja valitse\nYritä uudelleen.\n\nIlman verkkoa imagoa ei voi ladata.\nMitään ei ole vielä kirjoitettu millekään levylle."
   S_LAN_RETRY="Yritä uudelleen"
   S_LAN_WIFI="Käytä Wi-Fiä"
@@ -1206,6 +1310,14 @@ fi)
   S_SB_UNK="CHECK THIS (state unknown)"
   S_WELCOME="Welcome.\n\nThis tool installs the latest Home Assistant OS on this PC,\nwith no command line involved.\n\nREQUIREMENTS CHECK:\n  Boot mode   : %s\n  Secure Boot : %s\n\n\"CHECK THIS\" means Home Assistant may not boot after the\ninstall. Fix it in the BIOS (Del/F2 at power-on). Nothing\nis blocked: you may continue anyway.\n\nAt the disk step, the WHOLE disk you pick will be erased."
   S_NET_ETH="Looking for a wired (Ethernet) connection..."
+  S_SRC_ASK="Where should the image come from?\n\nDownloading needs an internet connection.\nAn image on a USB stick needs no network at all."
+  S_SRC_DL="Download the latest version"
+  S_SRC_USE="Use an image on a USB stick"
+  S_IMG_SCAN="Looking for Home Assistant OS images on the\nconnected sticks..."
+  S_IMG_NONE="No usable image found.\n\nThe file must be named\n  haos_generic-x86-64-<version>.img.xz\n\nFiles found but not usable here:\n%s\n\nPlug in a stick holding the right image, or go\nback and download it instead."
+  S_IMG_PICK="Which image should be written to the disk?"
+  S_IMG_CHECK="Checking the image's .xz checksums..."
+  S_IMG_BAD="This image could not be verified:\n%s\n\n%s\n\nIt is damaged, incomplete, or not really an\n.img.xz file. Nothing has been written to any\ndisk."
   S_LAN_ASK="No network connection.\n\nPlug an Ethernet (LAN) cable into the PC, then choose\nRetry.\n\nNo network means the image cannot be downloaded.\nNothing has been written to any disk yet."
   S_LAN_RETRY="Retry"
   S_LAN_WIFI="Use Wi-Fi instead"
@@ -2174,6 +2286,9 @@ pick_disk(){
   while read -r name; do
     [ -n "$name" ] || continue
     [ -n "$live_dev" ] && [ "$name" = "$live_dev" ] && continue   # never the boot medium
+    # Never the disk we are reading the image from: the write would overwrite
+    # the very bytes still to be read.
+    [ -n "${IMG_DISK:-}" ] && [ "$name" = "$IMG_DISK" ] && continue
     # Belt and braces: any disk carrying an iso9660 (itself or one of its
     # partitions) is an installation medium, never a target. Covers the writes
     # where the LABEL would not be the expected one (dd of another ISO).
@@ -2327,6 +2442,168 @@ find_stage_dir(){
   return 1
 }
 
+
+# ---------------------------------------------------------------------------
+# An image the user already has: for a machine with no network, or for pinning
+# the version. Same contract as the download -- the file is checked BEFORE
+# anything is erased.
+#
+# The NAME decides whether the file may be used at all. Writing an image built
+# for a Raspberry Pi onto a PC disk produces a disk that boots nothing, and the
+# user would learn that only after the erase; so a file that does not carry this
+# board's key (generic-x86_64) is reported as unusable rather than offered.
+IMG_FILE=""                    # verified local image; "" means "download"
+IMG_MNT=""                     # mount point that must stay until the write
+IMG_DISK=""                    # disk carrying that image: never a target
+IMG_CANDS=()                   # "path|mount point|size"
+IMG_FOREIGN=()                 # "name (board)", for the "not usable" message
+IMG_MNTS=()                    # every mount point this script created
+
+classify_image(){              # <filename> -> ok | board:<board> | no
+  local n b
+  n=$(printf '%s' "${1##*/}" | tr 'A-Z' 'a-z')
+  case "$n" in *.img.xz) ;; *) printf 'no'; return 0 ;; esac
+  case "$n" in haos_*-[0-9]*.img.xz) ;; *) printf 'no'; return 0 ;; esac
+  b=$(printf '%s' "$n" | sed -e 's/^haos_//' -e 's/-[0-9][^-]*\.img\.xz$//')
+  # Upstream writes generic-x86-64; a file renamed by hand may say generic-x86_64.
+  # It is the same board, so the separator is normalised before comparing rather
+  # than the name being trusted twice.
+  if [ "$(printf '%s' "$b" | tr '_' '-')" = "$HAOS_BOARD" ]; then
+    printf 'ok'
+  else
+    printf 'board:%s' "$b"
+  fi
+}
+
+image_version(){               # <filename> -> version, or nothing
+  printf '%s' "$1" | sed -n 's/^haos_generic-x86[-_]64-\([0-9][0-9.]*\)\.img\.xz$/\1/p'
+}
+
+release_image_mounts(){        # <mount point to keep, or "">
+  local keep="$1" m
+  for m in "${IMG_MNTS[@]:-}"; do
+    [ -n "$m" ] || continue
+    [ "$m" = "$keep" ] && continue
+    umount "$m" 2>>"$LOG" || true
+  done
+  IMG_MNTS=()
+  [ -n "$keep" ] && IMG_MNTS=("$keep")
+  return 0
+}
+
+# Scans removable media for HAOS images, read-only: the stick belongs to the
+# user and must look the same afterwards. Depth 2, because people keep the file
+# in a folder. Returns 0 when at least one usable image was found.
+find_images(){
+  local p pk fs mp f base size verdict tgt="" n=0
+  IMG_CANDS=(); IMG_FOREIGN=(); IMG_MNTS=()
+  [ -n "${TARGET:-}" ] && tgt=$(basename "$TARGET")
+  while read -r p; do
+    [ -n "$p" ] || continue
+    pk=$(lsblk -no PKNAME "/dev/$p" 2>/dev/null | head -1 | tr -d ' ')
+    [ -n "$pk" ] || continue
+    [ -n "$tgt" ] && [ "$pk" = "$tgt" ] && continue
+    [ -n "${live_dev:-}" ] && [ "$pk" = "$live_dev" ] && continue
+    case "$(lsblk -dno TRAN "/dev/$pk" 2>/dev/null | tr -d ' ')/$(lsblk -dno RM "/dev/$pk" 2>/dev/null | tr -d ' ')" in
+      *usb*|*1*) ;;
+      *) continue ;;
+    esac
+    fs=$(lsblk -no FSTYPE "/dev/$p" 2>/dev/null | tr -d ' ')
+    case "$fs" in iso9660|udf|"") continue ;; esac
+    mp=$(findmnt -rn -S "/dev/$p" -o TARGET 2>/dev/null | head -1)
+    if [ -z "$mp" ]; then
+      n=$(( n + 1 ))
+      mp="/mnt/img$n"
+      mkdir -p "$mp" 2>/dev/null || continue
+      mount -o ro "/dev/$p" "$mp" 2>>"$LOG" || continue
+      IMG_MNTS+=("$mp")
+    fi
+    while IFS= read -r f; do
+      [ -n "$f" ] || continue
+      base=${f##*/}
+      verdict=$(classify_image "$base")
+      case "$verdict" in
+        ok)
+          size=$(stat -c%s "$f" 2>/dev/null || echo 0)
+          logx "image candidate: $f ($(numfmt --to=iec "$size" 2>/dev/null || echo "$size"))"
+          IMG_CANDS+=("$f|$mp|$size") ;;
+        board:*)
+          logx "image refused, built for another board: $f (${verdict#board:})"
+          IMG_FOREIGN+=("$base (${verdict#board:})") ;;
+      esac
+    done < <(find "$mp" -maxdepth 2 -type f -iname '*.img.xz' 2>/dev/null | LC_ALL=C sort)
+  done < <(lsblk -lno NAME,TYPE 2>/dev/null | awk '$2=="part"{print $1}')
+  [ "${#IMG_CANDS[@]}" -gt 0 ]
+}
+
+# Lets the user pick one of them. Returns 0 with IMG_FILE set, 1 to download.
+use_local_image(){
+  local choice rec path mnt size ver note detail src
+  while :; do
+    whiptail --title "$S_TITLE" --infobox "$S_IMG_SCAN" 7 66
+    if ! find_images; then
+      note="-"
+      [ "${#IMG_FOREIGN[@]}" -gt 0 ] && note=$(printf '  %s\n' "${IMG_FOREIGN[@]}")
+      release_image_mounts ""
+      wt_yesno "$S_WARN" "$(printf "$S_IMG_NONE" "$note")" \
+        --yes-button "$S_STAGE_RETRY" --no-button "$S_SRC_DL" || return 1
+      continue
+    fi
+
+    local -a menu=()
+    for rec in "${IMG_CANDS[@]}"; do
+      path=${rec%%|*}
+      size=${rec##*|}
+      menu+=("$path" "$(numfmt --to=iec "$size" 2>/dev/null || echo "$size")")
+    done
+    choice=$(wt_menu "$S_TITLE" "$S_IMG_PICK" 12 "${menu[@]}") \
+      || { release_image_mounts ""; return 1; }
+
+    whiptail --title "$S_TITLE" --infobox "$S_IMG_CHECK" 7 66
+    if xz -t "$choice" 2>>"$LOG"; then
+      mnt=""
+      for rec in "${IMG_CANDS[@]}"; do
+        [ "${rec%%|*}" = "$choice" ] && mnt=$rec
+      done
+      mnt=${mnt#*|}; mnt=${mnt%%|*}
+      IMG_FILE="$choice"
+      IMG_MNT="$mnt"
+      # Reading the image from the disk we write to would corrupt both, so that
+      # disk is removed from the target list rather than trusted to the user.
+      IMG_DISK=""
+      src=$(findmnt -rn -o SOURCE -T "$choice" 2>/dev/null | head -1)
+      case "$src" in /dev/*) IMG_DISK=$(to_physical_disk "$src" 2>/dev/null) || IMG_DISK="" ;; esac
+      logx "image sits on disk ${IMG_DISK:-unknown}: it will not be offered as a target"
+      release_image_mounts "$mnt"
+      ver=$(image_version "${choice##*/}")
+      [ -n "$ver" ] && HAOS_VERSION="$ver"
+      logx "offline image accepted: $choice (${ver:-version unknown}), .xz checks passed"
+      return 0
+    fi
+    detail=$(tail -n 4 "$LOG" 2>/dev/null | cut -c1-64)
+    logx "offline image FAILED the .xz check: $choice"
+    wt_msg "$S_WARN" "$(printf "$S_IMG_BAD" "${choice##*/}" "$detail")"
+    release_image_mounts ""
+  done
+}
+
+choose_image_source(){
+  local choice
+  IMG_FILE=""
+  choice=$(wt_menu "$S_TITLE" "$S_SRC_ASK" 8 \
+             "$S_SRC_DL" "" \
+             "$S_SRC_USE" "") || die "$S_CANCELLED"
+  if [ "$choice" = "$S_SRC_USE" ]; then
+    logx "source: image already on a stick"
+    use_local_image && return 0
+    logx "source: no usable image on a stick, falling back to the download"
+  else
+    logx "source: download"
+  fi
+  IMG_FILE=""
+  return 0
+}
+
 # Downloads the image with resume and an integrity check; returns 0 only when the
 # file is complete AND its .xz checksums validate, so the caller can then erase a
 # disk knowing the image is already in hand.
@@ -2385,8 +2662,13 @@ download_image(){
 
 flash(){
   local dl
-  dl=$(curl -fsSLI "$IMG_URL" 2>>"$LOG" \
-       | awk 'BEGIN{IGNORECASE=1}/^content-length/{v=$2}END{gsub(/\r/,"",v);print v}')
+  if [ -n "${IMG_FILE:-}" ]; then
+    # Offline: the size comes from the file itself, there is no URL to ask.
+    dl=$(stat -c%s "$IMG_FILE" 2>/dev/null || echo 0)
+  else
+    dl=$(curl -fsSLI "$IMG_URL" 2>>"$LOG" \
+         | awk 'BEGIN{IGNORECASE=1}/^content-length/{v=$2}END{gsub(/\r/,"",v);print v}')
+  fi
   [[ "$dl" =~ ^[0-9]+$ ]] && (( dl > 1000000 )) || dl=0     # 0 = size unknown
 
   # whiptail's stdout is forced onto /dev/tty: otherwise the process substitution
@@ -2408,7 +2690,12 @@ flash(){
   # good is the whole point of the two-phase flow, and it used to be lost on
   # low-RAM machines: they fell straight back to a single-pass write. Nothing is
   # erased to find out, so asking costs nothing when the answer is "no medium".
-  if [ "$dl" -gt 0 ]; then
+  if [ -n "${IMG_FILE:-}" ]; then
+    # Nothing to stage: the image is on the stick the user brought, and it has
+    # passed its .xz check. It is read from there as it is.
+    d_file="$IMG_FILE"
+    logx "offline: writing from $d_file, nothing to stage or fetch"
+  elif [ "$dl" -gt 0 ]; then
     if [ "$avail_kb" -gt "$need_kb" ]; then
       d_file=/tmp/haos.img.xz
     else
@@ -2429,15 +2716,21 @@ flash(){
   fi
 
   if [ -n "$d_file" ]; then
-    # ---- 1/3: fetch. A failure offers a resume; declining stops with the disk
-    #      untouched, which is the whole point of doing this first. ----
-    t0=$SECONDS
-    download_image "$d_file" "$dl"
-    secs=$(( SECONDS - t0 ))
-    logx "download complete: $(( dl / 1048576 )) MiB in ${secs}s, average $(rate_mib "$dl" "$secs") MiB/s"
+    if [ -n "${IMG_FILE:-}" ]; then
+      # ---- 1/3 skipped: the image came with the user and is already checked.
+      logx "offline image checked before the erase: nothing to download"
+    else
+      # ---- 1/3: fetch. A failure offers a resume; declining stops with the disk
+      #      untouched, which is the whole point of doing this first. ----
+      t0=$SECONDS
+      download_image "$d_file" "$dl"
+      secs=$(( SECONDS - t0 ))
+      logx "download complete: $(( dl / 1048576 )) MiB in ${secs}s, average $(rate_mib "$dl" "$secs") MiB/s"
+    fi
 
-    # ---- 2/3: erase. Only reached with a complete, checksummed image staged
-    #      in RAM or on the medium found by find_stage_dir. ----
+    # ---- 2/3: erase. Only reached with a complete, checksummed image: staged
+    #      in RAM, on the medium found by find_stage_dir, or verified on the
+    #      stick the user brought. ----
     prepare_disk
 
     # ---- 3/3: write. The uncompressed size comes from the .xz index, so pv can
@@ -2457,9 +2750,11 @@ flash(){
       | dd of="$TARGET" bs=4M conv=fsync 2>>"$LOG"
     rc=$?
     secs=$(( SECONDS - t0 ))
-    rm -f "$d_file" 2>>"$LOG" || true
-    # Only unmount what find_stage_dir mounted itself.
+    # Never delete a file the user brought: their stick stays as they gave it.
+    [ -z "${IMG_FILE:-}" ] && { rm -f "$d_file" 2>>"$LOG" || true; }
+    # Only unmount what find_stage_dir or find_images mounted themselves.
     [ -n "${STAGE_MNT:-}" ] && { sync; umount "$STAGE_MNT" 2>>"$LOG" || true; STAGE_MNT=""; }
+    [ -n "${IMG_MNT:-}" ] && { sync; umount "$IMG_MNT" 2>>"$LOG" || true; IMG_MNT=""; }
     if [ -n "$usize" ]; then
       logx "write complete: $(( usize / 1048576 )) MiB in ${secs}s, average $(rate_mib "$usize" "$secs") MiB/s"
     else
@@ -2833,10 +3128,15 @@ if [ -n "$BUILD_STAMP" ]; then
 fi
 wt_msg "$S_TITLE" "$WELCOME_TEXT"
 STEP="2/6"
-setup_network
-log_active_net              # after setup_network: covers all of its exit points
-STEP="3/6"
-resolve_version             # REQUIRES the network: must stay after setup_network
+choose_image_source         # download, or an image the user brings on a stick
+if [ -z "${IMG_FILE:-}" ]; then
+  setup_network
+  log_active_net            # after setup_network: covers all of its exit points
+  STEP="3/6"
+  resolve_version           # REQUIRES the network: must stay after setup_network
+else
+  logx "network and version steps skipped: using an offline image"
+fi
 STEP="4/6"
 pick_disk
 STEP="5/6"

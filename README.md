@@ -76,7 +76,9 @@ that is not in the table falls back to English and US QWERTY.
 
 The ISO does **not** contain HAOS: the image is downloaded during the
 installation ("network install" approach). It therefore stays small (**~450 MB**) and
-always installs the **latest published version** of Home Assistant OS.
+always installs the **latest published version** of Home Assistant OS. If you already
+have that image, you can bring it on a USB stick instead and skip the network
+entirely — see [Using an image you already have](#using-an-image-you-already-have).
 
 ## ⚠️ READ THIS BEFORE ANYTHING ELSE
 
@@ -261,7 +263,7 @@ and the dialog says so before anything is touched.
 
 The whole sequence, and the one line that matters in it:
 
-![Wizard flow: language, network, disk, download and check, erase and write, verify, reboot — the disk is untouched until the download has been checked](docs/flow.svg)
+![Wizard flow: language, image source, network, disk, get and check the image, erase and write, verify, reboot — the disk is untouched until the image has been checked](docs/flow.svg)
 
 Everything above the red line can fail without costing you anything. Everything
 below it has already erased the disk.
@@ -276,17 +278,20 @@ Plug in the stick, boot. The wizard starts on its own:
 
 1. Welcome screen and reminders
 2. Language — 14 languages, each with its keyboard layout applied (table above)
-3. Network connection — automatic over Ethernet, otherwise Wi-Fi selection
-4. **Disk selection** — check the size and model; the current contents are
+3. **Where the image comes from** — download the latest version (default), or use
+   one you already have on a USB stick. The second needs no network at all; see
+   [Using an image you already have](#using-an-image-you-already-have).
+4. Network connection — automatic over Ethernet, otherwise Wi-Fi selection
+5. **Disk selection** — check the size and model; the current contents are
    displayed, and you must type `YES` to confirm (anything else stops)
-5. Download and integrity check, **then** erasing and writing — each with its
+6. Download and integrity check, **then** erasing and writing — each with its
    own progress bar (percentage, rate, ETA). The image is fetched and verified
    before the disk is touched, so a network failure leaves the disk intact, and
    an interrupted download resumes instead of starting over.
    On a machine with too little RAM the image is staged on a USB stick instead —
    see *When RAM is short* below.
    **Do not power off the PC**
-6. **Read-back check** — optional, and recommended. The wizard offers to read
+7. **Read-back check** — optional, and recommended. The wizard offers to read
    the written bytes back off the disk and hash them, then compare that hash
    with the hash of the image it wrote. The page cache is dropped first, so it
    reads the disk and not RAM. One to three minutes. This is how a worn SSD, a
@@ -296,7 +301,7 @@ Plug in the stick, boot. The wizard starts on its own:
    changes nothing else.
    It proves the copy is correct today; it cannot promise the disk will still be
    correct next year.
-7. **Remove the USB stick**, then confirm: the PC reboots straight into Home
+8. **Remove the USB stick**, then confirm: the PC reboots straight into Home
    Assistant. The installer runs from memory, so the stick is no longer needed
    at this point.
 
@@ -333,6 +338,41 @@ pick it.
 The choice of medium — what qualifies and what must be refused — is tested by
 `tests/stage.sh` (internal disk, installation disk, boot medium,
 ISO9660/UDF, too little room, read-only mount, and which candidate wins).
+
+## Using an image you already have
+
+The wizard asks where the image should come from before it touches the network:
+
+- **Download the latest version** (default) — what the rest of this page describes.
+- **Use an image on a USB stick** — for a machine with no network, or to install a
+  version you already have.
+
+The second route skips the network and the version lookup entirely. Plug in the
+stick holding the file (FAT32, exFAT, NTFS and ext4 all mount) and the wizard
+scans removable media, up to two folders deep, for `*.img.xz`. The stick is
+mounted **read-only**: nothing on it is written, renamed or deleted.
+
+Only `haos_generic-x86-64-<version>.img.xz` — the name Home Assistant itself
+publishes — is offered. A file built for another board (`haos_rpi4-64-…`,
+`haos_odroid-n2-…`, `haos_generic-aarch64-…`) is listed as unusable together with
+the board it was built for, because writing it would erase the disk and produce
+something that boots nothing. The separator in the name is not a trap either:
+`generic-x86_64` and `generic-x86-64` are read as the same board.
+
+If several images are found, you pick one from a list showing each path and size.
+The chosen file is then verified with its own `.xz` checksums **before** anything
+is erased, exactly as a download would be; a damaged file stops there with the
+disk untouched.
+
+What this route cannot tell you is where the file came from. The `.xz` check
+proves it is intact, not that it is genuine: if you did not get it from the
+[official releases](https://github.com/home-assistant/operating-system/releases),
+that judgement is yours. The read-back check afterwards still proves that the copy
+written to the disk is correct.
+
+The media scan and the name gating are covered by `tests/image.sh`: target disk,
+boot medium, internal disk, iso9660/UDF, a file in a folder, a wrong board, two
+versions, and an already-mounted stick.
 
 ## Step 5 — First boot
 

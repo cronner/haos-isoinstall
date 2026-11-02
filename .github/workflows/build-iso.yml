@@ -162,10 +162,14 @@ jobs:
 
             The Home Assistant OS image is **not** inside the ISO: it is downloaded
             during the installation, so this stays small (~470 MiB) and always
-            installs the latest published version.
+            installs the latest published version. If you already have that image,
+            the wizard writes it from a USB stick instead and skips the network
+            entirely: the file must be named `haos_generic-x86-64-<version>.img.xz`
+            and is verified before anything is erased.
 
             **Requirements:** x86-64 PC, UEFI (CSM off), Secure Boot **disabled**,
-            SATA in **AHCI**, a disk of at least 32 GB, and an Internet connection.
+            SATA in **AHCI**, a disk of at least 32 GB, and an Internet connection
+            (not needed when you bring the image on a stick).
 
             Verify the download before writing it:
 
