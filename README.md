@@ -385,6 +385,23 @@ into it, reusable as it is.
 
 ---
 
+## Origin and credits
+
+This is a fork of **[PocketFR/haos-netinstall](https://github.com/PocketFR/haos-netinstall)**
+by Sébastien CANAT. The wizard, the build script and the documentation started
+there, and `LICENSE` keeps his copyright notice next to this fork's — that is
+what the MIT licence requires, and it is simply true.
+
+What this fork changes: the wizard and this README are in English, Danish, German
+and French with matching keyboard layouts; the image is downloaded and
+integrity-checked **before** a disk is erased, and an interrupted download
+resumes; a disk is only erased after typing `YES`; the closing reformat step is
+offered only on a medium that can actually be reformatted; the ISO is named after
+this repository; and CI checks the string tables on every push.
+
+Home Assistant OS itself is downloaded at run time from the Open Home Foundation
+and is not covered by this licence — see `LICENSE` for the details.
+
 ## License
 
 [MIT](LICENSE) for the scripts in this repository.
