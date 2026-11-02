@@ -10,20 +10,20 @@ inferred from one to the other:
 
 | Language | Menu entry | Keyboard layouts offered |
 | -------- | ---------- | ------------------------ |
-| English | `English` | QWERTY (US), QWERTY (UK), QWERTZ (DE) |
-| Danish | `Dansk` | QWERTY (DK) |
-| Czech | `Cestina` | QWERTZ (CZ) |
-| Dutch | `Nederlands` | QWERTY (NL) |
-| Finnish | `Suomi` | QWERTY (FI) |
-| French | `French` | AZERTY (FR), AZERTY (BE), QWERTZ (CH), QWERTY (CA), QWERTY (US) |
-| German | `Deutsch` | QWERTZ (DE), QWERTZ (CH) |
-| Italian | `Italiano` | QWERTY (IT) |
-| Norwegian | `Norsk` | QWERTY (NO) |
-| Polish | `Polski` | QWERTY (PL) |
-| Portuguese | `Portugues` | QWERTY (PT) |
-| Russian | `Russkiy` | YTsUKEN (RU) |
-| Spanish | `Espanol` | QWERTY (ES) |
-| Swedish | `Svenska` | QWERTY (SE) |
+| English | `English` | QWERTY (United States), QWERTY (United Kingdom), QWERTZ (Germany) |
+| Danish | `Dansk` | QWERTY (Denmark) |
+| Czech | `Cestina` | QWERTZ (Czechia) |
+| Dutch | `Nederlands` | QWERTY (Netherlands) |
+| Finnish | `Suomi` | QWERTY (Finland) |
+| French | `French` | AZERTY (France), AZERTY (Belgium), QWERTZ (Switzerland), QWERTY (Canada), QWERTY (United States) |
+| German | `Deutsch` | QWERTZ (Germany), QWERTZ (Switzerland) |
+| Italian | `Italiano` | QWERTY (Italy) |
+| Norwegian | `Norsk` | QWERTY (Norway) |
+| Polish | `Polski` | QWERTY (Poland) |
+| Portuguese | `Portugues` | QWERTY (Portugal) |
+| Russian | `Russkiy` | YTsUKEN (Russia) |
+| Spanish | `Espanol` | QWERTY (Spain) |
+| Swedish | `Svenska` | QWERTY (Sweden) |
 
 That is 21 menu entries in all, in this order: English first, then Danish, then
 the rest alphabetically. The menu labels are kept in plain ASCII so they
