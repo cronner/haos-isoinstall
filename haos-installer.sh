@@ -1454,32 +1454,63 @@ apply_keymap(){
 
 # ---------------------------------------------------------------------------
 choose_lang_keyboard(){
-  local sel
+  local sel other="Keyboard layout only (another country)"
+  # One row per LANGUAGE, with the layout that language is normally typed on
+  # applied automatically: nobody has to match a language with a layout, and the
+  # list stays short enough to read at a glance.
+  # The full list of 21 pairs is still one row away, because the layout really
+  # does not follow from the language: a French speaker may sit at a US keyboard,
+  # English is typed on QWERTY (UK) as well, and Swiss German is not the German
+  # layout. That row is the exception, not the rule.
   sel=$(whiptail --title "Language & keyboard" --menu \
-    "Choose language and keyboard layout" \
-    22 72 15 \
-    "en|us|"  "English    |  QWERTY   (United States)" \
-    "en|gb|"  "English    |  QWERTY   (United Kingdom)" \
-    "en|de|"  "English    |  QWERTZ   (Germany)" \
-    "da|dk|"  "Dansk      |  QWERTY   (Denmark)" \
-    "cs|cz|"  "Cestina    |  QWERTZ   (Czechia)" \
-    "nl|nl|"  "Nederlands |  QWERTY   (Netherlands)" \
-    "fi|fi|"  "Suomi      |  QWERTY   (Finland)" \
-    "fr|fr|"  "French     |  AZERTY   (France)" \
-    "fr|be|"  "French     |  AZERTY   (Belgium)" \
-    "fr|ch|fr"  "French     |  QWERTZ   (Switzerland)" \
-    "fr|ca|"  "French     |  QWERTY   (Canada)" \
-    "fr|us|"  "French     |  QWERTY   (United States)" \
-    "de|de|"  "Deutsch    |  QWERTZ   (Germany)" \
-    "de|ch|de"  "Deutsch    |  QWERTZ   (Switzerland)" \
-    "it|it|"  "Italiano   |  QWERTY   (Italy)" \
-    "no|no|"  "Norsk      |  QWERTY   (Norway)" \
-    "pl|pl|"  "Polski     |  QWERTY   (Poland)" \
-    "pt|pt|"  "Portugues  |  QWERTY   (Portugal)" \
-    "ru|ru|"  "Russkiy    |  YTsUKEN  (Russia)" \
-    "es|es|"  "Espanol    |  QWERTY   (Spain)" \
-    "sv|se|"  "Svenska    |  QWERTY   (Sweden)" \
+    "Choose your language. Its keyboard layout is set automatically.
+
+The last line is for a keyboard from another country." \
+    22 78 15 \
+    "en|us|"  "English    — QWERTY   (United States)" \
+    "da|dk|"  "Dansk      — QWERTY   (Denmark)" \
+    "cs|cz|"  "Cestina    — QWERTZ   (Czechia)" \
+    "nl|nl|"  "Nederlands — QWERTY   (Netherlands)" \
+    "fi|fi|"  "Suomi      — QWERTY   (Finland)" \
+    "fr|fr|"  "French     — AZERTY   (France)" \
+    "de|de|"  "Deutsch    — QWERTZ   (Germany)" \
+    "it|it|"  "Italiano   — QWERTY   (Italy)" \
+    "no|no|"  "Norsk      — QWERTY   (Norway)" \
+    "pl|pl|"  "Polski     — QWERTY   (Poland)" \
+    "pt|pt|"  "Portugues  — QWERTY   (Portugal)" \
+    "ru|ru|"  "Russkiy    — YTsUKEN  (Russia)" \
+    "es|es|"  "Espanol    — QWERTY   (Spain)" \
+    "sv|se|"  "Svenska    — QWERTY   (Sweden)" \
+    "$other"  "AZERTY / QWERTY / QWERTZ elsewhere" \
     3>&1 1>&2 2>&3) || sel="en|us|"
+
+  if [ "$sel" = "$other" ]; then
+    sel=$(whiptail --title "Language & keyboard layout" --menu \
+      "Pick the exact pair" \
+      22 72 15 \
+      "en|us|"    "English    |  QWERTY   (United States)" \
+      "en|gb|"    "English    |  QWERTY   (United Kingdom)" \
+      "en|de|"    "English    |  QWERTZ   (Germany)" \
+      "da|dk|"    "Dansk      |  QWERTY   (Denmark)" \
+      "cs|cz|"    "Cestina    |  QWERTZ   (Czechia)" \
+      "nl|nl|"    "Nederlands |  QWERTY   (Netherlands)" \
+      "fi|fi|"    "Suomi      |  QWERTY   (Finland)" \
+      "fr|fr|"    "French     |  AZERTY   (France)" \
+      "fr|be|"    "French     |  AZERTY   (Belgium)" \
+      "fr|ch|fr"  "French     |  QWERTZ   (Switzerland)" \
+      "fr|ca|"    "French     |  QWERTY   (Canada)" \
+      "fr|us|"    "French     |  QWERTY   (United States)" \
+      "de|de|"    "Deutsch    |  QWERTZ   (Germany)" \
+      "de|ch|de"  "Deutsch    |  QWERTZ   (Switzerland)" \
+      "it|it|"    "Italiano   |  QWERTY   (Italy)" \
+      "no|no|"    "Norsk      |  QWERTY   (Norway)" \
+      "pl|pl|"    "Polski     |  QWERTY   (Poland)" \
+      "pt|pt|"    "Portugues  |  QWERTY   (Portugal)" \
+      "ru|ru|"    "Russkiy    |  YTsUKEN  (Russia)" \
+      "es|es|"    "Espanol    |  QWERTY   (Spain)" \
+      "sv|se|"    "Svenska    |  QWERTY   (Sweden)" \
+      3>&1 1>&2 2>&3) || sel="en|us|"
+  fi
 
   UI_LANG="${sel%%|*}"
   local rest="${sel#*|}"
@@ -1491,9 +1522,16 @@ choose_lang_keyboard(){
 # read as "no internet" while the image itself was perfectly reachable -- and a
 # captive portal that answers for github.com would give the opposite lie.
 have_net(){
-  curl -fsI --max-time 5 https://github.com >/dev/null 2>&1 && return 0
-  curl -fsI --max-time 5 https://version.home-assistant.io/stable.json >/dev/null 2>&1
+  # Short timeouts on purpose: this is called in loops, and a network that never
+  # answers must not make the wizard look hung for ten seconds at a time.
+  curl -fsI --connect-timeout 2 --max-time 4 https://github.com >/dev/null 2>&1 && return 0
+  curl -fsI --connect-timeout 2 --max-time 4 https://version.home-assistant.io/stable.json >/dev/null 2>&1
 }
+
+# Polls instead of sleeping a fixed time: when the cable is already up this
+# returns on the first try, and when it is plugged in late it reacts within half
+# a second instead of waiting out a whole sleep.
+wait_net(){ local i; for i in $(seq 1 "${1:-10}"); do have_net && return 0; sleep 0.5; done; return 1; }
 
 # UUID of the ACTIVE Wi-Fi connection, whatever way it was created (guided
 # walkthrough or nmtui). Empty when there is none.
@@ -1999,7 +2037,7 @@ forget_profile(){
 setup_network(){
   have_net && return 0
   whiptail --title "$S_TITLE" --infobox "$S_NET_ETH" 7 62
-  sleep 5; have_net && return 0
+  wait_net 10 && return 0            # up to 5 s, but only as long as it needs
 
   # No connection yet: ask explicitly for a LAN cable, with a Retry button.
   # That is the usual case on a desktop PC, and someone who simply plugged the
@@ -2008,16 +2046,22 @@ setup_network(){
     wt_yesno "$S_WARN" "$S_LAN_ASK" \
       --yes-button "$S_LAN_RETRY" --no-button "$S_LAN_WIFI" || break
     whiptail --title "$S_TITLE" --infobox "$S_NET_ETH" 7 62
-    sleep 3
+    wait_net 6
   done
   have_net && return 0
 
   rfkill unblock all 2>/dev/null || true
   nmcli radio wifi on 2>/dev/null || true
-  sleep 2
 
-  local wifi_if
-  wifi_if=$(nmcli -t -f DEVICE,TYPE dev status 2>/dev/null | awk -F: '$2=="wifi"{print $1; exit}')
+  # Poll for the radio instead of sleeping: on a desktop with no Wi-Fi card the
+  # fixed sleep was pure loss, and when there is one it usually shows up in well
+  # under two seconds.
+  local wifi_if="" i
+  for i in $(seq 1 10); do
+    wifi_if=$(nmcli -t -f DEVICE,TYPE dev status 2>/dev/null | awk -F: '$2=="wifi"{print $1; exit}')
+    [ -n "$wifi_if" ] && break
+    sleep 0.3
+  done
   if [ -z "$wifi_if" ]; then
     local diag
     diag=$( { ip -br link 2>/dev/null; nmcli dev status 2>/dev/null;
@@ -2028,7 +2072,13 @@ setup_network(){
 
   while true; do
     whiptail --title "$S_TITLE" --infobox "$S_NET_SCAN" 7 62
-    nmcli dev wifi rescan 2>/dev/null || true; sleep 3
+    nmcli dev wifi rescan 2>/dev/null || true
+    # The results matter, not the rescan: poll for a non-empty list instead of
+    # always paying three seconds, which the menu used to do on every pass.
+    for i in 1 2 3 4 5 6 7 8; do
+      nmcli -t -f SSID dev wifi list 2>/dev/null | grep -q . && break
+      sleep 0.5
+    done
 
     local menu=() ssid sig sec
     while IFS=$'\t' read -r ssid sig sec; do
