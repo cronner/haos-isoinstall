@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Get started with Home Assistant on a PC</title>
+<meta name="description" content="Two ways to install Home Assistant OS on an x86-64 PC: the method Home Assistant documents itself, and a guided USB installer from this project.">
+<style>
+  :root {
+    --bg: #fbfcfd;
+    --card: #ffffff;
+    --fg: #1b2733;
+    --muted: #5d6b7a;
+    --line: #dde5ec;
+    --accent: #0a7ea4;
+    --accent-soft: #e8f6fb;
+    --warn-bg: #fff8e6;
+    --warn-line: #e6c675;
+    --radius: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10161c;
+      --card: #172029;
+      --fg: #e7eef4;
+      --muted: #9db0c0;
+      --line: #26323d;
+      --accent: #4cc2e6;
+      --accent-soft: #122b35;
+      --warn-bg: #2a2313;
+      --warn-line: #6b5726;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .wrap { max-width: 64rem; margin: 0 auto; padding: 0 1.25rem; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:hover { text-decoration-thickness: 2px; }
+  code {
+    font: 0.9em/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: var(--accent-soft);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+
+  header.top {
+    border-bottom: 1px solid var(--line);
+    background: var(--card);
+  }
+  header.top .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+  }
+  header.top .name { font-weight: 650; letter-spacing: -0.01em; }
+  header.top nav { display: flex; gap: 1.1rem; flex-wrap: wrap; font-size: 0.92rem; }
+
+  .hero { padding: 3rem 0 1rem; }
+  h1 {
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.9rem;
+  }
+  .lede { font-size: 1.1rem; color: var(--fg); max-width: 44rem; margin: 0 0 0.9rem; }
+  .sub { color: var(--muted); max-width: 44rem; margin: 0; }
+
+  section { padding: 2.25rem 0 0.5rem; }
+  h2 {
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+  h3 { font-size: 1.02rem; margin: 1.4rem 0 0.5rem; }
+
+  .notice {
+    margin: 1.75rem 0 0;
+    padding: 0.95rem 1.1rem;
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-line);
+    border-radius: var(--radius);
+    font-size: 0.97rem;
+  }
+  .notice strong { display: block; margin-bottom: 0.15rem; }
+
+  ul.need { margin: 0; padding-left: 1.15rem; }
+  ul.need li { margin: 0.35rem 0; }
+
+  .routes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-top: 0.5rem;
+  }
+  @media (max-width: 820px) { .routes { grid-template-columns: 1fr; } }
+
+  .route {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.15rem 1.25rem 1.35rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .route h3 { margin: 0 0 0.35rem; font-size: 1.12rem; }
+  .badge {
+    align-self: flex-start;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 650;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    margin-bottom: 0.7rem;
+  }
+  .badge.official { background: var(--accent-soft); color: var(--accent); }
+  .badge.unofficial { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+  .route .tagline { color: var(--muted); font-size: 0.94rem; margin: 0 0 0.9rem; }
+
+  ol.steps { margin: 0 0 1rem; padding: 0; list-style: none; counter-reset: s; }
+  ol.steps li {
+    counter-increment: s;
+    position: relative;
+    padding-left: 2rem;
+    margin: 0 0 0.7rem;
+    font-size: 0.96rem;
+  }
+  ol.steps li::before {
+    content: counter(s);
+    position: absolute;
+    left: 0;
+    top: 0.05rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 650;
+    display: grid;
+    place-items: center;
+  }
+  .route .foot { margin-top: auto; padding-top: 0.6rem; font-size: 0.9rem; color: var(--muted); }
+
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+  caption { text-align: left; color: var(--muted); font-size: 0.9rem; padding-bottom: 0.6rem; }
+  th, td { text-align: left; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  thead th { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 650; }
+  tbody th { font-weight: 550; color: var(--muted); width: 34%; }
+
+  ol.shared { margin: 0; padding-left: 1.15rem; }
+  ol.shared li { margin: 0.5rem 0; }
+
+  .faq { margin: 0; }
+  .faq dt { font-weight: 600; margin-top: 0.9rem; }
+  .faq dd { margin: 0.2rem 0 0; color: var(--fg); font-size: 0.96rem; }
+
+  footer {
+    margin-top: 3rem;
+    border-top: 1px solid var(--line);
+    padding: 1.5rem 0 2.5rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  footer p { margin: 0.4rem 0; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <span class="name">haos-isoinstall</span>
+    <nav>
+      <a href="#routes">The two ways</a>
+      <a href="#first-boot">First boot</a>
+      <a href="#problems">If something goes wrong</a>
+      <a href="https://github.com/cronner/haos-isoinstall/releases">Download</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <h1>Get started with Home Assistant on a PC</h1>
+    <p class="lede">
+      Home Assistant is a free, open-source hub for your smart home. It runs on
+      hardware you own, keeps your data in your house, and keeps working when the
+      internet does not.
+    </p>
+    <p class="sub">
+      This page covers one thing: putting Home Assistant OS on an x86-64 PC.
+      There are two ways to do it — the method Home Assistant documents itself,
+      and a guided USB installer from this project. Both end in the same place.
+      Using a Raspberry Pi or another board? Those have their own images; see the
+      <a href="https://www.home-assistant.io/installation/">official installation page</a>.
+    </p>
+
+    <div class="notice">
+      <strong>Both routes erase a disk, completely.</strong>
+      The drive you install onto is wiped and everything on it is gone. Use a
+      dedicated machine with nothing worth keeping, and back up anything you
+      still need before you start.
+    </div>
+  </div>
+
+  <section id="needs">
+    <h2>What you need</h2>
+    <ul class="need">
+      <li>A dedicated <strong>x86-64 PC</strong> (Intel or AMD) that can boot in <strong>UEFI</strong> mode. It becomes your Home Assistant machine.</li>
+      <li><strong>2 GB of RAM or more</strong> — 4 GB if you plan to run apps or cameras.</li>
+      <li><strong>A drive for Home Assistant</strong>, 32 GB or more: an SSD is the usual choice. The boot drive should use 512-byte logical sectors; some NVMe drives with native 4K sectors cannot boot Home Assistant OS.</li>
+      <li><strong>An Ethernet cable and internet</strong>. The first start expects a cable; Wi-Fi can be set up later.</li>
+      <li><strong>A USB stick</strong>: 1 GB for the installer below, 8 GB or more for the standard route.</li>
+      <li><strong>Access to the BIOS</strong>, to switch UEFI on and Secure Boot off.</li>
+    </ul>
+  </section>
+
+  <section id="routes">
+    <h2>The two ways</h2>
+
+    <div class="routes">
+
+      <article class="route">
+        <span class="badge official">Officially supported</span>
+        <h3>The standard way</h3>
+        <p class="tagline">Home Assistant's own guide: boot a live Ubuntu, then write the image with the Disks utility.</p>
+        <ol class="steps">
+          <li>Enter the BIOS (usually <code>F2</code>, <code>Del</code> or <code>F10</code>), make sure <strong>UEFI boot</strong> is on and turn <strong>Secure Boot off</strong>.</li>
+          <li>Write an <strong>Ubuntu Desktop</strong> ISO to an 8 GB USB stick, boot it, and choose <strong>Try Ubuntu</strong> — do not install it.</li>
+          <li>On the live desktop, connect to the network and download the image for generic x86-64 from the
+            <a href="https://github.com/home-assistant/operating-system/releases">Home Assistant OS releases</a>.
+            The file looks like <code>haos_generic-x86_64-&lt;version&gt;.img.xz</code>.</li>
+          <li>Open <strong>Disks</strong>, select the internal drive, open the menu and choose <strong>Restore Disk Image…</strong>, pick the file, then <strong>Start Restoring</strong>.</li>
+          <li>Shut the PC down, unplug the Ubuntu stick, and start it again. Home Assistant OS is now on the drive.</li>
+        </ol>
+        <p class="foot">
+          Home Assistant OS has no installer of its own. A second official method
+          writes the image from another computer with Etcher and a SATA or USB
+          adapter — the
+          <a href="https://www.home-assistant.io/installation/generic-x86-64/">official guide</a>
+          describes both.
+        </p>
+      </article>
+
+      <article class="route">
+        <span class="badge unofficial">Independent project</span>
+        <h3>The guided installer</h3>
+        <p class="tagline">This project: one ISO that asks a few questions and writes the current Home Assistant OS for you.</p>
+        <ol class="steps">
+          <li>Download the <code>haos-isoinstall-*-amd64.iso</code> from
+            <a href="https://github.com/cronner/haos-isoinstall/releases">Releases</a>
+            and check it against the <code>.sha256</code> file next to it.</li>
+          <li>Write the ISO to a USB stick with <a href="https://etcher.balena.io/">Etcher</a> or
+            <a href="https://rufus.ie/">Rufus</a> — not by copying the file onto the stick.</li>
+          <li>In the BIOS, turn <strong>Secure Boot off</strong> and set SATA to <strong>AHCI</strong>.</li>
+          <li>Boot the stick and answer the wizard: language (14 available), network (Ethernet or Wi-Fi), and which disk to install on.</li>
+          <li>It downloads the current Home Assistant OS image, verifies it and writes it. Reboot and remove the stick.</li>
+        </ol>
+        <p class="foot">
+          The ISO is about 450 MB because it does not contain Home Assistant OS:
+          the image is fetched during the installation, so you always get the
+          version that is current that day.
+        </p>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="choose">
+    <h2>Which one should I pick?</h2>
+    <div class="table-wrap">
+      <table>
+        <caption>Both routes end with the same Home Assistant, and both need UEFI and Secure Boot off.</caption>
+        <thead>
+          <tr><th scope="col"></th><th scope="col">The standard way</th><th scope="col">The guided installer</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Supported by Home Assistant</th><td>Yes — it is their guide</td><td>No, an independent project</td></tr>
+          <tr><th scope="row">What you download</th><td>An Ubuntu ISO, then the HAOS image</td><td>One ISO</td></tr>
+          <tr><th scope="row">Tools you have to learn</th><td>The Disks utility in Ubuntu</td><td>None — answer questions on screen</td></tr>
+          <tr><th scope="row">Which version you get</th><td>Whatever image you downloaded</td><td>Whatever is current on the day you install</td></tr>
+          <tr><th scope="row">Languages</th><td>The installer screens are English</td><td>14 languages, each with its keyboard layout</td></tr>
+          <tr><th scope="row">If it breaks</th><td>The Home Assistant community</td><td>Nobody. MIT licence — fork it and fix it</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="first-boot">
+    <h2>First boot, same for both</h2>
+    <p class="sub">Once the disk is written and the stick removed, start the PC. From here on, the two routes are identical.</p>
+    <ol class="shared">
+      <li>In a browser on your network, open <a href="http://homeassistant.local/">http://homeassistant.local/</a>.
+        If that does not answer, try <code>http://homeassistant.local:8123/</code>, or the PC's IP address with <code>:8123</code>.</li>
+      <li>Wait for <strong>Preparing Home Assistant</strong>. This downloads the latest version and can take 20 minutes or more. It is not stuck.</li>
+      <li>Choose <strong>Create my smart home</strong> and set a name, a username (lowercase, no spaces) and a password.
+        This is the owner account, and there is no way to recover it — store it somewhere safe.</li>
+      <li>Set your home location, decide what you want to share, and finish. You are in Home Assistant.</li>
+      <li>From there: <strong>Settings → Devices &amp; services</strong> to add your devices, and <strong>Settings → Apps</strong> to install extras.</li>
+    </ol>
+  </section>
+
+  <section id="problems">
+    <h2>If something goes wrong</h2>
+    <dl class="faq">
+      <dt>The PC shows nothing after boot</dt>
+      <dd>Check that UEFI boot is on and Secure Boot is off, and that the written drive is first in the boot order. A drive with native 4K sectors cannot boot Home Assistant OS, whatever route you took.</dd>
+
+      <dt><code>homeassistant.local</code> does not open</dt>
+      <dd>Multicast DNS is blocked on some networks. Find the PC's address in your router and open <code>http://&lt;address&gt;:8123</code> instead.</dd>
+
+      <dt>It has said "Preparing Home Assistant" for a long time</dt>
+      <dd>Normal on a slow connection or an old drive. It downloads the current version on first start. Give it 30 minutes before you worry.</dd>
+
+      <dt>The wizard cannot find my disk</dt>
+      <dd>Some controllers need AHCI instead of RAID or Intel RST in the BIOS. Change the SATA mode, then boot the stick again.</dd>
+
+      <dt>Something is wrong with Home Assistant itself</dt>
+      <dd>Ask the <a href="https://community.home-assistant.io/">Home Assistant community</a>. This project only puts the operating system on the disk; it has no support for Home Assistant's own behaviour.</dd>
+    </dl>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>
+      <strong>haos-isoinstall</strong> is an unofficial project, not affiliated with
+      the Open Home Foundation, Nabu Casa or the Home Assistant project, and
+      neither approved nor supported by them. It is published under the MIT
+      licence, with no warranty and no support.
+    </p>
+    <p>
+      <a href="https://github.com/cronner/haos-isoinstall">Source and releases</a> ·
+      <a href="https://github.com/cronner/haos-isoinstall/blob/main/README.md">Installer manual</a> ·
+      <a href="https://www.home-assistant.io/installation/generic-x86-64/">Official x86-64 guide</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
