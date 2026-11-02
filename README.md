@@ -22,6 +22,11 @@ first.
 - **It says what it is about to do**, and the single irreversible step — erasing
   the disk you pick — asks first.
 
+**New to Home Assistant?** Follow the [step-by-step guide](https://cronner.github.io/haos-isoinstall/)
+instead. It assumes no experience: what you need, six steps, how the first
+start goes, and what to do when a step stalls. This page is the reference
+manual for people who want the details.
+
 **Quick start** — download the ISO from [Releases] and check it
 (`sha256sum -c *.iso.sha256`), write it to a USB stick with Etcher or Rufus (not
 by copying the file), turn **Secure Boot off** and SATA to **AHCI** in the BIOS,
