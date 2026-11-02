@@ -7,6 +7,21 @@ Bootable USB stick that installs **Home Assistant OS** on a PC through a guided
 wizard: network setup (Ethernet or Wi-Fi), disk selection, download and writing
 of the official image. Nothing to type.
 
+It exists to make that install an easy one. The official route hands you a
+compressed image and a set of steps; this hands you one stick that asks a few
+questions, fetches the current Home Assistant OS image for you, checks it, and
+writes it to the disk you choose. Nothing has to be prepared on the target PC
+first.
+
+- **The whole installer is on the stick** — network and Wi-Fi firmware, the
+  wizard and the language list are already there. The only thing downloaded is
+  Home Assistant OS itself.
+- **No commands to learn.** Language, network, disk: that is the whole interview.
+- **Always the version that is current today.** The image is fetched during the
+  installation, so it cannot be the one from last year.
+- **It says what it is about to do**, and the single irreversible step — erasing
+  the disk you pick — asks first.
+
 **Quick start** — download the ISO from [Releases] and check it
 (`sha256sum -c *.iso.sha256`), write it to a USB stick with Etcher or Rufus (not
 by copying the file), turn **Secure Boot off** and SATA to **AHCI** in the BIOS,
