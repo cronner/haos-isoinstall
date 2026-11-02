@@ -100,6 +100,11 @@ cp "$DOCSRC/LICENSE" "$DOCDIR/LICENSE"
 for f in README.md BUILDING.md; do
   if [ -f "$DOCSRC/$f" ]; then cp "$DOCSRC/$f" "$DOCDIR/$f"; fi
 done
+# ... and on the ISO surface itself: readable from a mounted image without
+# booting it, and cheap for the build to verify (the chroot copy sits inside
+# filesystem.squashfs, where a plain file listing cannot see it).
+mkdir -p config/includes.binary
+cp "$DOCSRC/LICENSE" config/includes.binary/LICENSE
 
 # --- Build stamp: the ISO carries no version string of its own. The
 # installer shows it on the welcome screen and logs it, so that a bug
