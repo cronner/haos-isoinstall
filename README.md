@@ -342,13 +342,16 @@ Ethernet cable.
 
 | Setup | Status |
 |---|---|
-| Physical PC (x86-64, UEFI) — this run went over Wi-Fi, not the cable | ✅ |
+| Physical PC (x86-64, UEFI) | ✅ |
 | Proxmox (q35 + OVMF, Secure Boot off) | ✅ |
 | Unraid (QEMU/KVM, OVMF, Secure Boot off) | ✅ reported |
 | virt-manager / libvirt, Incus, LXD | ◻ same settings, not tested here |
 | Hyper-V, VirtualBox | — use the official `haos_ova` (`.vhdx` / `.vdi`) |
 
 ✅ seen working · ◻ expected to work with the settings above, but not tried
+
+**Network:** a LAN cable is the preferred connection — it is what always works.
+Wi-Fi works too, and the physical test above was run over it.
 
 ## Building it yourself
 
