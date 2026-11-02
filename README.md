@@ -92,12 +92,19 @@ not to this repository.
 - A **USB stick** of 1 GB or more (its contents will be erased)
 - An **Ethernet cable** — recommended; Wi-Fi is offered as a fallback
 
-It also works in a **virtual machine**: attach the ISO as a virtual CD/DVD
-drive, boot UEFI (q35 + OVMF on Proxmox) with Secure Boot disabled, and give
-the VM at least a 32 GB virtual disk. Wi-Fi pre-configuration does not apply
-there — use a virtual Ethernet adapter instead. This is tested on Proxmox (see
-*Test status* below); for a long-lived hypervisor install, the official
-`haos_ova` images remain the better fit, as explained in [the technical notes](BUILDING.md#5-technical-notes).
+It also works in a **virtual machine**, and every hypervisor with UEFI firmware
+behaves the same way: attach the ISO as a virtual CD/DVD, boot it **UEFI** with
+**Secure Boot off**, and give the VM a **32 GB** virtual disk or more.
+
+- **Proxmox** — machine type `q35`, firmware **OVMF**
+- **Unraid** — an ordinary QEMU/KVM VM with **OVMF** firmware
+- **virt-manager / libvirt, Incus, LXD** — firmware **UEFI (OVMF)**
+
+Use a **virtual Ethernet adapter**: Wi-Fi pre-configuration does not apply to a
+VM. For a long-lived hypervisor install the official `haos_ova` image is the
+better fit — it ships as `.qcow2`, `.vmdk`, `.vhdx`, `.vdi` and `.ova`, which is
+what Home Assistant supports there; the ISO works, but it writes the bare-metal
+image. The reasoning is in [the technical notes](BUILDING.md#5-technical-notes).
 
 ## Step 1 — Download the ISO
 
@@ -331,11 +338,15 @@ Ethernet cable.
 
 ### Test status
 
-| | |
+| Setup | Status |
 |---|---|
-| Proxmox (q35 + OVMF, Secure Boot disabled) | ✅ |
 | Physical PC (Dell Inspiron, Wi-Fi) | ✅ |
-| Hyper-V / VirtualBox | ❌ not applicable — [see the technical notes](BUILDING.md#5-technical-notes) |
+| Proxmox (q35 + OVMF, Secure Boot off) | ✅ |
+| Unraid (QEMU/KVM, OVMF, Secure Boot off) | ✅ reported |
+| virt-manager / libvirt, Incus, LXD | ◻ same settings, not tested here |
+| Hyper-V, VirtualBox | — use the official `haos_ova` (`.vhdx` / `.vdi`) |
+
+✅ seen working · ◻ expected to work with the settings above, but not tried
 
 ## Building it yourself
 

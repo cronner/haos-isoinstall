@@ -78,12 +78,14 @@ mount | grep haos-installer-iso  # orphaned mounts after an interruption?
 
 ## 3. Testing without a USB stick
 
-On Proxmox, a test VM:
+A test VM on any QEMU/KVM hypervisor does the job; the names below are Proxmox's,
+and every other one has the same three knobs (UEFI, Secure Boot off, 32 GB).
 
-- **BIOS: OVMF (UEFI)** — mandatory
-- **Machine: q35**
-- **EFI Disk without "Pre-Enroll keys"** — otherwise Secure Boot rejects HAOS
-  (`Access Denied` on `bootx64.efi`)
+- **BIOS/firmware: OVMF (UEFI)** — mandatory
+- **Machine: q35** (Proxmox; the default on most others)
+- **EFI Disk without "Pre-Enroll keys"** (Proxmox) — otherwise Secure Boot
+  rejects HAOS (`Access Denied` on `bootx64.efi`); on Unraid and virt-manager
+  there is no separate EFI disk, the firmware setting alone decides
 - A disk of **32 GB minimum**
 
 That validates the wizard, the disk selection, the download and the writing.
@@ -117,10 +119,12 @@ into it, reusable as it is.
   (GPT + A/B system partitions), not a set of packages. `d-i` knows how to
   partition and install a Debian, not how to write a raw image. Hence the choice
   of a minimal live system + a purpose-built wizard.
-- **Why not in a virtual machine?** Home Assistant provides images **dedicated**
-  to hypervisors (`haos_ova` build: `.qcow2`, `.vmdk`, `.vhdx`, `.vdi`, `.ova`).
-  This ISO writes the `generic-x86-64` image, meant for bare metal. Use the
-  official artefact for your hypervisor.
+- **Why prefer the official VM image over this ISO?** Home Assistant provides
+  images **dedicated** to hypervisors (`haos_ova` build: `.qcow2`, `.vmdk`,
+  `.vhdx`, `.vdi`, `.ova`). This ISO writes the `generic-x86-64` image, meant for
+  bare metal. It does boot and install in a QEMU/KVM VM (Proxmox, Unraid,
+  virt-manager, Incus), but the official artefact is what Home Assistant
+  supports there, so use it for anything long-lived.
   A frequent special case: a hypervisor that only accepts ISOs **when creating**
   a VM — Synology VMM, typically. The restriction only applies to creation: on
   **import**, VMM accepts disk images (`.img`, `.vmdk`, `.vdi`, `.vhd`, `.vhdx`,
