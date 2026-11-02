@@ -83,6 +83,9 @@ always installs the **latest published version** of Home Assistant OS.
 **Provided as is, with no warranty and no support.**
 
 - **Personal** project, published in the hope that it is useful. Nothing more.
+- **Written with AI assistance.** The code, this documentation and the fourteen
+  translations were produced with AI help and checked by automated tests, not by
+  a support team. Expect mistakes, and read a step before you run it.
 - **No support is provided.** No installation assistance, no promise of an
   answer to issues, no commitment to fix anything, no long-term maintenance, no
   promise of hardware compatibility.
