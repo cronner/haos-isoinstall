@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One stick, a few questions — Koms.dk</title>
+<meta name="description" content="Install Home Assistant OS with a single ISO: the stick boots, asks for language, network and disk, downloads the current image and writes it.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="name" href="index.html">Koms<span>.dk</span></a>
+    <nav>
+      <a href="install-official.html">Official install</a>
+      <a href="install-iso.html" aria-current="page">One-stick install</a>
+      <a href="mcp.html">MCP</a>
+      <a href="ai.html">AI clients</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <h1>One stick, a few questions</h1>
+
+  <p class="lead">
+    An ISO that boots on the machine you want to install on, asks four
+    questions, fetches the current Home Assistant OS image itself and writes it
+    to the disk you pick. No adapter, no second operating system, no commands.
+  </p>
+
+  <p>
+    It exists because the official route needs either an adapter and a second
+    computer, or a live Ubuntu session first. This needs a USB stick and about
+    twenty minutes. The installer runs entirely from the stick, in fourteen
+    languages, with the matching keyboard layout for each.
+  </p>
+
+  <h2 id="need">What you need</h2>
+
+  <ul>
+    <li>The same 64-bit PC, 2 GB of RAM and 32 GB of storage as before, with
+      UEFI boot and Secure Boot switched off.</li>
+    <li>A USB stick, 8 GB or more. It is erased when you write the ISO to it.</li>
+    <li>Internet access during the install, over cable or Wi-Fi. Unless you
+      already have an image file — see <a href="#offline">below</a>.</li>
+  </ul>
+
+  <h2 id="steps">The steps</h2>
+
+  <ol class="steps">
+
+    <li>
+      <b>Download the ISO</b>
+      <p>
+        From the <a href="https://github.com/cronner/haos-isoinstall/releases/latest">latest release</a>,
+        take the file ending in <code>-amd64.iso</code> and its
+        <code>.sha256</code> companion. About 470 MB.
+      </p>
+      <p>
+        Checking it takes ten seconds and catches a download that went wrong:
+        on Linux or macOS, <code>sha256sum -c haos-isoinstall-*.iso.sha256</code>
+        in the folder you saved both files in. On Windows,
+        <code>certutil -hashfile haos-isoinstall-v1.1.0-amd64.iso SHA256</code>
+        and compare the line it prints with the one inside the
+        <code>.sha256</code> file.
+      </p>
+    </li>
+
+    <li>
+      <b>Write the ISO to the stick</b>
+      <p>
+        <a href="https://etcher.balena.io/">Etcher</a> or
+        <a href="https://rufus.ie/">Rufus</a>, the same way as any other ISO. Not
+        by copying the file onto the stick — a copied file cannot boot, because
+        the stick also needs a boot sector and a filesystem the firmware
+        understands.
+      </p>
+      <p>
+        In Rufus, choose <em>DD mode</em> if it offers a choice. In Etcher there
+        is nothing to choose.
+      </p>
+    </li>
+
+    <li>
+      <b>Two BIOS settings</b>
+      <p>
+        <strong>UEFI boot on</strong>, <strong>Secure Boot off</strong>. Enter
+        the firmware with <code>F2</code> or <code>Del</code>, change both, save.
+        SATA mode should be <strong>AHCI</strong> if the machine offers a choice
+        between that and RAID.
+      </p>
+    </li>
+
+    <li>
+      <b>Boot the stick and answer four questions</b>
+      <p>
+        The installer starts on its own. Boot text scrolls for a moment; that is
+        normal. Then:
+      </p>
+      <ul>
+        <li><strong>Language</strong> — fourteen, each with its own keyboard
+          layout.</li>
+        <li><strong>Where the image comes from</strong> — download the current
+          version, or use one you already have. This is asked before anything
+          touches the network.</li>
+        <li><strong>Network</strong> — automatic over Ethernet, otherwise pick
+          your Wi-Fi and type the password.</li>
+        <li><strong>Disk</strong> — the size, model and current contents of each
+          disk are shown. You must type <code>YES</code> to confirm; anything
+          else stops and nothing is written.</li>
+      </ul>
+      <p>
+        Then it downloads, verifies, erases and writes, each with its own
+        progress bar. The image is checked <em>before</em> the disk is touched,
+        so a network failure leaves your disk as it was, and an interrupted
+        download resumes rather than starting over.
+      </p>
+    </li>
+
+    <li>
+      <b>Say yes to the read-back check</b>
+      <p>
+        After writing, it offers to read the bytes back off the disk and compare
+        their hash with the image it wrote. One to three minutes, and it is the
+        difference between finding a worn SSD or a loose cable now and finding it
+        as a machine that boots to a black screen. Declining is allowed and
+        changes nothing else.
+      </p>
+    </li>
+
+    <li>
+      <b>Remove the stick and let it reboot</b>
+      <p>
+        The installer runs from memory, so the stick is not needed once the write
+        is done. The machine reboots into Home Assistant. From another computer,
+        open <code>http://homeassistant.local:8123</code> and create the owner
+        account.
+      </p>
+    </li>
+
+  </ol>
+
+  <h2 id="offline">Using an image you already have</h2>
+
+  <p>
+    If the machine has no network, or you would rather not download half a
+    gigabyte twice, put the <code>.img.xz</code> file on a USB stick and choose
+    the second option at the image question. The stick is mounted read-only and
+    the file is checked before anything is written, so an incomplete or corrupt
+    image is refused instead of copied.
+  </p>
+
+  <p>
+    Nothing is downloaded in that mode and nothing on your stick is changed or
+    deleted — the installer only ever reads from it.
+  </p>
+
+  <div class="note">
+    <b>Short on memory?</b>
+    <p>
+      The image is held outside the target disk until it has been checked, which
+      needs a few hundred megabytes of free memory. On a 2 GB machine the
+      installer says so, asks for a spare USB stick to stage the file on, and
+      carries on from there. It never uses its own stick for this — that one is
+      read-only, and it is your way back in if something fails.
+    </p>
+  </div>
+
+  <h2 id="first">What it does not do</h2>
+
+  <p>
+    No dual boot: the disk you choose is the disk Home Assistant gets. No ARM or
+    Raspberry Pi — the ISO is for ordinary 64-bit PCs. And it does not configure
+    Home Assistant for you; it hands over a freshly installed system and reboots
+    into it, which is exactly where the official route ends too.
+  </p>
+
+  <h2 id="problem">If it doesn't work</h2>
+
+  <h3>The stick does not appear in the boot menu</h3>
+  <p>
+    Secure Boot is still on, or the stick was written in a mode the firmware
+    cannot read. Turn Secure Boot off; if that is not it, rewrite the stick in
+    Rufus with <em>DD mode</em> and try again. Some machines also need
+    <em>USB boot</em> enabled explicitly.
+  </p>
+
+  <h3>It cannot find the network</h3>
+  <p>
+    Plug in a cable. Wi-Fi needs the driver for your card to be present in the
+    installer; Ethernet almost always works. If you have an image file on a
+    stick, the offline option skips the network question entirely.
+  </p>
+
+  <h3>It refuses the image file</h3>
+  <p>
+    The file is not a complete <code>.img.xz</code>: an interrupted copy, a
+    truncated download, or a file renamed to look right. Re-copy it, or let the
+    installer download the current version instead.
+  </p>
+
+  <h3>The disk you want is not listed</h3>
+  <p>
+    The installer deliberately hides the stick it is running from, and any disk
+    that is part of the running system. If an internal disk is missing entirely,
+    it is usually a controller setting — check AHCI and that the disk is visible
+    in the firmware at all.
+  </p>
+
+  <p style="margin-top:2rem">
+    Next: <a href="mcp.html">turn on MCP</a> so an AI can use the house you just
+    installed.
+  </p>
+
+</main>
+
+<footer class="bottom">
+  <div class="wrap">
+    <p>
+      The installer is open source:
+      <a href="https://github.com/cronner/haos-isoinstall">github.com/cronner/haos-isoinstall</a>.
+      The reference manual, including what happens on a 2 GB machine, is the
+      README there.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
