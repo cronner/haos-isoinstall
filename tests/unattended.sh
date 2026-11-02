@@ -9,7 +9,8 @@
 #   - a missing or non-yes WIPE= does not become a yes;
 #   - the disk eligibility rules are the same ones the menu uses: the boot
 #     medium, the disk holding the image, an iso9660 carrier and a Ventoy stick
-#     are never offered, and an internal disk is not flagged as removable.
+#     are never offered, and an internal disk is not flagged as removable;
+#   - the config template that ships in the ISO is still inert.
 #
 # Usage: bash tests/unattended.sh
 set -uo pipefail
@@ -240,6 +241,24 @@ load_config
 [ -z "$DIE_MSG" ] || ko "unsupported LANG must not stop the run"
 CFG_NEXT=""
 
+# ---- 14. the template on the ISO sets nothing -------------------------------
+# build-iso.sh puts haos-installer.cfg.example on the ISO surface under the real
+# name, so find_config() finds it on every boot of the image. A template that
+# grew an active WIPE=yes would turn the normal installer into a disk wiper, and
+# nobody would have been asked twice.
+reset
+TPL=haos-installer.cfg.example
+if [ ! -r "$TPL" ]; then
+  ko "shipped template missing: $TPL"
+else
+  parse_config_file "$TPL"
+  [ -z "$CFG_UNATTENDED$CFG_WIPE$CFG_DISK$CFG_IMAGE$CFG_LANG$CFG_KEYMAP$CFG_POWEROFF$CFG_STREAM$CFG_FORMAT" ] \
+    || ko "the shipped template must set nothing, got UNATTENDED='$CFG_UNATTENDED' WIPE='$CFG_WIPE' DISK='$CFG_DISK'"
+  # ... and the build has to actually ship it, or the guard above guards air.
+  grep -q 'haos-installer.cfg.example' build-iso.sh \
+    || ko 'build-iso.sh does not copy the template into the ISO'
+fi
+
 rm -rf "$tmp"
 
 if [ "$fail" -ne 0 ]; then
@@ -249,5 +268,6 @@ fi
 printf 'ok    unattended: CRLF, quotes, lowercase and unknown keys handled, WIPE\n'
 printf '      never assumed, consent gate stops a config without it, cmdline wins\n'
 printf '      over the file, language keys right, and the same disk exclusions\n'
-printf '      as the menu (boot medium, image disk, config stick, iso9660, Ventoy)\n'
+printf '      as the menu (boot medium, image disk, config stick, iso9660, Ventoy).\n'
+printf '      The template shipped in the ISO sets nothing.\n'
 printf '\nall checks passed\n'

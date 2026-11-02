@@ -392,6 +392,13 @@ There are two ways to ask for it:
    below work with the same names: `haos.disk=/dev/sda`, `haos.wipe=yes`,
    `haos.lang=da`, and so on.
 
+The ISO carries a template for the file: `haos-installer.cfg` in its root, every
+key commented out, plus `haos-installer.cfg.example` in
+`/usr/local/share/doc/haos-isoinstall/` on the running system. It sets nothing,
+so a normal boot still gives the wizard -- the log says it found a config that
+sets nothing, which is that file. An ISO is read-only, so copy it to a stick
+before editing it; in this repository it is `haos-installer.cfg.example`.
+
 The file is plain text, one `KEY=value` per line, `#` starts a comment, and a
 file saved on Windows with CRLF line endings is fine:
 

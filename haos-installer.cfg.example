@@ -1,0 +1,45 @@
+# Configuration for haos-installer.sh -- the opt-in unattended mode.
+#
+# Rename this file to haos-installer.cfg and put it in the ROOT of a FAT32 USB
+# stick, then keep the stick plugged in while the installer runs. Every key
+# below is commented out, so a copy that nobody edited changes nothing: the
+# wizard asks its questions exactly as it always did.
+#
+# This same file sits on the ISO, where it cannot be edited -- an ISO is
+# read-only. Copy it to a stick first, then edit the copy.
+#
+# Two keys decide whether anything happens at all:
+#
+#   UNATTENDED=yes   run without questions
+#   WIPE=yes         the written consent to erase a disk. Without it the run
+#                    stops before touching anything, and names this file.
+#
+#UNATTENDED=yes
+#WIPE=yes
+
+# The disk to install on, as the wizard would name it (/dev/sda, /dev/nvme0n1).
+# Leave it out when the machine has exactly one eligible disk: that one is
+# taken. Two eligible disks stop the run instead of guessing, and the installer
+# will never accept the boot medium, the stick holding the image, the stick
+# holding this file, a Ventoy stick or anything carrying an ISO.
+#DISK=/dev/sda
+
+# Home Assistant OS image: a path relative to this file, or an absolute path on
+# the running system. Leave it out to download the latest release.
+#IMAGE=haos_generic-x86-64-13.2.img.xz
+
+# Language and console layout, from the same list the wizard offers:
+# en da de nl fr es it pl sv pt ru cs no fi
+#LANG=da
+#KEYBOARD=dk
+
+# Power the machine off when the installation is done, instead of rebooting
+# into Home Assistant OS.
+#POWEROFF=yes
+
+# Write the image in one pass instead of verify-then-write. Faster, and it
+# writes before it can read anything back.
+#STREAM=yes
+
+# Reformat this stick at the end, as the wizard offers to.
+#FORMAT=yes

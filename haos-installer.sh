@@ -1910,6 +1910,12 @@ load_config(){
 
   if [ -n "$CFG_FILE" ]; then
     parse_config_file "$CFG_FILE" || logx "config file could not be read"
+    # The ISO carries an all-commented template under this exact name, so a
+    # plain wizard run finds a file that says nothing. Say that out loud: a
+    # reader of the log should not have to guess whether a config was applied.
+    if [ -z "$CFG_UNATTENDED$CFG_WIPE$CFG_DISK$CFG_IMAGE$CFG_LANG$CFG_KEYMAP$CFG_POWEROFF$CFG_STREAM$CFG_FORMAT" ]; then
+      logx "that file sets nothing (every key commented out): nothing applied"
+    fi
     CFG_DISK_DEV=$(cfg_medium_disk)
     [ -n "$CFG_DISK_DEV" ] && logx "config medium is /dev/$CFG_DISK_DEV: never a target"
   fi

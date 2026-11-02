@@ -125,6 +125,15 @@ the eligible list, so a 64 MB stick next to a 500 GB SSD still reads as one
 disk. That exclusion only exists because a stick with a config on it used to be
 the second "eligible disk" — if you are testing an older ISO, expect that stop.
 
+You do not have to write that file from scratch: the ISO carries it already, all
+keys commented out, at its root (`haos-installer.cfg`), and `build-iso.sh`
+copies it from `haos-installer.cfg.example` here. Mount the ISO, copy the file
+onto a FAT32 stick, uncomment two lines. Editing it in place does not work -- an
+ISO is read-only, and a stick written from one inherits that. The log of every
+boot names that template (`config file found: .../haos-installer.cfg`) and says
+on the next line that it sets nothing, so the file existing on the medium does
+not mean mode is on.
+
 After the run the stick holds `haos-install-*.log`: on a headless machine that
 file is the only evidence of what happened.
 

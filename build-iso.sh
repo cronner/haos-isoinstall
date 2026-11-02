@@ -106,6 +106,17 @@ done
 mkdir -p config/includes.binary
 cp "$DOCSRC/LICENSE" config/includes.binary/LICENSE
 
+# The unattended config, as a template on the ISO surface: every key commented
+# out, so it does nothing until someone copies it to a stick and edits it. It
+# belongs on the surface rather than in the chroot because the chroot copy is
+# unreachable until the live system is up, and by then the questions have
+# already started. Under the real name, so copying the file to a stick is the
+# whole procedure -- the installer finds it and reports that it sets nothing.
+if [ -f "$DOCSRC/haos-installer.cfg.example" ]; then
+  cp "$DOCSRC/haos-installer.cfg.example" config/includes.binary/haos-installer.cfg
+  cp "$DOCSRC/haos-installer.cfg.example" "$DOCDIR/haos-installer.cfg.example"
+fi
+
 # --- Build stamp: the ISO carries no version string of its own. The
 # installer shows it on the welcome screen and logs it, so that a bug
 # report says WHICH build produced it.
