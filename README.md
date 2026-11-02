@@ -138,6 +138,10 @@ Plug in the stick, boot. The wizard starts on its own:
    own progress bar (percentage, rate, ETA). The image is fetched and verified
    before the disk is touched, so a network failure leaves the disk intact, and
    an interrupted download resumes instead of starting over.
+   On a machine with too little RAM to hold the image, the wizard says so and
+   asks for a USB stick or external disk to keep it on, naming the exact path it
+   will use; only if there is none does it fall back to writing in one pass,
+   where the disk is erased first.
    **Do not power off the PC**
 6. **Remove the USB stick**, then confirm: the PC reboots straight into Home
    Assistant. The installer runs from memory, so the stick is no longer needed

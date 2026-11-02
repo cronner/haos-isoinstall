@@ -30,6 +30,10 @@ logx(){ printf '[%s] %s\n' "$(date '+%F %T')" "$*" >> "$LOG"; }
 set_strings(){
 case "$UI_LANG" in
 fr)
+  S_STAGE_ASK="Pas assez de mémoire libre pour garder l'image en RAM (%s).\nAucun support inscriptible avec autant d'espace libre n'a été trouvé.\nBranche une clé USB ou un disque externe, puis choisis Réessayer : l'image y est téléchargée et vérifiée AVANT que quoi que ce soit soit effacé.\n\"Écrire en un seul passage\" efface au contraire le disque cible d'abord : si le réseau tombe ensuite, il reste un disque vide."
+  S_STAGE_INFO="Pas assez de mémoire pour placer l'image en RAM.\nElle est téléchargée vers :\n%s\nRien n'est écrit sur le disque cible avant que le fichier soit complet et vérifié, et il en est effacé ensuite."
+  S_STAGE_RETRY="Réessayer"
+  S_STAGE_STREAM="Écrire en un seul passage"
   S_TITLE="Installation Home Assistant OS"
   S_WARN="⚠  AVERTISSEMENT — Installation Home Assistant OS"
   S_RESCUE="\n\nTu vas pouvoir sauvegarder le journal, puis éteindre le PC."
@@ -115,6 +119,10 @@ fr)
   S_DONE="Installation terminée.\n\nHome Assistant OS est installé sur %s.\n\n➜ RETIRE LA CLÉ USB MAINTENANT, avant de valider.\n  (l'installateur tourne en mémoire : la clé ne sert plus)\n\nÀ SUIVRE :\n 1. Valide ci-dessous : le PC redémarre sur Home Assistant.\n 2. Garde le câble réseau branché.\n 3. Patiente 2 à 5 minutes (premier démarrage).\n 4. Depuis un autre appareil :  http://homeassistant.local"
 ;;
 de)
+  S_STAGE_ASK="Zu wenig freier Arbeitsspeicher, um das Image im RAM zu halten (%s).\nEs wurde kein beschreibbares Medium mit so viel freiem Platz gefunden.\nSteck einen USB-Stick oder eine externe Festplatte an und wähle Erneut versuchen: das Image wird dorthin geladen und geprüft, BEVOR etwas gelöscht wird.\n\"In einem Durchgang schreiben\" löscht dagegen zuerst die Zieldiskette: bricht danach das Netz weg, bleibt eine leere Platte."
+  S_STAGE_INFO="Zu wenig Arbeitsspeicher, um das Image im RAM abzulegen.\nEs wird geladen nach:\n%s\nAuf die Zieldiskette wird nichts geschrieben, bevor die Datei vollständig und geprüft ist; danach wird sie dort wieder gelöscht."
+  S_STAGE_RETRY="Erneut versuchen"
+  S_STAGE_STREAM="In einem Durchgang schreiben"
   S_TITLE="Installation von Home Assistant OS"
   S_WARN="⚠  WARNUNG — Installation von Home Assistant OS"
   S_RESCUE="\n\nDu kannst jetzt das Protokoll speichern und den PC danach ausschalten."
@@ -200,6 +208,10 @@ de)
   S_DONE="Installation abgeschlossen.\n\nHome Assistant OS ist auf %s installiert.\n\n➜ ZIEHE JETZT DEN USB-STICK AB, bevor du bestätigst.\n  (der Installer läuft im Speicher: der Stick wird nicht mehr gebraucht)\n\nWEITER:\n 1. Bestätige unten: der PC startet in Home Assistant.\n 2. Lass das Netzwerkkabel angesteckt.\n 3. Warte 2 bis 5 Minuten (erster Start).\n 4. Von einem anderen Gerät:  http://homeassistant.local"
 ;;
 da)
+  S_STAGE_ASK="Der er ikke ledig hukommelse nok til at holde billedet i RAM (%s).\nDer blev ikke fundet et skrivbart medie med så meget ledig plads.\nSæt en USB-pind eller ekstern disk i, og vælg Prøv igen: billedet hentes dertil og kontrolleres, FØR noget slettes.\n\"Skriv i ét gennemløb\" sletter derimod måldisken først: falder nettet derefter, står du med en tom disk."
+  S_STAGE_INFO="Der er ikke hukommelse nok til at lægge billedet i RAM.\nDet hentes til:\n%s\nDer skrives intet på måldisken, før filen er komplet og kontrolleret, og den slettes derfra igen bagefter."
+  S_STAGE_RETRY="Prøv igen"
+  S_STAGE_STREAM="Skriv i ét gennemløb"
   S_TITLE="Installation af Home Assistant OS"
   S_WARN="⚠  ADVARSEL — Installation af Home Assistant OS"
   S_RESCUE="\n\nDu kan gemme loggen og derefter slukke PC'en."
@@ -285,6 +297,10 @@ da)
   S_DONE="Installationen er færdig.\n\nHome Assistant OS er installeret på %s.\n\n➜ TAG USB-STIKKET UD NU, før du bekræfter.\n  (installationsprogrammet kører i hukommelsen: stikket bruges ikke mere)\n\nNÆSTE:\n 1. Bekræft nedenfor: PC'en genstarter i Home Assistant.\n 2. Lad netværkskablet sidde i.\n 3. Vent 2 til 5 minutter (første opstart).\n 4. Fra en anden enhed:  http://homeassistant.local"
 ;;
 nl)
+  S_STAGE_ASK="Niet genoeg vrij geheugen om de image in RAM te houden (%s).\nEr is geen beschrijfbaar medium met zoveel vrije ruimte gevonden.\nSluit een USB-stick of externe schijf aan en kies Opnieuw: de image wordt daarheen gedownload en gecontroleerd, VOORDAT er iets wordt gewist.\n\"In een keer schrijven\" wist juist eerst de doelschijf: valt het netwerk daarna weg, dan blijft er een lege schijf over."
+  S_STAGE_INFO="Niet genoeg geheugen om de image in RAM te zetten.\nHij wordt gedownload naar:\n%s\nEr wordt niets naar de doelschijf geschreven voordat het bestand compleet en gecontroleerd is; daarna wordt het daar weer verwijderd."
+  S_STAGE_RETRY="Opnieuw"
+  S_STAGE_STREAM="In een keer schrijven"
   S_TITLE="Installatie Home Assistant OS"
   S_WARN="⚠  WAARSCHUWING — installatie Home Assistant OS"
   S_RESCUE="\n\nJe kunt het logboek opslaan en de pc daarna uitzetten."
@@ -370,6 +386,10 @@ nl)
   S_DONE="Installatie voltooid.\n\nHome Assistant OS staat op %s.\n\n-> VERWIJDER NU DE USB-STICK, voordat je bevestigt.\n   (het installatieprogramma draait in het geheugen)\n\nVOLGENDE:\n 1. Bevestig hieronder: de pc start in Home Assistant.\n 2. Laat de netwerkkabel aangesloten.\n 3. Wacht 2 tot 5 minuten (eerste start).\n 4. Vanaf een ander apparaat:  http://homeassistant.local"
 ;;
 es)
+  S_STAGE_ASK="No hay memoria libre suficiente para mantener la imagen en RAM (%s).\nNo se encontro ningun medio escribible con ese espacio libre.\nConecta un pendrive o un disco externo y elige Reintentar: la imagen se descarga alli y se comprueba ANTES de borrar nada.\n\"Escribir en una pasada\" borra primero el disco destino: si la red cae despues, queda un disco vacio."
+  S_STAGE_INFO="No hay memoria suficiente para dejar la imagen en RAM.\nSe descarga en:\n%s\nNo se escribe nada en el disco destino hasta que el archivo este completo y comprobado, y despues se borra de alli."
+  S_STAGE_RETRY="Reintentar"
+  S_STAGE_STREAM="Escribir en una pasada"
   S_TITLE="Instalacion de Home Assistant OS"
   S_WARN="⚠  AVISO — Instalacion de Home Assistant OS"
   S_RESCUE="\n\nPodras guardar el registro y apagar el PC."
@@ -455,6 +475,10 @@ es)
   S_DONE="Instalacion completada.\n\nHome Assistant OS esta instalado en %s.\n\n-> QUITA EL LAPIZ USB AHORA, antes de confirmar.\n   (el instalador se ejecuta en memoria: ya no se usa)\n\nSIGUIENTE:\n 1. Confirma abajo: el PC arranca en Home Assistant.\n 2. Deja el cable de red conectado.\n 3. Espera de 2 a 5 minutos (primer arranque).\n 4. Desde otro dispositivo:  http://homeassistant.local"
 ;;
 it)
+  S_STAGE_ASK="Memoria libera insufficiente per tenere l'immagine in RAM (%s).\nNessun supporto scrivibile con altrettanto spazio libero e stato trovato.\nCollega una chiavetta o un disco esterno e scegli Riprova: l'immagine viene scaricata li e controllata PRIMA di cancellare qualsiasi cosa.\n\"Scrivere in un solo passaggio\" cancella invece prima il disco di destinazione: se la rete cade dopo, resta un disco vuoto."
+  S_STAGE_INFO="Memoria insufficiente per mettere l'immagine in RAM.\nViene scaricata in:\n%s\nNon viene scritto nulla sul disco di destinazione finche il file non e completo e controllato, e poi viene cancellato da li."
+  S_STAGE_RETRY="Riprova"
+  S_STAGE_STREAM="Scrivere in un solo passaggio"
   S_TITLE="Installazione di Home Assistant OS"
   S_WARN="⚠  AVVISO — installazione di Home Assistant OS"
   S_RESCUE="\n\nPotrai salvare il registro, poi spegnere il PC."
@@ -540,6 +564,10 @@ it)
   S_DONE="Installazione completata.\n\nHome Assistant OS e installato su %s.\n\n-> RIMUOVI ORA LA CHIAVETTA USB, prima di confermare.\n   (l'installer gira in memoria: non serve piu)\n\nPROSSIMI PASSI:\n 1. Conferma qui sotto: il PC si riavvia in Home Assistant.\n 2. Lascia collegato il cavo di rete.\n 3. Attendi da 2 a 5 minuti (primo avvio).\n 4. Da un altro dispositivo:  http://homeassistant.local"
 ;;
 pl)
+  S_STAGE_ASK="Za malo wolnej pamieci, aby trzymac obraz w RAM (%s).\nNie znaleziono zapisywalnego nosnika z tyle wolnego miejsca.\nPodlacz pendrive lub dysk zewnetrzny i wybierz Ponow: obraz zostanie tam pobrany i sprawdzony, ZANIM cokolwiek zostanie usuniete.\n\"Zapis w jednym przebiegu\" najpierw czysci dysk docelowy: jesli siec padnie pozniej, zostanie pusty dysk."
+  S_STAGE_INFO="Za malo pamieci, aby umiescic obraz w RAM.\nJest pobierany do:\n%s\nNa dysk docelowy nic nie jest zapisywane, dopoki plik nie bedzie kompletny i sprawdzony, a potem jest stamtad usuwany."
+  S_STAGE_RETRY="Ponow"
+  S_STAGE_STREAM="Zapis w jednym przebiegu"
   S_TITLE="Instalacja Home Assistant OS"
   S_WARN="⚠  OSTRZEZENIE — instalacja Home Assistant OS"
   S_RESCUE="\n\nBedziesz mogl zapisac dziennik, a potem wylaczyc komputer."
@@ -625,6 +653,10 @@ pl)
   S_DONE="Instalacja zakonczona.\n\nHome Assistant OS jest zainstalowany na %s.\n\n-> WYJMIJ TERAZ PENDRIVE USB, przed potwierdzeniem.\n   (instalator dziala z pamieci: nie jest juz potrzebny)\n\nDALEJ:\n 1. Potwierdz ponizej: komputer uruchomi Home Assistant.\n 2. Zostaw podlaczony kabel sieciowy.\n 3. Poczekaj 2 do 5 minut (pierwszy start).\n 4. Z innego urzadzenia:  http://homeassistant.local"
 ;;
 sv)
+  S_STAGE_ASK="For lite ledigt minne for att halla avbilden i RAM (%s).\nInget skrivbart media med sa mycket ledigt utrymme hittades.\nAnslut ett USB-minne eller en extern disk och valj Forsok igen: avbilden hamtas dit och kontrolleras INNAN nagot raderas.\n\"Skriv i ett genomlop\" raderar i stallet maldisken forst: tappar natverket efterat star du med en tom disk."
+  S_STAGE_INFO="For lite minne for att lagga avbilden i RAM.\nDen hamtas till:\n%s\nIngenting skrivs till maldisken forran filen ar komplett och kontrollerad, och den tas bort darifran efterat."
+  S_STAGE_RETRY="Forsok igen"
+  S_STAGE_STREAM="Skriv i ett genomlop"
   S_TITLE="Installation av Home Assistant OS"
   S_WARN="⚠  VARNING — installation av Home Assistant OS"
   S_RESCUE="\n\nDu kan spara loggen och sedan stanga av datorn."
@@ -710,6 +742,10 @@ sv)
   S_DONE="Installationen ar klar.\n\nHome Assistant OS ar installerat pa %s.\n\n-> TA UT USB-MINNET NU, innan du bekraftar.\n   (programmet kors fran minnet: det behovs inte langre)\n\nNASTA:\n 1. Bekrafta nedan: datorn startar om i Home Assistant.\n 2. Lat natverkskabeln sitta kvar.\n 3. Vanta 2 till 5 minuter (forsta starten).\n 4. Fran en annan enhet:  http://homeassistant.local"
 ;;
 pt)
+  S_STAGE_ASK="Memoria livre insuficiente para manter a imagem em RAM (%s).\nNao foi encontrado nenhum suporte de escrita com esse espaco livre.\nLigue uma pen ou um disco externo e escolha Repetir: a imagem e descarregada para la e verificada ANTES de apagar seja o que for.\n\"Escrever de uma so vez\" apaga primeiro o disco de destino: se a rede cair depois, fica um disco vazio."
+  S_STAGE_INFO="Memoria insuficiente para colocar a imagem em RAM.\nE descarregada para:\n%s\nNada e escrito no disco de destino enquanto o ficheiro nao estiver completo e verificado, e depois e apagado de la."
+  S_STAGE_RETRY="Repetir"
+  S_STAGE_STREAM="Escrever de uma so vez"
   S_TITLE="Instalacao do Home Assistant OS"
   S_WARN="⚠  AVISO — instalacao do Home Assistant OS"
   S_RESCUE="\n\nVai poder guardar o registo e depois desligar o PC."
@@ -795,6 +831,10 @@ pt)
   S_DONE="Instalacao concluida.\n\nO Home Assistant OS esta instalado em %s.\n\n-> RETIRE AGORA A PEN USB, antes de confirmar.\n   (o instalador corre em memoria: ja nao e usada)\n\nSEGUINTE:\n 1. Confirme abaixo: o PC reinicia no Home Assistant.\n 2. Mantenha o cabo de rede ligado.\n 3. Aguarde 2 a 5 minutos (primeiro arranque).\n 4. A partir de outro dispositivo:  http://homeassistant.local"
 ;;
 ru)
+  S_STAGE_ASK="Недостаточно свободной памяти, чтобы держать образ в ОЗУ (%s).\nНе найден носитель для записи с таким объёмом свободного места.\nПодключите флешку или внешний диск и выберите Повторить: образ будет скачан туда и проверен ДО того, как что-либо будет стёрто.\n\"Запись в один проход\" наоборот сначала стирает целевой диск: если после этого пропадёт сеть, останется пустой диск."
+  S_STAGE_INFO="Недостаточно памяти, чтобы разместить образ в ОЗУ.\nОн скачивается в:\n%s\nНа целевой диск ничего не пишется, пока файл не будет полностью скачан и проверен; после записи он оттуда удаляется."
+  S_STAGE_RETRY="Повторить"
+  S_STAGE_STREAM="Запись в один проход"
   S_TITLE="Установка Home Assistant OS"
   S_WARN="⚠  ВНИМАНИЕ — установка Home Assistant OS"
   S_RESCUE="\n\nВы сможете сохранить журнал, а затем выключить компьютер."
@@ -880,6 +920,10 @@ ru)
   S_DONE="Установка завершена.\n\nHome Assistant OS установлен на %s.\n\n-> ИЗВЛЕКИТЕ ФЛЕШКУ USB СЕЙЧАС, до подтверждения.\n   (установщик работает из памяти: она больше не нужна)\n\nДАЛЬШЕ:\n 1. Подтвердите ниже: компьютер загрузится в Home Assistant.\n 2. Оставьте сетевой кабель подключённым.\n 3. Подождите от 2 до 5 минут (первая загрузка).\n 4. С другого устройства:  http://homeassistant.local"
 ;;
 cs)
+  S_STAGE_ASK="Nedostatek volné paměti pro uložení obrazu do RAM (%s).\nNebylo nalezeno zapisovatelné médium s tolika volného místa.\nPřipojte USB disk nebo externí disk a zvolte Zkusit znovu: obraz se tam stáhne a ověří, NEŽ se cokoli smaže.\n\"Zápis v jednom průchodu\" naopak nejprve smaže cílový disk: pokud potom vypadne síť, zůstane prázdný disk."
+  S_STAGE_INFO="Nedostatek paměti pro umístění obrazu do RAM.\nStahuje se do:\n%s\nNa cílový disk se nic nezapisuje, dokud není soubor kompletní a ověřený; potom se odtud smaže."
+  S_STAGE_RETRY="Zkusit znovu"
+  S_STAGE_STREAM="Zapis v jednom pruchodu"
   S_TITLE="Instalace Home Assistant OS"
   S_WARN="⚠  UPOZORNĚNÍ — instalace Home Assistant OS"
   S_RESCUE="\n\nBudete moci uložit protokol a potom počítač vypnout."
@@ -965,6 +1009,10 @@ cs)
   S_DONE="Instalace dokončena.\n\nHome Assistant OS je nainstalován na %s.\n\n-> VYJMĚTE NYNÍ USB DISK, než potvrdíte.\n   (instalátor běží z paměti: už ho nepotřebuje)\n\nDALŠÍ KROKY:\n 1. Potvrďte níže: počítač se restartuje do Home Assistant.\n 2. Nechte síťový kabel zapojený.\n 3. Počkejte 2 až 5 minut (první spuštění).\n 4. Z jiného zařízení:  http://homeassistant.local"
 ;;
 no)
+  S_STAGE_ASK="For lite ledig minne til å holde bildet i RAM (%s).\nFant ingen skrivbart medium med så mye ledig plass.\nKoble til en USB-pinne eller en ekstern disk og velg Prøv igjen: bildet lastes ned dit og kontrolleres FØR noe slettes.\n\"Skriv i én omgang\" sletter i stedet måldisken først: faller nettet ut etterpå, står du igjen med en tom disk."
+  S_STAGE_INFO="For lite minne til å legge bildet i RAM.\nDet lastes ned til:\n%s\nIngenting skrives til måldisken før filen er komplett og kontrollert, og den slettes derfra etterpå."
+  S_STAGE_RETRY="Prøv igjen"
+  S_STAGE_STREAM="Skriv i én omgang"
   S_TITLE="Installasjon av Home Assistant OS"
   S_WARN="⚠  ADVARSEL — installasjon av Home Assistant OS"
   S_RESCUE="\n\nDu kan lagre loggen og deretter slå av PC-en."
@@ -1050,6 +1098,10 @@ no)
   S_DONE="Installasjonen er fullført.\n\nHome Assistant OS er installert på %s.\n\n-> TA UT USB-PINNEN NÅ, før du bekrefter.\n   (programmet kjører fra minnet: den trengs ikke lenger)\n\nNESTE:\n 1. Bekreft nedenfor: PC-en starter på nytt i Home Assistant.\n 2. La nettverkskabelen stå i.\n 3. Vent 2 til 5 minutter (første oppstart).\n 4. Fra en annen enhet:  http://homeassistant.local"
 ;;
 fi)
+  S_STAGE_ASK="Liian vähän vapaata muistia kuvan pitämiseksi RAMissa (%s).\nKirjoitettavaa mediaa, jossa on niin paljon vapaata tilaa, ei löytynyt.\nKytke USB-muistitikku tai ulkoinen levy ja valitse Yritä uudelleen: kuva ladataan sinne ja tarkistetaan ENNEN kuin mitään poistetaan.\n\"Kirjoita yhdellä kertaa\" poistaa sen sijaan kohdelevyn ensin: jos verkko katkeaa sen jälkeen, jäljelle jää tyhjä levy."
+  S_STAGE_INFO="Liian vähän muistia kuvan sijoittamiseksi RAMiin.\nSe ladataan kohteeseen:\n%s\nKohdelevylle ei kirjoiteta mitään ennen kuin tiedosto on valmis ja tarkistettu, ja se poistetaan siltä kirjoituksen jälkeen."
+  S_STAGE_RETRY="Yritä uudelleen"
+  S_STAGE_STREAM="Kirjoita yhdellä kertaa"
   S_TITLE="Home Assistant OS -asennus"
   S_WARN="⚠  VAROITUS — Home Assistant OS -asennus"
   S_RESCUE="\n\nVoit tallentaa lokin ja sammuttaa sitten tietokoneen."
@@ -1135,6 +1187,10 @@ fi)
   S_DONE="Asennus valmis.\n\nHome Assistant OS on asennettu levylle %s.\n\n-> IRROTA USB-MUISTITIKKU NYT ennen vahvistamista.\n   (asentaja toimii muistista: tikkua ei enää tarvita)\n\nSEURAAVAKSI:\n 1. Vahvista alla: tietokone käynnistyy Home Assistantiin.\n 2. Jätä verkkokaapeli kytkettynä.\n 3. Odota 2-5 minuuttia (ensimmäinen käynnistys).\n 4. Toisesta laitteesta:  http://homeassistant.local"
 ;;
 *)
+  S_STAGE_ASK="Not enough free memory to hold the image in RAM (%s).\nNo writable stick or external disk with that much free space was found.\nPlug one in and choose Retry: the image is downloaded there and checked BEFORE anything is erased.\n\"Write in one pass\" instead erases the target disk first: a network drop after that leaves an empty disk."
+  S_STAGE_INFO="Not enough memory to stage the image in RAM.\nIt is being downloaded to:\n%s\nNothing is written to the target disk until the file is complete and checked, and it is deleted from there once the write is done."
+  S_STAGE_RETRY="Retry"
+  S_STAGE_STREAM="Write in one pass"
   S_TITLE="Home Assistant OS installation"
   S_WARN="⚠  WARNING — Home Assistant OS installation"
   S_RESCUE="\n\nYou will be able to save the log, then power the PC off."
@@ -2171,6 +2227,56 @@ prepare_disk(){
   logx "target erased: signatures removed, first and last 16 MiB zeroed"
 }
 
+# A writable medium to stage the image on when RAM is too small, so that the disk
+# is still erased only after the image is known good.
+# Only a USB or external disk qualifies: never the target, never the boot medium,
+# and never a read-only-by-design filesystem (iso9660, udf). A partition that is
+# not already mounted is mounted here and STAGE_MNT is set so flash() can let go
+# of it afterwards; an already-mounted partition is used as-is and never unmounted,
+# because we do not unmount what we did not mount.
+# Sets STAGE_DIR and returns 0, or returns 1.
+find_stage_dir(){
+  local need="$1" p pk fs mp avail tgt=""
+  STAGE_DIR=""; STAGE_MNT=""
+  [ -n "${TARGET:-}" ] && tgt=$(basename "$TARGET")
+  while read -r p; do
+    [ -n "$p" ] || continue
+    pk=$(lsblk -no PKNAME "/dev/$p" 2>/dev/null | head -1 | tr -d ' ')
+    [ -n "$pk" ] || continue
+    [ -n "$tgt" ] && [ "$pk" = "$tgt" ] && continue
+    [ -n "${live_dev:-}" ] && [ "$pk" = "$live_dev" ] && continue
+    case "$(lsblk -dno TRAN "/dev/$pk" 2>/dev/null | tr -d ' ')/$(lsblk -dno RM "/dev/$pk" 2>/dev/null | tr -d ' ')" in
+      *usb*|*1*) ;;
+      *) continue ;;
+    esac
+    fs=$(lsblk -no FSTYPE "/dev/$p" 2>/dev/null | tr -d ' ')
+    case "$fs" in iso9660|udf|"") continue ;; esac    # read-only by design
+    mp=$(findmnt -rn -S "/dev/$p" -o TARGET 2>/dev/null | head -1)
+    if [ -z "$mp" ]; then
+      mp=/mnt/stage
+      mkdir -p "$mp" 2>/dev/null || continue
+      mount -o rw "/dev/$p" "$mp" 2>>"$LOG" || continue
+      STAGE_MNT="$mp"
+    fi
+    # Mounted read-only (dirty NTFS, Ventoy) or not writable: not a candidate.
+    if ! touch "$mp/.haos-stage-test" 2>/dev/null; then
+      [ -n "$STAGE_MNT" ] && { umount "$mp" 2>>"$LOG" || true; STAGE_MNT=""; }
+      continue
+    fi
+    rm -f "$mp/.haos-stage-test" 2>/dev/null || true
+    avail=$(df --output=avail -k "$mp" 2>/dev/null | tail -1 | tr -d ' ')
+    if [ "${avail:-0}" -lt "$need" ]; then
+      logx "staging refused on /dev/$p: $(( ${avail:-0} / 1024 )) MiB free, $(( need / 1024 )) MiB needed"
+      [ -n "$STAGE_MNT" ] && { umount "$mp" 2>>"$LOG" || true; STAGE_MNT=""; }
+      continue
+    fi
+    logx "staging medium /dev/$p on $mp, $(( ${avail:-0} / 1024 )) MiB free"
+    STAGE_DIR="$mp"
+    return 0
+  done < <(lsblk -lno NAME,TYPE 2>/dev/null | awk '$2=="part"{print $1}')
+  return 1
+}
+
 # Downloads the image with resume and an integrity check; returns 0 only when the
 # file is complete AND its .xz checksums validate, so the caller can then erase a
 # disk knowing the image is already in hand.
@@ -2235,18 +2341,44 @@ flash(){
 
   # whiptail's stdout is forced onto /dev/tty: otherwise the process substitution
   # inherits the pipe to xz and injects the terminal codes into it.
-  local rc=0 avail_kb need_kb usize t0 secs d_file=/tmp/haos.img.xz
+  local rc=0 avail_kb need_kb usize t0 secs d_file="" stage_h stage_dir
   local -a pvargs
 
   # Two separate phases give each one its own progress bar -- percent, rate and
   # ETA -- which a single pipeline cannot: it can only ever show one number.
-  # That needs the compressed image in RAM (~450 MB), so on a machine with too
-  # little free memory we keep the streaming pipeline and its single gauge.
+  # That needs the compressed image staged (~450 MB) in RAM, or on a USB medium
+  # when RAM is too small; only with neither do we fall back to the streaming
+  # pipeline and its single gauge.
   avail_kb=$(awk '/^MemAvailable:/{print $2}' /proc/meminfo 2>/dev/null)
   [[ "$avail_kb" =~ ^[0-9]+$ ]] || avail_kb=0
   need_kb=$(( dl / 1024 * 2 ))            # image + headroom for the write phase
 
-  if [ "$dl" -gt 0 ] && [ "$avail_kb" -gt "$need_kb" ]; then
+  # Where does the image wait while it is checked? In RAM (a tmpfs) when it fits,
+  # otherwise on a stick the user plugs in. Erasing only once the image is known
+  # good is the whole point of the two-phase flow, and it used to be lost on
+  # low-RAM machines: they fell straight back to a single-pass write. Nothing is
+  # erased to find out, so asking costs nothing when the answer is "no medium".
+  if [ "$dl" -gt 0 ]; then
+    if [ "$avail_kb" -gt "$need_kb" ]; then
+      d_file=/tmp/haos.img.xz
+    else
+      stage_h=$(numfmt --to=iec "$dl" 2>/dev/null || echo "$dl bytes")
+      while :; do
+        find_stage_dir "$need_kb" && { stage_dir="$STAGE_DIR"; break; }
+        wt_yesno "$S_WARN" "$(printf "$S_STAGE_ASK" "$stage_h")" \
+          --yes-button "$S_STAGE_RETRY" --no-button "$S_STAGE_STREAM" || break
+      done
+      if [ -n "$stage_dir" ]; then
+        d_file="$stage_dir/haos-$HAOS_VERSION.img.xz"
+        logx "RAM too small ($(( avail_kb / 1024 )) MiB free, $(( need_kb / 1024 )) MiB needed): staging on $d_file"
+        wt_msg "$S_TITLE" "$(printf "$S_STAGE_INFO" "$d_file")"
+      else
+        logx "no staging medium found: single-pass write, the disk is erased first"
+      fi
+    fi
+  fi
+
+  if [ -n "$d_file" ]; then
     # ---- 1/3: fetch. A failure offers a resume; declining stops with the disk
     #      untouched, which is the whole point of doing this first. ----
     t0=$SECONDS
@@ -2254,7 +2386,8 @@ flash(){
     secs=$(( SECONDS - t0 ))
     logx "download complete: $(( dl / 1048576 )) MiB in ${secs}s, average $(rate_mib "$dl" "$secs") MiB/s"
 
-    # ---- 2/3: erase. Only reached with a complete, checksummed image in RAM. ----
+    # ---- 2/3: erase. Only reached with a complete, checksummed image staged
+    #      in RAM or on the medium found by find_stage_dir. ----
     prepare_disk
 
     # ---- 3/3: write. The uncompressed size comes from the .xz index, so pv can
@@ -2274,7 +2407,9 @@ flash(){
       | dd of="$TARGET" bs=4M conv=fsync 2>>"$LOG"
     rc=$?
     secs=$(( SECONDS - t0 ))
-    rm -f "$d_file"
+    rm -f "$d_file" 2>>"$LOG" || true
+    # Only unmount what find_stage_dir mounted itself.
+    [ -n "${STAGE_MNT:-}" ] && { sync; umount "$STAGE_MNT" 2>>"$LOG" || true; STAGE_MNT=""; }
     if [ -n "$usize" ]; then
       logx "write complete: $(( usize / 1048576 )) MiB in ${secs}s, average $(rate_mib "$usize" "$secs") MiB/s"
     else
@@ -2282,8 +2417,9 @@ flash(){
     fi
   else
     # ---- Streaming fallback: download and write interleaved, one gauge. ----
-    # Small-RAM machines cannot hold the image in memory, so the old worst case
-    # is back: the disk is erased before the download is known to work.
+    # Reached only when there is nowhere to stage the image: too little RAM and no
+    # writable medium. This is the old worst case, the disk being erased before the
+    # download is known to work, and S_STAGE_ASK has just said so.
     prepare_disk
     t0=$SECONDS
     # --speed-limit/--speed-time: without them, a network drop left curl waiting
