@@ -14,7 +14,7 @@ boot the stick and follow the wizard. Everything below is detail.
 
 **Contents:** [What you need](#what-you-need) · [1 Download](#step-1--download-the-iso)
 · [2 Write the stick](#step-2--write-the-iso-to-the-usb-stick)
-· [3 BIOS](#step-3--configure-the-pcs-biosuefi) · [4 Install](#step-4--install)
+· [3 BIOS](#step-3--configure-the-pcs-biosuefi) · [Screens](#what-it-looks-like) · [4 Install](#step-4--install)
 · [When RAM is short](#when-ram-is-short--the-image-is-staged-on-a-usb-stick)
 · [5 First boot](#step-5--first-boot) · [Troubleshooting](#if-something-goes-wrong)
 · [Building your own](#1-where-to-build) · [Credits](#origin-and-credits)
@@ -143,6 +143,95 @@ This is **the step everybody trips over**. Power on the PC and immediately press
 Once Home Assistant boots on its own, put the **internal disk first** in the boot
 order again. The wizard does recreate a `HAOS` UEFI entry, but the stick would
 otherwise keep priority and start the installer again.
+
+## What it looks like
+
+Text mock-ups of the real screens, so you know what to expect. The wording is
+the wizard's own; only the disk details are made up.
+
+**1. Language** — one line per language, and the keyboard layout is applied with
+it, so there is nothing to match up. The last line opens the full set of layouts
+for keyboards that do not match their language (a US keyboard with French,
+British English, Swiss German).
+
+```
+┌─ Language & keyboard ──────────────────────────────────────────────────┐
+│ Choose your language. Its keyboard layout is set automatically.        │
+│                                                                        │
+│ The last line is for a keyboard from another country.                  │
+│                                                                        │
+│ ▶ English    — QWERTY   (United States)                                │
+│   Dansk      — QWERTY   (Denmark)                                      │
+│   Cestina    — QWERTZ   (Czechia)                                      │
+│   Nederlands — QWERTY   (Netherlands)                                  │
+│   Suomi      — QWERTY   (Finland)                                      │
+│   French     — AZERTY   (France)                                       │
+│   Deutsch    — QWERTZ   (Germany)                                      │
+│   Italiano   — QWERTY   (Italy)                                        │
+│   Norsk      — QWERTY   (Norway)                                       │
+│   Polski     — QWERTY   (Poland)                                       │
+│   Portugues  — QWERTY   (Portugal)                                     │
+│   Russkiy    — YTsUKEN  (Russia)                                       │
+│   Espanol    — QWERTY   (Spain)                                        │
+│   Svenska    — QWERTY   (Sweden)                                       │
+│   Keyboard layout only (another country)                               │
+│                                                                        │
+│                          <Ok>       <Cancel>                           │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+**3. Disk** — the current contents are listed above the question, and the answer
+has to be typed, so a button cannot erase a disk by accident.
+
+```
+┌─ ⚠  FINAL CONFIRMATION  [4/6] ─────────────────────────────────────────┐
+│ Disk /dev/sda will be COMPLETELY ERASED.                               │
+│                                                                        │
+│ Current contents detected:                                             │
+│    sda                                                                 │
+│    ├─sda1     512M  vfat                                               │
+│    └─sda2     460G  ext4                                               │
+│                                                                        │
+│ Type YES (in capitals) to erase it and install                         │
+│ Home Assistant OS.                                                     │
+│ Any other answer stops here, with nothing erased.                      │
+│                                                                        │
+│ YES                                                                    │
+│                                                                        │
+│                          <Ok>       <Cancel>                           │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+**4. Download** — with too little RAM the image is staged on a USB stick instead,
+and the dialog says so before anything is touched.
+
+```
+┌─ ⚠  WARNING  [5/6] ────────────────────────────────────────────────────┐
+│ Not enough free memory to hold the image in RAM (429M).                │
+│                                                                        │
+│ No writable stick or external disk with that much free space           │
+│ was found.                                                             │
+│                                                                        │
+│ Plug one in and choose Retry: the image is downloaded there            │
+│ and checked BEFORE anything is erased.                                 │
+│                                                                        │
+│ "Write in one pass" instead erases the target disk first:              │
+│ a network drop after that leaves an empty disk.                        │
+│                                                                        │
+│                   <Retry>       <Write in one pass>                    │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+The whole sequence, and the one line that matters in it:
+
+![Wizard flow: language, network, disk, download and check, erase and write, verify, reboot — the disk is untouched until the download has been checked](docs/flow.svg)
+
+Everything above the red line can fail without costing you anything. Everything
+below it has already erased the disk.
+
+Real screenshots would have to come from a virtual machine: boot the ISO at 80×24
+and capture each step. The mock-ups above are checked by hand whenever the wording
+changes; screenshots would have to be checked too, which is why there are none yet.
 
 ## Step 4 — Install
 
