@@ -1,0 +1,7 @@
+# The installer and the build script run inside a Debian live build: a checkout
+# with CRLF endings makes bash fail on every line ("\r: command not found"), and
+# the failure only shows up in the ISO build, not here.
+* text=auto
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
