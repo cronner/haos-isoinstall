@@ -50,6 +50,7 @@
     padding-top: 0.8rem; padding-bottom: 0.8rem;
   }
   header.top .name { font-weight: 650; font-size: 0.95rem; }
+  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.88rem; }
   ul.langs {
     list-style: none; display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem;
     margin: 0; padding: 0; font-size: 0.85rem;
@@ -111,6 +112,12 @@
 <header class="top">
   <div class="wrap">
     <span class="name">haos-isoinstall</span>
+    <nav>
+      <a href="#need">Wat je nodig hebt</a>
+      <a href="#steps">Stap voor stap</a>
+      <a href="#first">Eerste start</a>
+      <a href="#problem">Als het niet lukt</a>
+    </nav>
     <ul class="langs">
       <li><a href="./" hreflang="en">English</a></li>
       <li><a href="da.html" hreflang="da">Dansk</a></li>
@@ -143,7 +150,7 @@
     </div>
   </div>
 
-  <h2>Wat je nodig hebt</h2>
+  <h2 id="need">Wat je nodig hebt</h2>
   <ul class="need">
     <li>Een pc die je kunt missen (Intel of AMD) die in UEFI-modus start. Die wordt je Home Assistant-machine.</li>
     <li>Een USB-stick van 2 GB of meer.</li>
@@ -151,7 +158,7 @@
     <li>Ongeveer een half uur. Het meeste is wachten.</li>
   </ul>
 
-  <h2>Stap voor stap</h2>
+  <h2 id="steps">Stap voor stap</h2>
   <ol class="steps">
     <li>
       <h3>Het bestand downloaden</h3>
@@ -179,14 +186,14 @@
     </li>
   </ol>
 
-  <h2>Eerste start</h2>
+  <h2 id="first">Eerste start</h2>
   <ul class="need">
     <li>Sluit de pc met een kabel op de router aan en zet hem aan.</li>
     <li>Open http://homeassistant.local — “Preparing Home Assistant” kan twintig minuten duren.</li>
     <li>Maak je account en schrijf het wachtwoord op: het is niet te herstellen.</li>
   </ul>
 
-  <h2>Als het niet lukt</h2>
+  <h2 id="problem">Als het niet lukt</h2>
   <dl class="faq">
     <dt>De pc start zijn oude systeem</dt>
     <dd>Herstart, druk op F12 en kies de stick. Staat hij er niet bij, schrijf de stick dan opnieuw met Etcher.</dd>

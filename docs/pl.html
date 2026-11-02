@@ -50,6 +50,7 @@
     padding-top: 0.8rem; padding-bottom: 0.8rem;
   }
   header.top .name { font-weight: 650; font-size: 0.95rem; }
+  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.88rem; }
   ul.langs {
     list-style: none; display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem;
     margin: 0; padding: 0; font-size: 0.85rem;
@@ -111,6 +112,12 @@
 <header class="top">
   <div class="wrap">
     <span class="name">haos-isoinstall</span>
+    <nav>
+      <a href="#need">Czego potrzebujesz</a>
+      <a href="#steps">Krok po kroku</a>
+      <a href="#first">Pierwsze uruchomienie</a>
+      <a href="#problem">Jeśli coś nie działa</a>
+    </nav>
     <ul class="langs">
       <li><a href="./" hreflang="en">English</a></li>
       <li><a href="da.html" hreflang="da">Dansk</a></li>
@@ -143,7 +150,7 @@
     </div>
   </div>
 
-  <h2>Czego potrzebujesz</h2>
+  <h2 id="need">Czego potrzebujesz</h2>
   <ul class="need">
     <li>Komputera, którego możesz się pozbyć (Intel lub AMD), startującego w trybie UEFI. Zostanie twoją maszyną Home Assistant.</li>
     <li>Pendrive'a 2 GB lub większego.</li>
@@ -151,7 +158,7 @@
     <li>Około pół godziny. Większość to czekanie.</li>
   </ul>
 
-  <h2>Krok po kroku</h2>
+  <h2 id="steps">Krok po kroku</h2>
   <ol class="steps">
     <li>
       <h3>Pobierz plik</h3>
@@ -179,14 +186,14 @@
     </li>
   </ol>
 
-  <h2>Pierwsze uruchomienie</h2>
+  <h2 id="first">Pierwsze uruchomienie</h2>
   <ul class="need">
     <li>Podłącz komputer kablem do routera i włącz go.</li>
     <li>Otwórz http://homeassistant.local — „Preparing Home Assistant” może potrwać dwadzieścia minut.</li>
     <li>Załóż konto i zapisz hasło: nie da się go odzyskać.</li>
   </ul>
 
-  <h2>Jeśli coś nie działa</h2>
+  <h2 id="problem">Jeśli coś nie działa</h2>
   <dl class="faq">
     <dt>Komputer uruchamia stary system</dt>
     <dd>Zrestartuj, naciśnij F12 i wybierz pendrive. Jeśli go nie ma na liście, zapisz go ponownie Etcherem.</dd>

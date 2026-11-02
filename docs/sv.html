@@ -50,6 +50,7 @@
     padding-top: 0.8rem; padding-bottom: 0.8rem;
   }
   header.top .name { font-weight: 650; font-size: 0.95rem; }
+  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.88rem; }
   ul.langs {
     list-style: none; display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem;
     margin: 0; padding: 0; font-size: 0.85rem;
@@ -111,6 +112,12 @@
 <header class="top">
   <div class="wrap">
     <span class="name">haos-isoinstall</span>
+    <nav>
+      <a href="#need">Det här behöver du</a>
+      <a href="#steps">Steg för steg</a>
+      <a href="#first">Första starten</a>
+      <a href="#problem">Om något strular</a>
+    </nav>
     <ul class="langs">
       <li><a href="./" hreflang="en">English</a></li>
       <li><a href="da.html" hreflang="da">Dansk</a></li>
@@ -143,7 +150,7 @@
     </div>
   </div>
 
-  <h2>Det här behöver du</h2>
+  <h2 id="need">Det här behöver du</h2>
   <ul class="need">
     <li>En dator du kan avvara (Intel eller AMD) som startar i UEFI-läge. Den blir din Home Assistant-maskin.</li>
     <li>Ett USB-minne på 2 GB eller mer.</li>
@@ -151,7 +158,7 @@
     <li>Ungefär en halvtimme. Det mesta är väntan.</li>
   </ul>
 
-  <h2>Steg för steg</h2>
+  <h2 id="steps">Steg för steg</h2>
   <ol class="steps">
     <li>
       <h3>Ladda ner filen</h3>
@@ -179,14 +186,14 @@
     </li>
   </ol>
 
-  <h2>Första starten</h2>
+  <h2 id="first">Första starten</h2>
   <ul class="need">
     <li>Anslut datorn till routern med en kabel och slå på den.</li>
     <li>Öppna http://homeassistant.local — ”Preparing Home Assistant” kan ta tjugo minuter.</li>
     <li>Skapa ditt konto och skriv ner lösenordet: det går inte att återställa.</li>
   </ul>
 
-  <h2>Om något strular</h2>
+  <h2 id="problem">Om något strular</h2>
   <dl class="faq">
     <dt>Datorn startar sitt gamla system</dt>
     <dd>Starta om, tryck F12 och välj minnet. Finns det inte med, skriv det igen med Etcher.</dd>

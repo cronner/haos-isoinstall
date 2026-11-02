@@ -752,6 +752,7 @@ STYLE = """  :root {
     padding-top: 0.8rem; padding-bottom: 0.8rem;
   }
   header.top .name { font-weight: 650; font-size: 0.95rem; }
+  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.88rem; }
   ul.langs {
     list-style: none; display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem;
     margin: 0; padding: 0; font-size: 0.85rem;
@@ -842,6 +843,12 @@ def page(code, d):
 <header class="top">
   <div class="wrap">
     <span class="name">haos-isoinstall</span>
+    <nav>
+      <a href="#need">%(need_h)s</a>
+      <a href="#steps">%(steps_h)s</a>
+      <a href="#first">%(first_h)s</a>
+      <a href="#problem">%(prob_h)s</a>
+    </nav>
 %(bar)s
   </div>
 </header>
@@ -859,22 +866,22 @@ def page(code, d):
     </div>
   </div>
 
-  <h2>%(need_h)s</h2>
+  <h2 id="need">%(need_h)s</h2>
   <ul class="need">
 %(need)s
   </ul>
 
-  <h2>%(steps_h)s</h2>
+  <h2 id="steps">%(steps_h)s</h2>
   <ol class="steps">
 %(steps)s
   </ol>
 
-  <h2>%(first_h)s</h2>
+  <h2 id="first">%(first_h)s</h2>
   <ul class="need">
 %(first)s
   </ul>
 
-  <h2>%(prob_h)s</h2>
+  <h2 id="problem">%(prob_h)s</h2>
   <dl class="faq">
 %(prob)s
   </dl>

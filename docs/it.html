@@ -50,6 +50,7 @@
     padding-top: 0.8rem; padding-bottom: 0.8rem;
   }
   header.top .name { font-weight: 650; font-size: 0.95rem; }
+  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.88rem; }
   ul.langs {
     list-style: none; display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem;
     margin: 0; padding: 0; font-size: 0.85rem;
@@ -111,6 +112,12 @@
 <header class="top">
   <div class="wrap">
     <span class="name">haos-isoinstall</span>
+    <nav>
+      <a href="#need">Cosa ti serve</a>
+      <a href="#steps">Passo per passo</a>
+      <a href="#first">Primo avvio</a>
+      <a href="#problem">Se qualcosa non va</a>
+    </nav>
     <ul class="langs">
       <li><a href="./" hreflang="en">English</a></li>
       <li><a href="da.html" hreflang="da">Dansk</a></li>
@@ -143,7 +150,7 @@
     </div>
   </div>
 
-  <h2>Cosa ti serve</h2>
+  <h2 id="need">Cosa ti serve</h2>
   <ul class="need">
     <li>Un computer di cui puoi fare a meno (Intel o AMD) che si avvii in modalita UEFI. Diventera la tua macchina Home Assistant.</li>
     <li>Una chiavetta USB da 2 GB o piu.</li>
@@ -151,7 +158,7 @@
     <li>Circa mezz'ora. La maggior parte e attesa.</li>
   </ul>
 
-  <h2>Passo per passo</h2>
+  <h2 id="steps">Passo per passo</h2>
   <ol class="steps">
     <li>
       <h3>Scaricare il file</h3>
@@ -179,14 +186,14 @@
     </li>
   </ol>
 
-  <h2>Primo avvio</h2>
+  <h2 id="first">Primo avvio</h2>
   <ul class="need">
     <li>Collega il PC al router con un cavo e accendilo.</li>
     <li>Apri http://homeassistant.local: "Preparing Home Assistant" puo richiedere venti minuti.</li>
     <li>Crea il tuo account e annota la password: non si puo recuperare.</li>
   </ul>
 
-  <h2>Se qualcosa non va</h2>
+  <h2 id="problem">Se qualcosa non va</h2>
   <dl class="faq">
     <dt>Il PC avvia il vecchio sistema</dt>
     <dd>Riavvia, premi F12 e scegli la chiavetta. Se non compare, riscrivila con Etcher.</dd>

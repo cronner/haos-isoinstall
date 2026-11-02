@@ -50,6 +50,7 @@
     padding-top: 0.8rem; padding-bottom: 0.8rem;
   }
   header.top .name { font-weight: 650; font-size: 0.95rem; }
+  header.top nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.88rem; }
   ul.langs {
     list-style: none; display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem;
     margin: 0; padding: 0; font-size: 0.85rem;
@@ -111,6 +112,12 @@
 <header class="top">
   <div class="wrap">
     <span class="name">haos-isoinstall</span>
+    <nav>
+      <a href="#need">Ce qu'il vous faut</a>
+      <a href="#steps">Étape par étape</a>
+      <a href="#first">Premier démarrage</a>
+      <a href="#problem">Si ça coince</a>
+    </nav>
     <ul class="langs">
       <li><a href="./" hreflang="en">English</a></li>
       <li><a href="da.html" hreflang="da">Dansk</a></li>
@@ -143,7 +150,7 @@
     </div>
   </div>
 
-  <h2>Ce qu'il vous faut</h2>
+  <h2 id="need">Ce qu'il vous faut</h2>
   <ul class="need">
     <li>Un ordinateur dont vous pouvez vous passer (Intel ou AMD), qui démarre en mode UEFI. Il deviendra votre machine Home Assistant.</li>
     <li>Une clé USB de 2 Go ou plus.</li>
@@ -151,7 +158,7 @@
     <li>Environ une demi-heure. L'essentiel est de l'attente.</li>
   </ul>
 
-  <h2>Étape par étape</h2>
+  <h2 id="steps">Étape par étape</h2>
   <ol class="steps">
     <li>
       <h3>Télécharger le fichier</h3>
@@ -179,14 +186,14 @@
     </li>
   </ol>
 
-  <h2>Premier démarrage</h2>
+  <h2 id="first">Premier démarrage</h2>
   <ul class="need">
     <li>Reliez le PC au routeur avec un câble, et allumez-le.</li>
     <li>Ouvrez http://homeassistant.local — « Preparing Home Assistant » peut prendre vingt minutes.</li>
     <li>Créez votre compte et notez le mot de passe : il n'est pas récupérable.</li>
   </ul>
 
-  <h2>Si ça coince</h2>
+  <h2 id="problem">Si ça coince</h2>
   <dl class="faq">
     <dt>Le PC démarre son ancien système</dt>
     <dd>Redémarrez, appuyez sur F12 et choisissez la clé. Si elle n'apparaît pas, réécrivez-la avec Etcher.</dd>
