@@ -91,6 +91,90 @@ and every other one has the same three knobs (UEFI, Secure Boot off, 32 GB).
 That validates the wizard, the disk selection, the download and the writing.
 **Wi-Fi**, on the other hand, requires a physical machine.
 
+### 3.1 Testing unattended mode
+
+Unattended asks for two things a normal run does not need: `haos.unattended=yes`
+and `WIPE=yes`. There are two ways to hand them over, and the first one leaves
+nothing behind to clean up.
+
+**Without a stick — the kernel command line.** Boot the ISO, and when the GRUB
+menu appears, press `e` on the installer entry. Append to the line that starts
+with `linux`:
+
+```
+haos.unattended=yes haos.wipe=yes
+```
+
+Then press `Ctrl+X` to boot. Nothing is written to any medium, so this is the
+fastest way to watch a full run: with one eligible disk the installer takes it,
+downloads, writes, verifies and reboots. Add `haos.disk=/dev/sda` if the VM has
+more than one disk. If your build shows no GRUB menu (some hypervisors hide it),
+use the stick below instead.
+
+**With a stick — the config file.** Format a USB stick as FAT32 and put
+`haos-installer.cfg` in its root:
+
+```ini
+UNATTENDED=yes
+WIPE=yes
+```
+
+Attach it to the VM and leave it plugged in for the whole run. The stick itself
+is never offered as a target: the disk carrying the config file is excluded from
+the eligible list, so a 64 MB stick next to a 500 GB SSD still reads as one
+disk. That exclusion only exists because a stick with a config on it used to be
+the second "eligible disk" — if you are testing an older ISO, expect that stop.
+
+After the run the stick holds `haos-install-*.log`: on a headless machine that
+file is the only evidence of what happened.
+
+**Negative tests, first.** They take seconds and prove the guards rather than the
+happy path, which is the part that costs you a disk if it is wrong:
+
+| Change | Expected |
+| --- | --- |
+| delete `WIPE=yes` | stops at once, naming the config file |
+| `WIPE=maybe` | same: a typo is not consent |
+| `DISK=/dev/sdb`, stick is on `sdb` | stops: it is not an eligible disk |
+| a second 32 GB disk, no `DISK=` | stops and lists both instead of picking |
+| `LANG=xx` | English, with a line in the log, and the run continues |
+| `DISK=` a disk of 16 GB | stops before writing: below 32 GB |
+
+**QEMU, end to end** (Linux/WSL2; replace the firmware paths for your distro):
+
+```bash
+qemu-img create -f qcow2 target.qcow2 32G
+qemu-img create -f raw cfg.img 64M            # a stand-in for the config stick
+mkfs.vfat -F 32 cfg.img && mcopy -i cfg.img haos-installer.cfg ::/
+qemu-system-x86_64 -machine q35 -m 4096 -enable-kvm \
+  -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE.fd \
+  -drive if=pflash,format=raw,file=OVMF_VARS.fd \
+  -cdrom haos-isoinstall-main-amd64.iso \
+  -drive file=target.qcow2,if=virtio \
+  -device qemu-xhci -drive id=cfg,if=none,format=raw,file=cfg.img \
+  -device usb-storage,drive=cfg
+```
+
+`OVMF_VARS.fd` must be a writable **copy** of the firmware's variables file
+(`cp /usr/share/OVMF/OVMF_VARS.fd .`), otherwise QEMU refuses or the VM loses
+its boot entries. Keep `-enable-kvm` off inside a VM that has no nested
+virtualisation; it then runs slowly but correctly.
+
+**VirtualBox 7 on Windows.** New VM, type *Other Linux (64-bit)*, 4 GB RAM, a
+40 GB disk on the default controller, then Settings → System → Motherboard →
+**Enable EFI**, and attach the ISO under Storage. The GRUB menu appears on the
+first boot; press `e` as above. For the stick route, plug it in and pick it under
+Devices → USB: the default USB 1.1 controller is enough for a text file, while
+USB 2.0/3.0 needs the Extension Pack.
+
+**What to watch for,** in order: the language and welcome screens are skipped; a
+banner says which config was used, for two seconds; the wait for a network link;
+the version lookup; the disk is chosen without a menu; the progress screens look
+exactly as in the wizard; the read-back check runs without asking; and the run
+ends by rebooting into Home Assistant (or powering off, with `POWEROFF=yes`).
+If it instead stops and *waits*, that is a bug in the halt path — on a headless
+machine nobody can press the key it is waiting for.
+
 ## 4. Customisation
 
 **Version resolution** — after the network configuration,

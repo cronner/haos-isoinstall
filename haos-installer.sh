@@ -1884,6 +1884,17 @@ find_config(){
   return 1
 }
 
+# The disk that carries the config file. target_rows() needs it: a stick holding
+# nothing but haos-installer.cfg is an installation medium, and counting it as a
+# target would turn "the only disk" into two and stop a machine that was ready.
+cfg_medium_disk(){
+  local src
+  [ -n "${CFG_MNT:-}" ] || return 0
+  src=$(findmnt -no SOURCE "$CFG_MNT" 2>/dev/null) || return 0
+  [ -n "$src" ] || return 0
+  lsblk -no PKNAME "$src" 2>/dev/null | head -1 | tr -d ' '
+}
+
 # Decides whether this run is unattended, and stops at once when a config asks
 # for a disk to be erased without saying WIPE=yes. The kernel command line is
 # applied last, so the person who just edited the boot entry wins over a file
@@ -1899,6 +1910,8 @@ load_config(){
 
   if [ -n "$CFG_FILE" ]; then
     parse_config_file "$CFG_FILE" || logx "config file could not be read"
+    CFG_DISK_DEV=$(cfg_medium_disk)
+    [ -n "$CFG_DISK_DEV" ] && logx "config medium is /dev/$CFG_DISK_DEV: never a target"
   fi
 
   for p in $(cat "$cmd" 2>/dev/null); do
@@ -2689,6 +2702,8 @@ target_rows(){
     # Never the disk we are reading the image from: the write would overwrite
     # the very bytes still to be read.
     [ -n "${IMG_DISK:-}" ] && [ "$name" = "$IMG_DISK" ] && continue
+    # Same for the stick that only carries the config file (see cfg_medium_disk).
+    [ -n "${CFG_DISK_DEV:-}" ] && [ "$name" = "$CFG_DISK_DEV" ] && continue
     # Belt and braces: any disk carrying an iso9660 (itself or one of its
     # partitions) is an installation medium, never a target. Covers the writes
     # where the LABEL would not be the expected one (dd of another ISO).
@@ -3530,6 +3545,7 @@ VER_SRC=""                    # source chosen for the version: traced in the log
 UNATTENDED=""                 # "yes" once a config asked for it
 CFG_FILE=""                   # config file that was read (empty = kernel cmdline)
 CFG_MNT=""                    # where that file is mounted, for IMAGE= paths
+CFG_DISK_DEV=""                    # disk carrying that file: never a target
 CFG_WIPE=""                   # WIPE=yes: consent to erase, replaces the typed YES
 CFG_DISK=""                   # DISK=: the target, or empty to take the only one
 CFG_IMAGE=""                  # IMAGE=: a .img.xz next to the config file

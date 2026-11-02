@@ -22,7 +22,7 @@ ko(){ fail=$((fail + 1)); printf '  FAIL  %s\n' "$*"; }
 
 # ---- extract the functions under test --------------------------------------
 for fn in cfg_clean config_supported_lang default_keymap parse_config_line parse_config_file \
-        load_config target_rows; do
+        cfg_medium_disk load_config target_rows; do
   chunk=$(awk -v n="$fn" '$0 ~ "^" n "\\(\\)\\{" {f=1} f{print} f&&/^}$/{exit}' "$SRC")
   [ -n "$chunk" ] || { printf '%s not found in %s\n' "$fn" "$SRC"; exit 1; }
   eval "$chunk"
@@ -75,7 +75,7 @@ lsblk(){
 
 reset(){
   DISKS=(); FSTYPE=(); LABEL=(); SIZE=(); MODEL=(); VENDOR=(); TRAN=(); RM=()
-  TARGET=""; live_dev=""; IMG_DISK=""
+  TARGET=""; live_dev=""; IMG_DISK=""; CFG_DISK_DEV=""; CFG_MNT=""
   CFG_UNATTENDED=""; CFG_WIPE=""; CFG_DISK=""; CFG_IMAGE=""; CFG_LANG=""
   CFG_KEYMAP=""; CFG_POWEROFF=""; CFG_STREAM=""; CFG_FORMAT=""
 }
@@ -164,6 +164,14 @@ DISKS=(sda sdb); TRAN[sdb]=usb; RM[sdb]=1
 IMG_DISK=sdb
 [ "$(devs)" = "/dev/sda " ] || ko "image-carrying disk offered as target: '$(devs)'"
 
+# ---- 6b. the stick that only carries the config is a medium, not a target ---
+# Otherwise a 64 MB stick next to the SSD reads as "two eligible disks" and an
+# otherwise ready machine refuses to install.
+reset
+DISKS=(sda sdb); TRAN[sda]=sata; TRAN[sdb]=usb; RM[sdb]=1
+CFG_DISK_DEV=sdb
+[ "$(devs)" = "/dev/sda " ] || ko "config stick offered as target: '$(devs)'"
+
 # ---- 7. a disk carrying an iso9660 or a Ventoy stick is never a target -----
 reset
 DISKS=(sda sdb sdc); TRAN[sdb]=usb; RM[sdb]=1; TRAN[sdc]=usb; RM[sdc]=1
@@ -241,5 +249,5 @@ fi
 printf 'ok    unattended: CRLF, quotes, lowercase and unknown keys handled, WIPE\n'
 printf '      never assumed, consent gate stops a config without it, cmdline wins\n'
 printf '      over the file, language keys right, and the same disk exclusions\n'
-printf '      as the menu (boot medium, image disk, iso9660, Ventoy)\n'
+printf '      as the menu (boot medium, image disk, config stick, iso9660, Ventoy)\n'
 printf '\nall checks passed\n'

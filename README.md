@@ -425,11 +425,14 @@ shows the same progress screens as the wizard. It always runs the read-back chec
 at the end — minutes nobody is there to spend, but also nobody is there to notice
 a disk that does not match.
 
+The stick that carries the config file is not a candidate either: it is a medium,
+not a target, so a small stick next to the SSD still reads as one disk.
+
 What it refuses to do, and why: erase without `WIPE=yes`; pick between two usable
 disks; accept a `DISK=` that the wizard would not have offered (the boot medium,
-the stick holding the image, a Ventoy stick, anything carrying an ISO); write to a
-disk under 32 GB; download when there is no network and no local image; and use
-the destructive one-pass write unless `STREAM=yes` says so.
+the stick holding the image or the config, a Ventoy stick, anything carrying an
+ISO); write to a disk under 32 GB; download when there is no network and no local
+image; and use the destructive one-pass write unless `STREAM=yes` says so.
 
 If anything fails, the log is copied to a stick if one is mounted, the reason is
 printed on screen, and the PC powers off after 20 seconds rather than waiting for
@@ -439,6 +442,9 @@ the others were not.
 The config parsing and the disk eligibility rules are covered by
 `tests/unattended.sh`: CRLF and quoted values, lowercase keys, unknown keys,
 comments, `WIPE` never assumed, and the same exclusions the menu applies.
+
+Watching a whole run in a VM, and the negative tests that prove the guards, are
+described in [BUILDING.md §3.1](BUILDING.md#31-testing-unattended-mode).
 
 ## Step 5 — First boot
 
