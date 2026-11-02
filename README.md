@@ -342,7 +342,7 @@ Ethernet cable.
 
 | Setup | Status |
 |---|---|
-| Physical PC (x86-64, UEFI, built-in Wi-Fi) | ✅ |
+| Physical PC (x86-64, UEFI) — this run went over Wi-Fi, not the cable | ✅ |
 | Proxmox (q35 + OVMF, Secure Boot off) | ✅ |
 | Unraid (QEMU/KVM, OVMF, Secure Boot off) | ✅ reported |
 | virt-manager / libvirt, Incus, LXD | ◻ same settings, not tested here |
