@@ -39,8 +39,12 @@ boot the stick and follow the wizard. Everything below is detail.
 · [5 First boot](#step-5--first-boot) · [Troubleshooting](#if-something-goes-wrong)
 · [Building it yourself](BUILDING.md)
 
-The wizard speaks **14 languages**. You pick the language, and its keyboard
-layout is applied automatically — one line, nothing to match up:
+The wizard speaks **14 languages**, chosen as the ones most likely to be needed
+by people who install Home Assistant themselves: the larger European languages,
+with English first and Danish second because this fork started in Danish. Others
+— Chinese, Japanese, Arabic — are not there yet; each new one is 87 strings to
+translate. You pick the language, and its keyboard layout is applied
+automatically — one line, nothing to match up:
 
 | Language | Keyboard layout set automatically |
 | -------- | --------------------------------- |
