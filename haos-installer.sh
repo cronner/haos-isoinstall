@@ -125,6 +125,15 @@ fr)
   S_FMT_FAIL="La clé n'a pas pu être reformatée.\n\nRien n'a été touché : elle reste utilisable comme\ninstallateur. Le détail figure dans le journal."
   S_FMT_BROKEN="Le reformatage de la clé a échoué en cours de route.\n\n⚠  La clé n'est plus amorçable : il faudra la regraver pour\ns'en resservir comme installateur.\n\nL'installation de Home Assistant sur le disque n'est pas\nconcernée, elle est terminée."
   S_DONE="Installation terminée.\n\nHome Assistant OS est installé sur %s.\n\n➜ RETIRE LA CLÉ USB MAINTENANT, avant de valider.\n  (l'installateur tourne en mémoire : la clé ne sert plus)\n\nÀ SUIVRE :\n 1. Valide ci-dessous : le PC redémarre sur Home Assistant.\n 2. Garde le câble réseau branché.\n 3. Patiente 2 à 5 minutes (premier démarrage).\n 4. Depuis un autre appareil :  http://homeassistant.local"
+  S_UNAT_ACTIVE="Installation sans surveillance.\n\nFichier de configuration : %s\nLangue : %s\n\nAucune question ne sera posée."
+  S_UNAT_NOWIPE="Installation sans surveillance refusée.\n\nWIPE=yes manque dans :\n%s\n\nRien n'a été modifié."
+  S_UNAT_NODISK="Installation sans surveillance refusée.\n\nDISK=%s n'est pas un disque utilisable ici.\n\nRien n'a été modifié."
+  S_UNAT_MULTI="Installation sans surveillance refusée.\n\n%s disques utilisables trouvés :\n%s\n\nIndique DISK= pour l'un d'eux dans le fichier de\nconfiguration. Rien n'a été modifié."
+  S_UNAT_NONET="Installation sans surveillance en échec.\n\nPas de réseau et pas d'image sur une clé :\nrien ne peut être téléchargé.\n\nRien n'a été modifié."
+  S_UNAT_NOSTAGE="Installation sans surveillance refusée.\n\nPas assez de RAM libre pour l'image (%s), et aucun\nsupport inscriptible pour la stocker.\n\nAjoute STREAM=yes pour accepter d'effacer le disque\navant la vérification du téléchargement.\nRien n'a été écrit."
+  S_UNAT_OFF_REBOOT="Installation terminée.\n\nHome Assistant OS est installé sur %s.\n\nRetire la clé USB maintenant.\nLe PC redémarre dans 15 secondes."
+  S_UNAT_OFF_HALT="Installation terminée.\n\nHome Assistant OS est installé sur %s.\n\nRetire la clé USB maintenant.\nLe PC s'éteint dans 15 secondes."
+  S_UNAT_FAIL="\n\nLe journal s'affiche ici et est enregistré dans\n%s.\n\nLe PC s'éteint dans 20 secondes."
 ;;
 de)
   S_STAGE_ASK="Zu wenig freier Arbeitsspeicher, um das Image im RAM zu halten (%s).\nEs wurde kein beschreibbares Medium mit so viel freiem Platz gefunden.\nSteck einen USB-Stick oder eine externe Festplatte an und wähle Erneut versuchen: das Image wird dorthin geladen und geprüft, BEVOR etwas gelöscht wird.\n\"In einem Durchgang schreiben\" löscht dagegen zuerst die Zieldiskette: bricht danach das Netz weg, bleibt eine leere Platte."
@@ -222,6 +231,15 @@ de)
   S_FMT_FAIL="Der Stick konnte nicht neu formatiert werden.\n\nNichts wurde verändert: er bleibt als Installer nutzbar.\nDetails stehen im Protokoll."
   S_FMT_BROKEN="Das Neuformatieren des Sticks ist unterwegs fehlgeschlagen.\n\n⚠  Der Stick ist nicht mehr bootfähig: du müsstest ihn neu\nschreiben, um ihn wieder als Installer zu nutzen.\n\nDie Installation von Home Assistant auf der Platte ist\nnicht betroffen, sie ist fertig."
   S_DONE="Installation abgeschlossen.\n\nHome Assistant OS ist auf %s installiert.\n\n➜ ZIEHE JETZT DEN USB-STICK AB, bevor du bestätigst.\n  (der Installer läuft im Speicher: der Stick wird nicht mehr gebraucht)\n\nWEITER:\n 1. Bestätige unten: der PC startet in Home Assistant.\n 2. Lass das Netzwerkkabel angesteckt.\n 3. Warte 2 bis 5 Minuten (erster Start).\n 4. Von einem anderen Gerät:  http://homeassistant.local"
+  S_UNAT_ACTIVE="Unbeaufsichtigte Installation.\n\nKonfigurationsdatei: %s\nSprache: %s\n\nEs wird keine Frage gestellt."
+  S_UNAT_NOWIPE="Unbeaufsichtigte Installation abgelehnt.\n\nWIPE=yes fehlt in:\n%s\n\nEs wurde nichts geändert."
+  S_UNAT_NODISK="Unbeaufsichtigte Installation abgelehnt.\n\nDISK=%s ist hier keine nutzbare Platte.\n\nEs wurde nichts geändert."
+  S_UNAT_MULTI="Unbeaufsichtigte Installation abgelehnt.\n\n%s nutzbare Platten gefunden:\n%s\n\nSetze DISK= auf eine davon in der Konfigurations-\ndatei. Es wurde nichts geändert."
+  S_UNAT_NONET="Unbeaufsichtigte Installation fehlgeschlagen.\n\nKein Netzwerk und kein Image auf einem Stick:\nes kann nichts geladen werden.\n\nEs wurde nichts geändert."
+  S_UNAT_NOSTAGE="Unbeaufsichtigte Installation abgelehnt.\n\nZu wenig freier RAM für das Image (%s) und kein\nbeschreibbarer Datenträger dafür.\n\nFüge STREAM=yes hinzu, um das Löschen der Platte vor\nder Prüfung des Downloads zu erlauben.\nEs wurde nichts geschrieben."
+  S_UNAT_OFF_REBOOT="Installation abgeschlossen.\n\nHome Assistant OS ist auf %s installiert.\n\nZiehe jetzt den USB-Stick ab.\nDer PC startet in 15 Sekunden neu."
+  S_UNAT_OFF_HALT="Installation abgeschlossen.\n\nHome Assistant OS ist auf %s installiert.\n\nZiehe jetzt den USB-Stick ab.\nDer PC schaltet sich in 15 Sekunden aus."
+  S_UNAT_FAIL="\n\nDas Protokoll erscheint hier und wird gespeichert\nunter %s.\n\nDer PC schaltet sich in 20 Sekunden aus."
 ;;
 da)
   S_STAGE_ASK="Der er ikke ledig hukommelse nok til at holde billedet i RAM (%s).\nDer blev ikke fundet et skrivbart medie med så meget ledig plads.\nSæt en USB-pind eller ekstern disk i, og vælg Prøv igen: billedet hentes dertil og kontrolleres, FØR noget slettes.\n\"Skriv i ét gennemløb\" sletter derimod måldisken først: falder nettet derefter, står du med en tom disk."
@@ -319,6 +337,15 @@ da)
   S_FMT_FAIL="Stikket kunne ikke formateres.\n\nIntet blev rørt: det kan stadig bruges som\ninstallationsprogram. Detaljerne står i loggen."
   S_FMT_BROKEN="Formateringen af stikket mislykkedes undervejs.\n\n⚠  Stikket kan ikke længere starte: du skal skrive det igen\nfor at bruge det som installationsprogram.\n\nHome Assistant-installationen på disken er ikke berørt,\nden er færdig."
   S_DONE="Installationen er færdig.\n\nHome Assistant OS er installeret på %s.\n\n➜ TAG USB-STIKKET UD NU, før du bekræfter.\n  (installationsprogrammet kører i hukommelsen: stikket bruges ikke mere)\n\nNÆSTE:\n 1. Bekræft nedenfor: PC'en genstarter i Home Assistant.\n 2. Lad netværkskablet sidde i.\n 3. Vent 2 til 5 minutter (første opstart).\n 4. Fra en anden enhed:  http://homeassistant.local"
+  S_UNAT_ACTIVE="Unattended installation.\n\nKonfigurationsfil: %s\nSprog: %s\n\nDer bliver ikke stillet spørgsmål."
+  S_UNAT_NOWIPE="Unattended installation afvist.\n\nWIPE=yes mangler i:\n%s\n\nIntet er blevet ændret."
+  S_UNAT_NODISK="Unattended installation afvist.\n\nDISK=%s er ikke en brugbar disk her.\n\nIntet er blevet ændret."
+  S_UNAT_MULTI="Unattended installation afvist.\n\nFandt %s brugbare diske:\n%s\n\nSæt DISK= til en af dem i konfigurationsfilen.\nIntet er blevet ændret."
+  S_UNAT_NONET="Unattended installation mislykkedes.\n\nIntet netværk og ingen image-fil på en stick:\nder kan ikke hentes noget.\n\nIntet er blevet ændret."
+  S_UNAT_NOSTAGE="Unattended installation afvist.\n\nFor lidt ledig RAM til image-filen (%s), og intet\nskrivbart medie at lægge den på.\n\nTilføj STREAM=yes for at acceptere at disken slettes,\nfør downloadet er kontrolleret. Intet er skrevet."
+  S_UNAT_OFF_REBOOT="Installationen er færdig.\n\nHome Assistant OS er installeret på %s.\n\nTag USB-sticken ud nu.\nPC'en genstarter om 15 sekunder."
+  S_UNAT_OFF_HALT="Installationen er færdig.\n\nHome Assistant OS er installeret på %s.\n\nTag USB-sticken ud nu.\nPC'en slukker om 15 sekunder."
+  S_UNAT_FAIL="\n\nLoggen vises her på skærmen og gemmes i\n%s.\n\nPC'en slukker om 20 sekunder."
 ;;
 nl)
   S_STAGE_ASK="Niet genoeg vrij geheugen om de image in RAM te houden (%s).\nEr is geen beschrijfbaar medium met zoveel vrije ruimte gevonden.\nSluit een USB-stick of externe schijf aan en kies Opnieuw: de image wordt daarheen gedownload en gecontroleerd, VOORDAT er iets wordt gewist.\n\"In een keer schrijven\" wist juist eerst de doelschijf: valt het netwerk daarna weg, dan blijft er een lege schijf over."
@@ -416,6 +443,15 @@ nl)
   S_FMT_FAIL="De stick kon niet worden geformatteerd.\n\nEr is niets aangeraakt: hij is nog als installer te gebruiken.\nDetails staan in het logboek."
   S_FMT_BROKEN="Het formatteren van de stick is halverwege mislukt.\n\n⚠  De stick is niet meer opstartbaar: je moet hem opnieuw\nschrijven om hem weer als installer te gebruiken.\n\nDe Home Assistant-installatie op de schijf is niet\naangetast, die is compleet."
   S_DONE="Installatie voltooid.\n\nHome Assistant OS staat op %s.\n\n-> VERWIJDER NU DE USB-STICK, voordat je bevestigt.\n   (het installatieprogramma draait in het geheugen)\n\nVOLGENDE:\n 1. Bevestig hieronder: de pc start in Home Assistant.\n 2. Laat de netwerkkabel aangesloten.\n 3. Wacht 2 tot 5 minuten (eerste start).\n 4. Vanaf een ander apparaat:  http://homeassistant.local"
+  S_UNAT_ACTIVE="Installatie zonder toezicht.\n\nConfiguratiebestand: %s\nTaal: %s\n\nEr wordt geen vraag gesteld."
+  S_UNAT_NOWIPE="Installatie zonder toezicht geweigerd.\n\nWIPE=yes ontbreekt in:\n%s\n\nEr is niets gewijzigd."
+  S_UNAT_NODISK="Installatie zonder toezicht geweigerd.\n\nDISK=%s is hier geen bruikbare schijf.\n\nEr is niets gewijzigd."
+  S_UNAT_MULTI="Installatie zonder toezicht geweigerd.\n\n%s bruikbare schijven gevonden:\n%s\n\nZet DISK= op een daarvan in het configuratie-\nbestand. Er is niets gewijzigd."
+  S_UNAT_NONET="Installatie zonder toezicht mislukt.\n\nGeen netwerk en geen image op een stick:\ner kan niets worden gedownload.\n\nEr is niets gewijzigd."
+  S_UNAT_NOSTAGE="Installatie zonder toezicht geweigerd.\n\nTe weinig vrij RAM voor het image (%s) en geen\nbeschrijfbaar medium om het op te zetten.\n\nVoeg STREAM=yes toe om het wissen van de schijf\nvóór de downloadcontrole toe te staan.\nEr is niets geschreven."
+  S_UNAT_OFF_REBOOT="Installatie voltooid.\n\nHome Assistant OS staat op %s.\n\nHaal de USB-stick er nu uit.\nDe PC start over 15 seconden opnieuw."
+  S_UNAT_OFF_HALT="Installatie voltooid.\n\nHome Assistant OS staat op %s.\n\nHaal de USB-stick er nu uit.\nDe PC schakelt over 15 seconden uit."
+  S_UNAT_FAIL="\n\nHet log verschijnt hier en wordt bewaard in\n%s.\n\nDe PC schakelt over 20 seconden uit."
 ;;
 es)
   S_STAGE_ASK="No hay memoria libre suficiente para mantener la imagen en RAM (%s).\nNo se encontro ningun medio escribible con ese espacio libre.\nConecta un pendrive o un disco externo y elige Reintentar: la imagen se descarga alli y se comprueba ANTES de borrar nada.\n\"Escribir en una pasada\" borra primero el disco destino: si la red cae despues, queda un disco vacio."
@@ -513,6 +549,15 @@ es)
   S_FMT_FAIL="No se pudo formatear el lapiz.\n\nNo se ha tocado nada: sigue sirviendo como instalador.\nLos detalles estan en el registro."
   S_FMT_BROKEN="El formateo del lapiz fallo a medias.\n\n⚠  El lapiz ya no arranca: tendras que grabarlo de nuevo\npara reutilizarlo como instalador.\n\nLa instalacion de Home Assistant en el disco no se ve\nafectada, esta completa."
   S_DONE="Instalacion completada.\n\nHome Assistant OS esta instalado en %s.\n\n-> QUITA EL LAPIZ USB AHORA, antes de confirmar.\n   (el instalador se ejecuta en memoria: ya no se usa)\n\nSIGUIENTE:\n 1. Confirma abajo: el PC arranca en Home Assistant.\n 2. Deja el cable de red conectado.\n 3. Espera de 2 a 5 minutos (primer arranque).\n 4. Desde otro dispositivo:  http://homeassistant.local"
+  S_UNAT_ACTIVE="Instalación desatendida.\n\nArchivo de configuración: %s\nIdioma: %s\n\nNo se hará ninguna pregunta."
+  S_UNAT_NOWIPE="Instalación desatendida rechazada.\n\nFalta WIPE=yes en:\n%s\n\nNo se ha cambiado nada."
+  S_UNAT_NODISK="Instalación desatendida rechazada.\n\nDISK=%s no es un disco utilizable aquí.\n\nNo se ha cambiado nada."
+  S_UNAT_MULTI="Instalación desatendida rechazada.\n\nSe encontraron %s discos utilizables:\n%s\n\nPon DISK= en uno de ellos en el archivo de\nconfiguración. No se ha cambiado nada."
+  S_UNAT_NONET="La instalación desatendida falló.\n\nSin red y sin imagen en un lápiz:\nno se puede descargar nada.\n\nNo se ha cambiado nada."
+  S_UNAT_NOSTAGE="Instalación desatendida rechazada.\n\nPoca RAM libre para la imagen (%s) y ningún\nmedio escribible donde guardarla.\n\nAñade STREAM=yes para aceptar borrar el disco\nantes de comprobar la descarga.\nNo se ha escrito nada."
+  S_UNAT_OFF_REBOOT="Instalación completada.\n\nHome Assistant OS está instalado en %s.\n\nRetira el lápiz USB ahora.\nEl PC se reinicia en 15 segundos."
+  S_UNAT_OFF_HALT="Instalación completada.\n\nHome Assistant OS está instalado en %s.\n\nRetira el lápiz USB ahora.\nEl PC se apaga en 15 segundos."
+  S_UNAT_FAIL="\n\nEl registro aparece aquí y se guarda en\n%s.\n\nEl PC se apaga en 20 segundos."
 ;;
 it)
   S_STAGE_ASK="Memoria libera insufficiente per tenere l'immagine in RAM (%s).\nNessun supporto scrivibile con altrettanto spazio libero e stato trovato.\nCollega una chiavetta o un disco esterno e scegli Riprova: l'immagine viene scaricata li e controllata PRIMA di cancellare qualsiasi cosa.\n\"Scrivere in un solo passaggio\" cancella invece prima il disco di destinazione: se la rete cade dopo, resta un disco vuoto."
@@ -610,6 +655,15 @@ it)
   S_FMT_FAIL="Non e stato possibile formattare la chiavetta.\n\nNon e stato toccato nulla: e ancora utilizzabile come\ninstaller. I dettagli sono nel registro."
   S_FMT_BROKEN="La formattazione della chiavetta e fallita a meta.\n\n⚠  La chiavetta non e piu avviabile: dovrai riscriverla per\nriutilizzarla come installer.\n\nL'installazione di Home Assistant sul disco non e\ninteressata, e completa."
   S_DONE="Installazione completata.\n\nHome Assistant OS e installato su %s.\n\n-> RIMUOVI ORA LA CHIAVETTA USB, prima di confermare.\n   (l'installer gira in memoria: non serve piu)\n\nPROSSIMI PASSI:\n 1. Conferma qui sotto: il PC si riavvia in Home Assistant.\n 2. Lascia collegato il cavo di rete.\n 3. Attendi da 2 a 5 minuti (primo avvio).\n 4. Da un altro dispositivo:  http://homeassistant.local"
+  S_UNAT_ACTIVE="Installazione senza assistenza.\n\nFile di configurazione: %s\nLingua: %s\n\nNessuna domanda verrà posta."
+  S_UNAT_NOWIPE="Installazione senza assistenza rifiutata.\n\nManca WIPE=yes in:\n%s\n\nNon è stato modificato nulla."
+  S_UNAT_NODISK="Installazione senza assistenza rifiutata.\n\nDISK=%s non è un disco utilizzabile qui.\n\nNon è stato modificato nulla."
+  S_UNAT_MULTI="Installazione senza assistenza rifiutata.\n\nTrovati %s dischi utilizzabili:\n%s\n\nImposta DISK= su uno di essi nel file di\nconfigurazione. Non è stato modificato nulla."
+  S_UNAT_NONET="Installazione senza assistenza fallita.\n\nNessuna rete e nessuna immagine su una chiavetta:\nnon si può scaricare nulla.\n\nNon è stato modificato nulla."
+  S_UNAT_NOSTAGE="Installazione senza assistenza rifiutata.\n\nRAM libera insufficiente per l'immagine (%s) e\nnessun supporto scrivibile per tenerla.\n\nAggiungi STREAM=yes per accettare di cancellare\nil disco prima del controllo del download.\nNon è stato scritto nulla."
+  S_UNAT_OFF_REBOOT="Installazione completata.\n\nHome Assistant OS è installato su %s.\n\nRimuovi ora la chiavetta USB.\nIl PC si riavvia tra 15 secondi."
+  S_UNAT_OFF_HALT="Installazione completata.\n\nHome Assistant OS è installato su %s.\n\nRimuovi ora la chiavetta USB.\nIl PC si spegne tra 15 secondi."
+  S_UNAT_FAIL="\n\nIl registro appare qui e viene salvato in\n%s.\n\nIl PC si spegne tra 20 secondi."
 ;;
 pl)
   S_STAGE_ASK="Za malo wolnej pamieci, aby trzymac obraz w RAM (%s).\nNie znaleziono zapisywalnego nosnika z tyle wolnego miejsca.\nPodlacz pendrive lub dysk zewnetrzny i wybierz Ponow: obraz zostanie tam pobrany i sprawdzony, ZANIM cokolwiek zostanie usuniete.\n\"Zapis w jednym przebiegu\" najpierw czysci dysk docelowy: jesli siec padnie pozniej, zostanie pusty dysk."
@@ -707,6 +761,15 @@ pl)
   S_FMT_FAIL="Nie udalo sie sformatowac pendrive'a.\n\nNic nie zostalo ruszone: nadal dziala jako instalator.\nSzczegoly sa w dzienniku."
   S_FMT_BROKEN="Formatowanie pendrive'a nie udalo sie do konca.\n\n⚠  Pendrive nie jest juz bootowalny: musisz zapisac go\nponownie, aby uzyc go jako instalatora.\n\nInstalacja Home Assistant na dysku nie jest naruszona,\njest kompletna."
   S_DONE="Instalacja zakonczona.\n\nHome Assistant OS jest zainstalowany na %s.\n\n-> WYJMIJ TERAZ PENDRIVE USB, przed potwierdzeniem.\n   (instalator dziala z pamieci: nie jest juz potrzebny)\n\nDALEJ:\n 1. Potwierdz ponizej: komputer uruchomi Home Assistant.\n 2. Zostaw podlaczony kabel sieciowy.\n 3. Poczekaj 2 do 5 minut (pierwszy start).\n 4. Z innego urzadzenia:  http://homeassistant.local"
+  S_UNAT_ACTIVE="Instalacja bezobsługowa.\n\nPlik konfiguracji: %s\nJęzyk: %s\n\nŻadne pytanie nie zostanie zadane."
+  S_UNAT_NOWIPE="Instalacja bezobsługowa odrzucona.\n\nBrak WIPE=yes w:\n%s\n\nNic nie zostało zmienione."
+  S_UNAT_NODISK="Instalacja bezobsługowa odrzucona.\n\nDISK=%s nie jest tutaj użytecznym dyskiem.\n\nNic nie zostało zmienione."
+  S_UNAT_MULTI="Instalacja bezobsługowa odrzucona.\n\nZnaleziono %s użytecznych dysków:\n%s\n\nUstaw DISK= na jeden z nich w pliku konfiguracji.\nNic nie zostało zmienione."
+  S_UNAT_NONET="Instalacja bezobsługowa nie powiodła się.\n\nBrak sieci i brak obrazu na pendrivie:\nnie można niczego pobrać.\n\nNic nie zostało zmienione."
+  S_UNAT_NOSTAGE="Instalacja bezobsługowa odrzucona.\n\nZa mało wolnego RAM na obraz (%s) i brak\nzapisywalnego nośnika, aby go trzymać.\n\nDodaj STREAM=yes, aby zgodzić się na skasowanie\ndysku przed sprawdzeniem pobrania.\nNic nie zostało zapisane."
+  S_UNAT_OFF_REBOOT="Instalacja zakończona.\n\nHome Assistant OS jest zainstalowany na %s.\n\nWyjmij teraz pendrive USB.\nKomputer uruchomi się ponownie za 15 sekund."
+  S_UNAT_OFF_HALT="Instalacja zakończona.\n\nHome Assistant OS jest zainstalowany na %s.\n\nWyjmij teraz pendrive USB.\nKomputer wyłączy się za 15 sekund."
+  S_UNAT_FAIL="\n\nDziennik widać tutaj i jest zapisany w\n%s.\n\nKomputer wyłączy się za 20 sekund."
 ;;
 sv)
   S_STAGE_ASK="For lite ledigt minne for att halla avbilden i RAM (%s).\nInget skrivbart media med sa mycket ledigt utrymme hittades.\nAnslut ett USB-minne eller en extern disk och valj Forsok igen: avbilden hamtas dit och kontrolleras INNAN nagot raderas.\n\"Skriv i ett genomlop\" raderar i stallet maldisken forst: tappar natverket efterat star du med en tom disk."
@@ -804,6 +867,15 @@ sv)
   S_FMT_FAIL="Minnet kunde inte formateras.\n\nInget rordes: det gar fortfarande att anvanda som\ninstallationsprogram. Detaljerna finns i loggen."
   S_FMT_BROKEN="Formateringen av minnet misslyckades halvvags.\n\n⚠  Minnet gar inte langre att starta fran: du maste skriva\nom det for att anvanda det som installationsprogram.\n\nHome Assistant-installationen pa disken paverkas inte, den\nar komplett."
   S_DONE="Installationen ar klar.\n\nHome Assistant OS ar installerat pa %s.\n\n-> TA UT USB-MINNET NU, innan du bekraftar.\n   (programmet kors fran minnet: det behovs inte langre)\n\nNASTA:\n 1. Bekrafta nedan: datorn startar om i Home Assistant.\n 2. Lat natverkskabeln sitta kvar.\n 3. Vanta 2 till 5 minuter (forsta starten).\n 4. Fran en annan enhet:  http://homeassistant.local"
+  S_UNAT_ACTIVE="Obevakad installation.\n\nKonfigurationsfil: %s\nSpråk: %s\n\nIngen fråga kommer att ställas."
+  S_UNAT_NOWIPE="Obevakad installation nekad.\n\nWIPE=yes saknas i:\n%s\n\nInget har ändrats."
+  S_UNAT_NODISK="Obevakad installation nekad.\n\nDISK=%s är ingen användbar disk här.\n\nInget har ändrats."
+  S_UNAT_MULTI="Obevakad installation nekad.\n\nHittade %s användbara diskar:\n%s\n\nSätt DISK= till en av dem i konfigurationsfilen.\nInget har ändrats."
+  S_UNAT_NONET="Obevakad installation misslyckades.\n\nInget nätverk och ingen image på ett minne:\ninget kan hämtas.\n\nInget har ändrats."
+  S_UNAT_NOSTAGE="Obevakad installation nekad.\n\nFör lite ledigt RAM för imagen (%s) och inget\nskrivbart medium att lägga den på.\n\nLägg till STREAM=yes för att acceptera att disken\nraderas före kontrollen av nedladdningen.\nInget har skrivits."
+  S_UNAT_OFF_REBOOT="Installationen är klar.\n\nHome Assistant OS är installerat på %s.\n\nTa ut USB-minnet nu.\nDatorn startar om inom 15 sekunder."
+  S_UNAT_OFF_HALT="Installationen är klar.\n\nHome Assistant OS är installerat på %s.\n\nTa ut USB-minnet nu.\nDatorn stängs av inom 15 sekunder."
+  S_UNAT_FAIL="\n\nLoggen visas här och sparas i\n%s.\n\nDatorn stängs av inom 20 sekunder."
 ;;
 pt)
   S_STAGE_ASK="Memoria livre insuficiente para manter a imagem em RAM (%s).\nNao foi encontrado nenhum suporte de escrita com esse espaco livre.\nLigue uma pen ou um disco externo e escolha Repetir: a imagem e descarregada para la e verificada ANTES de apagar seja o que for.\n\"Escrever de uma so vez\" apaga primeiro o disco de destino: se a rede cair depois, fica um disco vazio."
@@ -901,6 +973,15 @@ pt)
   S_FMT_FAIL="Nao foi possivel formatar a pen.\n\nNada foi tocado: continua utilizavel como instalador.\nOs detalhes estao no registo."
   S_FMT_BROKEN="A formatacao da pen falhou a meio.\n\n⚠  A pen ja nao arranca: tera de a gravar de novo para a\nreutilizar como instalador.\n\nA instalacao do Home Assistant no disco nao foi afetada,\nesta completa."
   S_DONE="Instalacao concluida.\n\nO Home Assistant OS esta instalado em %s.\n\n-> RETIRE AGORA A PEN USB, antes de confirmar.\n   (o instalador corre em memoria: ja nao e usada)\n\nSEGUINTE:\n 1. Confirme abaixo: o PC reinicia no Home Assistant.\n 2. Mantenha o cabo de rede ligado.\n 3. Aguarde 2 a 5 minutos (primeiro arranque).\n 4. A partir de outro dispositivo:  http://homeassistant.local"
+  S_UNAT_ACTIVE="Instalação sem assistência.\n\nFicheiro de configuração: %s\nIdioma: %s\n\nNenhuma pergunta será feita."
+  S_UNAT_NOWIPE="Instalação sem assistência recusada.\n\nFalta WIPE=yes em:\n%s\n\nNada foi alterado."
+  S_UNAT_NODISK="Instalação sem assistência recusada.\n\nDISK=%s não é um disco utilizável aqui.\n\nNada foi alterado."
+  S_UNAT_MULTI="Instalação sem assistência recusada.\n\nEncontrados %s discos utilizáveis:\n%s\n\nDefina DISK= num deles no ficheiro de\nconfiguração. Nada foi alterado."
+  S_UNAT_NONET="A instalação sem assistência falhou.\n\nSem rede e sem imagem numa pen:\nnão é possível descarregar nada.\n\nNada foi alterado."
+  S_UNAT_NOSTAGE="Instalação sem assistência recusada.\n\nPouca RAM livre para a imagem (%s) e nenhum\nsuporte gravável onde a guardar.\n\nAcrescente STREAM=yes para aceitar apagar o disco\nantes de verificar a transferência.\nNada foi escrito."
+  S_UNAT_OFF_REBOOT="Instalação concluída.\n\nO Home Assistant OS está instalado em %s.\n\nRetire a pen USB agora.\nO PC reinicia dentro de 15 segundos."
+  S_UNAT_OFF_HALT="Instalação concluída.\n\nO Home Assistant OS está instalado em %s.\n\nRetire a pen USB agora.\nO PC desliga-se dentro de 15 segundos."
+  S_UNAT_FAIL="\n\nO registo aparece aqui e é guardado em\n%s.\n\nO PC desliga-se dentro de 20 segundos."
 ;;
 ru)
   S_STAGE_ASK="Недостаточно свободной памяти, чтобы держать образ в ОЗУ (%s).\nНе найден носитель для записи с таким объёмом свободного места.\nПодключите флешку или внешний диск и выберите Повторить: образ будет скачан туда и проверен ДО того, как что-либо будет стёрто.\n\"Запись в один проход\" наоборот сначала стирает целевой диск: если после этого пропадёт сеть, останется пустой диск."
@@ -998,6 +1079,15 @@ ru)
   S_FMT_FAIL="Не удалось отформатировать флешку.\n\nНичего не тронуто: она по-прежнему годится как\nустановщик. Подробности в журнале."
   S_FMT_BROKEN="Форматирование флешки прервалось на середине.\n\n⚠  Флешка больше не загрузочная: придётся записать её\nзаново, чтобы снова использовать как установщик.\n\nУстановка Home Assistant на диске не затронута, она\nзавершена."
   S_DONE="Установка завершена.\n\nHome Assistant OS установлен на %s.\n\n-> ИЗВЛЕКИТЕ ФЛЕШКУ USB СЕЙЧАС, до подтверждения.\n   (установщик работает из памяти: она больше не нужна)\n\nДАЛЬШЕ:\n 1. Подтвердите ниже: компьютер загрузится в Home Assistant.\n 2. Оставьте сетевой кабель подключённым.\n 3. Подождите от 2 до 5 минут (первая загрузка).\n 4. С другого устройства:  http://homeassistant.local"
+  S_UNAT_ACTIVE="Автоустановка.\n\nФайл настроек: %s\nЯзык: %s\n\nВопросов не будет."
+  S_UNAT_NOWIPE="Автоустановка отклонена.\n\nВ файле нет WIPE=yes:\n%s\n\nНичего не изменено."
+  S_UNAT_NODISK="Автоустановка отклонена.\n\nDISK=%s здесь не подходящий диск.\n\nНичего не изменено."
+  S_UNAT_MULTI="Автоустановка отклонена.\n\nНайдено %s подходящих дисков:\n%s\n\nУкажите DISK= для одного из них в файле\nнастроек. Ничего не изменено."
+  S_UNAT_NONET="Автоустановка не удалась.\n\nНет сети и нет образа на флешке:\nскачать нечего.\n\nНичего не изменено."
+  S_UNAT_NOSTAGE="Автоустановка отклонена.\n\nМало свободной памяти для образа (%s) и нет\nзаписываемого носителя, чтобы его сохранить.\n\nДобавьте STREAM=yes, чтобы разрешить стирание\nдиска до проверки загрузки.\nНичего не записано."
+  S_UNAT_OFF_REBOOT="Установка завершена.\n\nHome Assistant OS установлен на %s.\n\nВыньте USB-флешку сейчас.\nКомпьютер перезагрузится через 15 секунд."
+  S_UNAT_OFF_HALT="Установка завершена.\n\nHome Assistant OS установлен на %s.\n\nВыньте USB-флешку сейчас.\nКомпьютер выключится через 15 секунд."
+  S_UNAT_FAIL="\n\nЖурнал показан здесь и сохранён в\n%s.\n\nКомпьютер выключится через 20 секунд."
 ;;
 cs)
   S_STAGE_ASK="Nedostatek volné paměti pro uložení obrazu do RAM (%s).\nNebylo nalezeno zapisovatelné médium s tolika volného místa.\nPřipojte USB disk nebo externí disk a zvolte Zkusit znovu: obraz se tam stáhne a ověří, NEŽ se cokoli smaže.\n\"Zápis v jednom průchodu\" naopak nejprve smaže cílový disk: pokud potom vypadne síť, zůstane prázdný disk."
@@ -1095,6 +1185,15 @@ cs)
   S_FMT_FAIL="Disk se nepodařilo naformátovat.\n\nNic nebylo dotčeno: stále ho lze použít jako instalátor.\nPodrobnosti jsou v protokolu."
   S_FMT_BROKEN="Formátování disku selhalo v polovině.\n\n⚠  Disk už není bootovatelný: musíte ho znovu zapsat,\nabyste ho použili jako instalátor.\n\nInstalace Home Assistant na disku není narušena, je\nkompletní."
   S_DONE="Instalace dokončena.\n\nHome Assistant OS je nainstalován na %s.\n\n-> VYJMĚTE NYNÍ USB DISK, než potvrdíte.\n   (instalátor běží z paměti: už ho nepotřebuje)\n\nDALŠÍ KROKY:\n 1. Potvrďte níže: počítač se restartuje do Home Assistant.\n 2. Nechte síťový kabel zapojený.\n 3. Počkejte 2 až 5 minut (první spuštění).\n 4. Z jiného zařízení:  http://homeassistant.local"
+  S_UNAT_ACTIVE="Instalace bez obsluhy.\n\nKonfigurační soubor: %s\nJazyk: %s\n\nNebude položena žádná otázka."
+  S_UNAT_NOWIPE="Instalace bez obsluhy odmítnuta.\n\nV souboru chybí WIPE=yes:\n%s\n\nNic nebylo změněno."
+  S_UNAT_NODISK="Instalace bez obsluhy odmítnuta.\n\nDISK=%s zde není použitelný disk.\n\nNic nebylo změněno."
+  S_UNAT_MULTI="Instalace bez obsluhy odmítnuta.\n\nNalezeno %s použitelných disků:\n%s\n\nNastav DISK= na jeden z nich v konfiguračním\nsouboru. Nic nebylo změněno."
+  S_UNAT_NONET="Instalace bez obsluhy selhala.\n\nŽádná síť a žádný obraz na disku:\nnení co stáhnout.\n\nNic nebylo změněno."
+  S_UNAT_NOSTAGE="Instalace bez obsluhy odmítnuta.\n\nMálo volné RAM pro obraz (%s) a žádné\nzapisovatelné médium, kam ho uložit.\n\nPřidej STREAM=yes, aby se disk smazal ještě před\nkontrolou stažení.\nNic nebylo zapsáno."
+  S_UNAT_OFF_REBOOT="Instalace dokončena.\n\nHome Assistant OS je nainstalován na %s.\n\nVyndej nyní USB flash disk.\nPočítač se restartuje za 15 sekund."
+  S_UNAT_OFF_HALT="Instalace dokončena.\n\nHome Assistant OS je nainstalován na %s.\n\nVyndej nyní USB flash disk.\nPočítač se vypne za 15 sekund."
+  S_UNAT_FAIL="\n\nZáznam je vidět zde a je uložen v\n%s.\n\nPočítač se vypne za 20 sekund."
 ;;
 no)
   S_STAGE_ASK="For lite ledig minne til å holde bildet i RAM (%s).\nFant ingen skrivbart medium med så mye ledig plass.\nKoble til en USB-pinne eller en ekstern disk og velg Prøv igjen: bildet lastes ned dit og kontrolleres FØR noe slettes.\n\"Skriv i én omgang\" sletter i stedet måldisken først: faller nettet ut etterpå, står du igjen med en tom disk."
@@ -1192,6 +1291,15 @@ no)
   S_FMT_FAIL="Pinnen kunne ikke formateres.\n\nIngenting ble rørt: den kan fortsatt brukes som\ninstallasjonsprogram. Detaljene står i loggen."
   S_FMT_BROKEN="Formateringen av pinnen mislyktes halvveis.\n\n⚠  Pinnen kan ikke lenger starte fra: du må skrive den på\nnytt for å bruke den som installasjonsprogram.\n\nHome Assistant-installasjonen på disken er ikke påvirket,\nden er komplett."
   S_DONE="Installasjonen er fullført.\n\nHome Assistant OS er installert på %s.\n\n-> TA UT USB-PINNEN NÅ, før du bekrefter.\n   (programmet kjører fra minnet: den trengs ikke lenger)\n\nNESTE:\n 1. Bekreft nedenfor: PC-en starter på nytt i Home Assistant.\n 2. La nettverkskabelen stå i.\n 3. Vent 2 til 5 minutter (første oppstart).\n 4. Fra en annen enhet:  http://homeassistant.local"
+  S_UNAT_ACTIVE="Ubetjent installasjon.\n\nKonfigurasjonsfil: %s\nSpråk: %s\n\nIngen spørsmål blir stilt."
+  S_UNAT_NOWIPE="Ubetjent installasjon avvist.\n\nWIPE=yes mangler i:\n%s\n\nIngenting er endret."
+  S_UNAT_NODISK="Ubetjent installasjon avvist.\n\nDISK=%s er ikke en brukbar disk her.\n\nIngenting er endret."
+  S_UNAT_MULTI="Ubetjent installasjon avvist.\n\nFant %s brukbare disker:\n%s\n\nSett DISK= til en av dem i konfigurasjonsfilen.\nIngenting er endret."
+  S_UNAT_NONET="Ubetjent installasjon mislyktes.\n\nIngen nettverk og ingen image-fil på en penn:\ndet kan ikke lastes ned noe.\n\nIngenting er endret."
+  S_UNAT_NOSTAGE="Ubetjent installasjon avvist.\n\nFor lite ledig RAM til image-filen (%s), og ingen\nskrivbart medium å legge den på.\n\nLegg til STREAM=yes for å godta at disken slettes\nfør nedlastingen er kontrollert.\nIngenting er skrevet."
+  S_UNAT_OFF_REBOOT="Installasjonen er ferdig.\n\nHome Assistant OS er installert på %s.\n\nTa ut USB-pennen nå.\nPC-en starter på nytt om 15 sekunder."
+  S_UNAT_OFF_HALT="Installasjonen er ferdig.\n\nHome Assistant OS er installert på %s.\n\nTa ut USB-pennen nå.\nPC-en slår seg av om 15 sekunder."
+  S_UNAT_FAIL="\n\nLoggen vises her og lagres i\n%s.\n\nPC-en slår seg av om 20 sekunder."
 ;;
 fi)
   S_STAGE_ASK="Liian vähän vapaata muistia kuvan pitämiseksi RAMissa (%s).\nKirjoitettavaa mediaa, jossa on niin paljon vapaata tilaa, ei löytynyt.\nKytke USB-muistitikku tai ulkoinen levy ja valitse Yritä uudelleen: kuva ladataan sinne ja tarkistetaan ENNEN kuin mitään poistetaan.\n\"Kirjoita yhdellä kertaa\" poistaa sen sijaan kohdelevyn ensin: jos verkko katkeaa sen jälkeen, jäljelle jää tyhjä levy."
@@ -1289,6 +1397,15 @@ fi)
   S_FMT_FAIL="Tikkua ei voitu alustaa.\n\nMitään ei koskettu: se toimii edelleen asentajana.\nYksityiskohdat ovat lokissa."
   S_FMT_BROKEN="Tikun alustus epäonnistui kesken.\n\n⚠  Tikku ei enää käynnisty: sinun on kirjoitettava se\nuudelleen käyttääksesi sitä asentajana.\n\nLevyn Home Assistant -asennus ei vahingoittunut, se on\nvalmis."
   S_DONE="Asennus valmis.\n\nHome Assistant OS on asennettu levylle %s.\n\n-> IRROTA USB-MUISTITIKKU NYT ennen vahvistamista.\n   (asentaja toimii muistista: tikkua ei enää tarvita)\n\nSEURAAVAKSI:\n 1. Vahvista alla: tietokone käynnistyy Home Assistantiin.\n 2. Jätä verkkokaapeli kytkettynä.\n 3. Odota 2-5 minuuttia (ensimmäinen käynnistys).\n 4. Toisesta laitteesta:  http://homeassistant.local"
+  S_UNAT_ACTIVE="Valvomaton asennus.\n\nAsetustiedosto: %s\nKieli: %s\n\nMitään kysymystä ei esitetä."
+  S_UNAT_NOWIPE="Valvomaton asennus hylätty.\n\nWIPE=yes puuttuu tiedostosta:\n%s\n\nMitään ei muutettu."
+  S_UNAT_NODISK="Valvomaton asennus hylätty.\n\nDISK=%s ei ole käyttökelpoinen levy tässä.\n\nMitään ei muutettu."
+  S_UNAT_MULTI="Valvomaton asennus hylätty.\n\nLöytyi %s käyttökelpoista levyä:\n%s\n\nAseta DISK= johonkin niistä asetustiedostossa.\nMitään ei muutettu."
+  S_UNAT_NONET="Valvomaton asennus epäonnistui.\n\nEi verkkoa eikä levykuvaa tikulla:\nmitään ei voi ladata.\n\nMitään ei muutettu."
+  S_UNAT_NOSTAGE="Valvomaton asennus hylätty.\n\nLiian vähän vapaata RAM-muistia levykuvalle (%s)\neikä kirjoitettavaa mediaa sen säilyttämiseen.\n\nLisää STREAM=yes, jos levy saa pyyhkiytyä ennen\nlatauksen tarkistusta.\nMitään ei kirjoitettu."
+  S_UNAT_OFF_REBOOT="Asennus valmis.\n\nHome Assistant OS on asennettu levylle %s.\n\nIrrota USB-tikku nyt.\nTietokone käynnistyy uudelleen 15 sekunnissa."
+  S_UNAT_OFF_HALT="Asennus valmis.\n\nHome Assistant OS on asennettu levylle %s.\n\nIrrota USB-tikku nyt.\nTietokone sammuu 15 sekunnissa."
+  S_UNAT_FAIL="\n\nLoki näkyy tässä ja tallennetaan tiedostoon\n%s.\n\nTietokone sammuu 20 sekunnissa."
 ;;
 *)
   S_STAGE_ASK="Not enough free memory to hold the image in RAM (%s).\nNo writable stick or external disk with that much free space was found.\nPlug one in and choose Retry: the image is downloaded there and checked BEFORE anything is erased.\n\"Write in one pass\" instead erases the target disk first: a network drop after that leaves an empty disk."
@@ -1386,6 +1503,15 @@ fi)
   S_FMT_FAIL="The stick could not be reformatted.\n\nNothing was touched: it is still usable as an installer.\nDetails are in the log."
   S_FMT_BROKEN="Reformatting the stick failed partway through.\n\n⚠  The stick is no longer bootable: you will have to write it\nagain to reuse it as an installer.\n\nThe Home Assistant installation on the disk is not affected,\nit is complete."
   S_DONE="Installation complete.\n\nHome Assistant OS is installed on %s.\n\n➜ REMOVE THE USB STICK NOW, before confirming.\n  (the installer runs from memory: the stick is no longer used)\n\nNEXT:\n 1. Confirm below: the PC reboots into Home Assistant.\n 2. Keep the network cable plugged in.\n 3. Wait 2 to 5 minutes (first boot).\n 4. From another device:  http://homeassistant.local"
+  S_UNAT_ACTIVE="Unattended installation.\n\nConfig file: %s\nLanguage: %s\n\nNo question will be asked."
+  S_UNAT_NOWIPE="Unattended installation refused.\n\nWIPE=yes is missing from:\n%s\n\nNothing has been changed."
+  S_UNAT_NODISK="Unattended installation refused.\n\nDISK=%s is not a usable disk here.\n\nNothing has been changed."
+  S_UNAT_MULTI="Unattended installation refused.\n\n%s usable disks found:\n%s\n\nSet DISK= to one of them in the config file.\nNothing has been changed."
+  S_UNAT_NONET="Unattended installation failed.\n\nNo network and no image on a stick:\nnothing can be downloaded.\n\nNothing has been changed."
+  S_UNAT_NOSTAGE="Unattended installation refused.\n\nToo little free RAM for the image (%s), and no\nwritable medium to keep it on.\n\nAdd STREAM=yes to accept erasing the disk before\nthe download is checked. Nothing has been written."
+  S_UNAT_OFF_REBOOT="Installation complete.\n\nHome Assistant OS is installed on %s.\n\nRemove the USB stick now.\nThe PC restarts in 15 seconds."
+  S_UNAT_OFF_HALT="Installation complete.\n\nHome Assistant OS is installed on %s.\n\nRemove the USB stick now.\nThe PC powers off in 15 seconds."
+  S_UNAT_FAIL="\n\nThe log appears here and is saved at\n%s.\n\nThe PC powers off in 20 seconds."
 ;;
 esac
 }
@@ -1505,6 +1631,19 @@ halt_now(){
 }
 
 die(){
+  if [ -n "$UNATTENDED" ]; then
+    logx "UNATTENDED: stopping: $1"
+    loud_console
+    # No menu and no OK button: both would hang until someone power-cycles the
+    # box, and the log would never reach a stick on its own.
+    try_write_log "$LOG" >/dev/null 2>&1 || true
+    clear
+    printf '\n%s\n' "$(printf '%s\n' "$1" | sed 's/\\n/\n/g')"
+    printf '%s\n' "$(printf "$S_UNAT_FAIL" "$LOG" | sed 's/\\n/\n/g')"
+    sleep 20
+    halt_now
+    exit 1                     # halt_now could not cut the power: do not hang
+  fi
   wt_msg "$S_TITLE" "$1$S_RESCUE"
   save_log
   loud_console
@@ -1628,6 +1767,254 @@ The last line is for a keyboard from another country." \
   local rest="${sel#*|}"
   apply_keymap "${rest%%|*}" "${rest#*|}"
   set_strings
+}
+
+# ---------------------------------------------------------------------------
+# UNATTENDED MODE -- opt-in, never a default.
+#
+# Nothing below runs unless the kernel command line says haos.unattended=yes, or
+# a file called haos-installer.cfg sits in the root of a USB stick. Booting the
+# ISO and pressing Enter still gives the wizard, and the wizard still demands the
+# typed YES before it erases anything: a wiped disk is not something to infer
+# from a file that might just as well be left over from another machine.
+#
+# The file is plain text, one KEY=value per line, '#' starts a comment, Windows
+# CRLF is fine. Keys are documented in README.md. It may carry the image itself
+# next to it, in which case nothing is downloaded and no network is needed.
+cfg_clean(){                                   # <line> -> trimmed, CR removed
+  local v="${1%$'\r'}"
+  v="${v#"${v%%[![:space:]]*}"}"
+  v="${v%"${v##*[![:space:]]}"}"
+  printf '%s' "$v"
+}
+
+config_supported_lang(){
+  case "${1:-}" in en|da|de|nl|fr|es|it|pl|sv|pt|ru|cs|no|fi) return 0 ;; esac
+  return 1
+}
+
+# Default console layout for a language: the same pairs choose_lang_keyboard()
+# offers, so the unattended path cannot drift away from the menu.
+default_keymap(){
+  case "${1:-en}" in
+    en) printf 'us' ;;
+    da) printf 'dk' ;;
+    cs) printf 'cz' ;;
+    sv) printf 'se' ;;
+    *)  printf '%s' "${1:-us}" ;;
+  esac
+}
+
+# One line of config. Unknown keys are logged and ignored rather than fatal: a
+# typo in an optional line must not cost an installation, while a missing
+# WIPE=yes does stop it (see load_config).
+parse_config_line(){
+  local line key val
+  line=$(cfg_clean "$1")
+  case "$line" in ""|\#*) return 0 ;; esac
+  case "$line" in
+    *=*) ;;
+    *) logx "config: line without '=', ignored: $line"; return 0 ;;
+  esac
+  key=$(cfg_clean "${line%%=*}")
+  val=$(cfg_clean "${line#*=}")
+  key=${key^^}                                 # wipe=yes is WIPE=yes
+  case "$val" in                               # tolerate "yes" and 'yes'
+    \"*\") val=${val#\"}; val=${val%\"} ;;
+    \'*\') val=${val#\'}; val=${val%\'} ;;
+  esac
+  case "$key" in
+    UNATTENDED|WIPE|POWEROFF|STREAM|FORMAT)
+      case "${val,,}" in
+        yes|1|true)  printf -v "CFG_$key" '%s' "yes" ;;
+        no|0|false)  printf -v "CFG_$key" '%s' "" ;;
+        *) logx "config: $key=$val is neither yes nor no, ignored" ;;
+      esac ;;
+    DISK)     CFG_DISK="$val" ;;
+    IMAGE)    CFG_IMAGE="$val" ;;
+    LANG)     CFG_LANG="$val" ;;
+    KEYBOARD) CFG_KEYMAP="$val" ;;
+    *) logx "config: unknown key $key ignored" ;;
+  esac
+  return 0
+}
+
+# Reads a config file into the CFG_* variables. Its directory stays mounted:
+# IMAGE= paths are relative to it, and the caller unmounts it after the write.
+parse_config_file(){
+  local f="$1" line
+  [ -r "$f" ] || return 1
+  while IFS= read -r line || [ -n "$line" ]; do
+    parse_config_line "$line"
+  done < "$f"
+  return 0
+}
+
+# Finds haos-installer.cfg: first in whatever is already mounted (a stick the
+# live system mounted, or an ISO someone remastered with a config inside), then
+# by mounting removable partitions read-only, the same candidates find_images()
+# walks. Read-only on purpose: looking for a config must not touch the stick.
+find_config(){
+  local m p pk fs
+  while read -r m; do
+    [ -n "$m" ] || continue
+    if [ -f "$m/haos-installer.cfg" ]; then
+      CFG_FILE="$m/haos-installer.cfg"; CFG_MNT="$m"; return 0
+    fi
+  done < <(findmnt -rno TARGET 2>/dev/null)
+
+  while read -r p; do
+    [ -n "$p" ] || continue
+    pk=$(lsblk -no PKNAME "/dev/$p" 2>/dev/null | head -1 | tr -d ' ')
+    [ -n "$pk" ] || continue
+    [ -n "${live_dev:-}" ] && [ "$pk" = "$live_dev" ] && continue
+    case "$(lsblk -dno TRAN "/dev/$pk" 2>/dev/null | tr -d ' ')/$(lsblk -dno RM "/dev/$pk" 2>/dev/null | tr -d ' ')" in
+      *usb*|*1*) ;;
+      *) continue ;;
+    esac
+    fs=$(lsblk -no FSTYPE "/dev/$p" 2>/dev/null | tr -d ' ')
+    case "$fs" in iso9660|udf|"") continue ;; esac
+    mkdir -p /mnt/cfg 2>/dev/null || continue
+    mount -o ro "/dev/$p" /mnt/cfg 2>>"$LOG" || continue
+    if [ -f /mnt/cfg/haos-installer.cfg ]; then
+      CFG_FILE=/mnt/cfg/haos-installer.cfg; CFG_MNT=/mnt/cfg; return 0
+    fi
+    umount /mnt/cfg 2>>"$LOG" || true
+  done < <(lsblk -lno NAME,TYPE 2>/dev/null | awk '$2=="part"{print $1}')
+  return 1
+}
+
+# Decides whether this run is unattended, and stops at once when a config asks
+# for a disk to be erased without saying WIPE=yes. The kernel command line is
+# applied last, so the person who just edited the boot entry wins over a file
+# left on the stick.
+load_config(){
+  local p kv
+  # Overridable so that tests/unattended.sh can feed it a canned command line
+  # without touching the machine it runs on.
+  local cmd="${HAOS_CMDLINE:-/proc/cmdline}"
+
+  find_config && logx "config file found: $CFG_FILE" \
+              || logx "no config file on any medium"
+
+  if [ -n "$CFG_FILE" ]; then
+    parse_config_file "$CFG_FILE" || logx "config file could not be read"
+  fi
+
+  for p in $(cat "$cmd" 2>/dev/null); do
+    case "$p" in
+      haos.*=*)
+        kv=${p#haos.}
+        parse_config_line "${kv%%=*}=${kv#*=}"    # haos.disk=/dev/sda -> DISK=...
+        ;;
+    esac
+  done
+
+  if [ "$CFG_UNATTENDED" != "yes" ]; then
+    [ -n "$CFG_FILE" ] && logx "UNATTENDED is not yes in $CFG_FILE: normal wizard"
+    return 0
+  fi
+  UNATTENDED=yes
+
+  if [ -n "$CFG_LANG" ]; then
+    if config_supported_lang "$CFG_LANG"; then
+      UI_LANG="$CFG_LANG"
+    else
+      logx "config: LANG=$CFG_LANG is not supported, keeping English"
+    fi
+  fi
+  set_strings
+  if [ -n "$CFG_KEYMAP" ]; then
+    apply_keymap "${CFG_KEYMAP%%|*}" \
+      "$( [ "${CFG_KEYMAP#*|}" != "$CFG_KEYMAP" ] && printf '%s' "${CFG_KEYMAP#*|}" )"
+  else
+    apply_keymap "$(default_keymap "$UI_LANG")" ""
+  fi
+
+  # Erasing a disk with nobody in front of the screen needs consent written down:
+  # WIPE=yes is that signature, and its absence stops the run here.
+  if [ "$CFG_WIPE" != "yes" ]; then
+    die "$(printf "$S_UNAT_NOWIPE" "${CFG_FILE:-/proc/cmdline}")"
+  fi
+  return 0
+}
+
+unattended_banner(){
+  logx "UNATTENDED: config ${CFG_FILE:-kernel command line} | language $UI_LANG | disk ${CFG_DISK:-<the only one>} | image ${CFG_IMAGE:-download} | poweroff ${CFG_POWEROFF:-no} | stream ${CFG_STREAM:-no} | format ${CFG_FORMAT:-no}"
+  whiptail --title "$S_TITLE" --infobox \
+    "$(printf "$S_UNAT_ACTIVE" "${CFG_FILE:-/proc/cmdline}" "$UI_LANG")" 13 68
+  sleep 2
+}
+
+# Picks the image without asking: IMAGE= if the config names one, else the only
+# .img.xz found on a stick, else the download. More than one image is ambiguous,
+# so it downloads rather than guessing which one someone meant.
+unattended_image_source(){
+  local path
+  if [ -n "$CFG_IMAGE" ]; then
+    path="$CFG_IMAGE"
+    case "$path" in /*) ;; *) path="${CFG_MNT:-/mnt/cfg}/$path" ;; esac
+    if [ ! -f "$path" ]; then
+      die "$(printf "$S_IMG_BAD" "$path" "IMAGE=$CFG_IMAGE: file not found")"
+    fi
+    accept_local_image "$path" \
+      || die "$(printf "$S_IMG_BAD" "${path##*/}" "$(tail -n 4 "$LOG" 2>/dev/null | cut -c1-64)")"
+    return 0
+  fi
+  if find_images; then
+    if [ "${#IMG_CANDS[@]}" -eq 1 ]; then
+      path="${IMG_CANDS[0]%%|*}"
+      accept_local_image "$path" \
+        || die "$(printf "$S_IMG_BAD" "${path##*/}" "$(tail -n 4 "$LOG" 2>/dev/null | cut -c1-64)")"
+      return 0
+    fi
+    logx "unattended: ${#IMG_CANDS[@]} images on sticks, ambiguous -> download"
+  fi
+  release_image_mounts ""
+  logx "unattended: source download"
+  return 0
+}
+
+# Chooses the target without asking: DISK= when the config names one (and it is
+# eligible by the same rules the menu uses), otherwise the only eligible disk.
+# Two eligible disks is ambiguous -> stop, rather than erase the wrong one.
+unattended_target(){
+  local -a rows=() devs=()
+  local rec dev list bytes gb
+
+  mapfile -t rows < <(target_rows)
+  for rec in ${rows[@]+"${rows[@]}"}; do devs+=("${rec%%$'\t'*}"); done
+  [ "${#devs[@]}" -gt 0 ] || die "$S_DISK_NONE"
+
+  if [ -n "$CFG_DISK" ]; then
+    for dev in "${devs[@]}"; do
+      [ "$dev" = "$CFG_DISK" ] && TARGET="$dev"
+    done
+    [ -n "$TARGET" ] || die "$(printf "$S_UNAT_NODISK" "$CFG_DISK")"
+    logx "unattended: target from config: $TARGET"
+  elif [ "${#devs[@]}" -eq 1 ]; then
+    TARGET="${devs[0]}"
+    logx "unattended: single eligible disk: $TARGET"
+  else
+    list=$(printf '  %s\n' "${devs[@]}")
+    die "$(printf "$S_UNAT_MULTI" "${#devs[@]}" "$list")"
+  fi
+
+  # 32 GB: below that threshold dd would die with "No space left" AFTER erasing.
+  bytes=$(blockdev --getsize64 "$TARGET" 2>/dev/null || echo 0)
+  gb=$(( bytes / 1000000000 ))
+  if [ "$gb" -lt 32 ]; then
+    die "$(printf "$S_DISK_SMALL" "$TARGET" "$gb")"
+  fi
+
+  # Unattended is also how a box gets reinstalled, so an existing Home Assistant
+  # is not refused -- but it is said in the log, because WIPE=yes was signed for
+  # a disk that already held someone's house.
+  if lsblk -no LABEL "$TARGET" 2>/dev/null | grep -qix 'hassos-boot'; then
+    logx "unattended: $TARGET already carries a Home Assistant installation -- WIPE=yes covers it"
+  fi
+  logx "unattended: target $TARGET ($(describe_part "$TARGET"), ${gb} GB)"
+  return 0
 }
 
 # Two targets, success on either: a network that filters github.com used to be
@@ -2151,6 +2538,14 @@ setup_network(){
   whiptail --title "$S_TITLE" --infobox "$S_NET_ETH" 7 62
   wait_net 10 && return 0            # up to 5 s, but only as long as it needs
 
+  # Unattended: wait longer for an Ethernet link, and never fall into the Wi-Fi
+  # menu -- a prompt nobody answers is a hang. The offline path never gets here
+  # (an image on a stick needs no network), so failing is the honest answer.
+  if [ -n "$UNATTENDED" ]; then
+    wait_net 20 || die "$S_UNAT_NONET"
+    return 0
+  fi
+
   # No connection yet: ask explicitly for a LAN cable, with a Retry button.
   # That is the usual case on a desktop PC, and someone who simply plugged the
   # cable in late must not be pushed into the Wi-Fi scan menu.
@@ -2277,9 +2672,14 @@ resolve_version(){
 }
 
 # ---------------------------------------------------------------------------
-pick_disk(){
-  local menu=() name size model tran vendor rm_ hp tag kind
-  # whiptail cannot colour a menu item -> textual marking at the front.
+# Every rule that decides whether a disk may be erased lives here, once: the live
+# medium, the disk holding the image, anything carrying an iso9660, and a Ventoy
+# stick are all excluded. Prints one TAB-separated record per eligible disk:
+#   /dev/name  size  transport  SSD|HDD  vendor model  is-removable
+# pick_disk() renders them as a menu; unattended_target() counts and picks from
+# them. Two copies of these exclusions would drift, and a drift erases a disk.
+target_rows(){
+  local name size model vendor tran rm_ hp kind usb
   # No eval on lsblk output: a MODEL field containing a quote would break the
   # parsing. One column at a time, otherwise an empty field shifts the following
   # ones when read back.
@@ -2309,8 +2709,28 @@ pick_disk(){
     kind=$(lsblk -dno ROTA    "/dev/$name" 2>/dev/null | xargs)
     case "${kind:-}" in 0) kind="SSD" ;; 1) kind="HDD" ;; *) kind="-" ;; esac
 
-    tag=""
+    usb=0
     if [ "${rm_:-0}" = "1" ] || [ "${hp:-0}" = "1" ] || [ "$tran" = "usb" ]; then
+      usb=1
+    fi
+    printf '%s\t%s\t%s\t%s\t%s\t%s\n' "/dev/$name" "${size:-?}" "${tran:-?}" \
+      "$kind" "$(echo "$vendor ${model:-?}" | xargs)" "$usb"
+  done < <(lsblk -dno NAME,TYPE 2>/dev/null | awk '$2=="disk"{print $1}')
+}
+
+pick_disk(){
+  local menu=() dev size tran kind desc usb tag
+  # Unattended picks the disk itself, by the rules in target_rows.
+  if [ -n "$UNATTENDED" ]; then
+    unattended_target
+    return $?
+  fi
+
+  while IFS=$'\t' read -r dev size tran kind desc usb; do
+    [ -n "$dev" ] || continue
+    # whiptail cannot colour a menu item -> textual marking at the front.
+    tag=""
+    if [ "$usb" = "1" ]; then
       case "$UI_LANG" in
         fr) tag="[!! USB / EXTERNE !!] " ;;
         de|nl|sv) tag="[!! USB / EXTERN !!] " ;;
@@ -2324,9 +2744,8 @@ pick_disk(){
         *)  tag="[!! USB / EXTERNAL !!] " ;;
       esac
     fi
-    menu+=("/dev/$name" "$(printf '%s%-9s %-5s %-4s %s' "$tag" "${size:-?}" "${tran:-?}" \
-           "$kind" "$(echo "$vendor ${model:-?}" | xargs)")")
-  done < <(lsblk -dno NAME,TYPE 2>/dev/null | awk '$2=="disk"{print $1}')
+    menu+=("$dev" "$(printf '%s%-9s %-5s %-4s %s' "$tag" "$size" "$tran" "$kind" "$desc")")
+  done < <(target_rows)
 
   [ ${#menu[@]} -gt 0 ] || die "$S_DISK_NONE"
 
@@ -2536,6 +2955,33 @@ find_images(){
   [ "${#IMG_CANDS[@]}" -gt 0 ]
 }
 
+# Accepts <path> as the image to write: .xz integrity first, then where it sits
+# is recorded, because the disk carrying it must never be offered as a target.
+# Returns 1, leaving IMG_FILE untouched, when the file does not pass its checks.
+accept_local_image(){
+  local path="$1" rec mnt src ver
+  whiptail --title "$S_TITLE" --infobox "$S_IMG_CHECK" 7 66
+  xz -t "$path" 2>>"$LOG" || return 1
+  mnt=""
+  for rec in ${IMG_CANDS[@]+"${IMG_CANDS[@]}"}; do
+    [ "${rec%%|*}" = "$path" ] && mnt=$rec
+  done
+  mnt=${mnt#*|}; mnt=${mnt%%|*}
+  IMG_FILE="$path"
+  IMG_MNT="$mnt"
+  # Reading the image from the disk we write to would corrupt both, so that disk
+  # is removed from the target list rather than trusted to the user.
+  IMG_DISK=""
+  src=$(findmnt -rn -o SOURCE -T "$path" 2>/dev/null | head -1)
+  case "$src" in /dev/*) IMG_DISK=$(to_physical_disk "$src" 2>/dev/null) || IMG_DISK="" ;; esac
+  logx "image sits on disk ${IMG_DISK:-unknown}: it will not be offered as a target"
+  release_image_mounts "$mnt"
+  ver=$(image_version "${path##*/}")
+  [ -n "$ver" ] && HAOS_VERSION="$ver"
+  logx "offline image accepted: $path (${ver:-version unknown}), .xz checks passed"
+  return 0
+}
+
 # Lets the user pick one of them. Returns 0 with IMG_FILE set, 1 to download.
 use_local_image(){
   local choice rec path mnt size ver note detail src
@@ -2559,25 +3005,7 @@ use_local_image(){
     choice=$(wt_menu "$S_TITLE" "$S_IMG_PICK" 12 "${menu[@]}") \
       || { release_image_mounts ""; return 1; }
 
-    whiptail --title "$S_TITLE" --infobox "$S_IMG_CHECK" 7 66
-    if xz -t "$choice" 2>>"$LOG"; then
-      mnt=""
-      for rec in "${IMG_CANDS[@]}"; do
-        [ "${rec%%|*}" = "$choice" ] && mnt=$rec
-      done
-      mnt=${mnt#*|}; mnt=${mnt%%|*}
-      IMG_FILE="$choice"
-      IMG_MNT="$mnt"
-      # Reading the image from the disk we write to would corrupt both, so that
-      # disk is removed from the target list rather than trusted to the user.
-      IMG_DISK=""
-      src=$(findmnt -rn -o SOURCE -T "$choice" 2>/dev/null | head -1)
-      case "$src" in /dev/*) IMG_DISK=$(to_physical_disk "$src" 2>/dev/null) || IMG_DISK="" ;; esac
-      logx "image sits on disk ${IMG_DISK:-unknown}: it will not be offered as a target"
-      release_image_mounts "$mnt"
-      ver=$(image_version "${choice##*/}")
-      [ -n "$ver" ] && HAOS_VERSION="$ver"
-      logx "offline image accepted: $choice (${ver:-version unknown}), .xz checks passed"
+    if accept_local_image "$choice"; then
       return 0
     fi
     detail=$(tail -n 4 "$LOG" 2>/dev/null | cut -c1-64)
@@ -2590,6 +3018,10 @@ use_local_image(){
 choose_image_source(){
   local choice
   IMG_FILE=""
+  if [ -n "$UNATTENDED" ]; then
+    unattended_image_source
+    return 0
+  fi
   choice=$(wt_menu "$S_TITLE" "$S_SRC_ASK" 8 \
              "$S_SRC_DL" "" \
              "$S_SRC_USE" "") || die "$S_CANCELLED"
@@ -2640,6 +3072,9 @@ download_image(){
       detail=$(tail -n 6 "$LOG" 2>/dev/null | cut -c1-64)
       logx "download interrupted (curl code $rc, $(stat -c%s "$dst" 2>/dev/null || echo 0) bytes on disk)"
       # The partial file is KEPT: that is exactly what makes the resume useful.
+      if [ -n "$UNATTENDED" ]; then
+        die "$(printf "$S_DL_ABORT" "$detail" "$LOG")"
+      fi
       wt_yesno "$S_WARN" "$(printf "$S_DL_RETRY" "$rc" "$detail")" \
         || die "$(printf "$S_DL_ABORT" "$detail" "$LOG")"
       continue
@@ -2702,6 +3137,7 @@ flash(){
       stage_h=$(numfmt --to=iec "$dl" 2>/dev/null || echo "$dl bytes")
       while :; do
         find_stage_dir "$need_kb" && { stage_dir="$STAGE_DIR"; break; }
+        [ -n "$UNATTENDED" ] && break        # nobody is there to plug a stick in
         wt_yesno "$S_WARN" "$(printf "$S_STAGE_ASK" "$stage_h")" \
           --yes-button "$S_STAGE_RETRY" --no-button "$S_STAGE_STREAM" || break
       done
@@ -2710,6 +3146,12 @@ flash(){
         logx "RAM too small ($(( avail_kb / 1024 )) MiB free, $(( need_kb / 1024 )) MiB needed): staging on $d_file"
         wt_msg "$S_TITLE" "$(printf "$S_STAGE_INFO" "$d_file")"
       else
+        # The single-pass write erases the disk before the download is known to
+        # work. Fine when someone chose it after reading the warning; not fine to
+        # decide alone, so unattended refuses unless STREAM=yes was written.
+        if [ -n "$UNATTENDED" ] && [ -z "$CFG_STREAM" ]; then
+          die "$(printf "$S_UNAT_NOSTAGE" "$stage_h")"
+        fi
         logx "no staging medium found: single-pass write, the disk is erased first"
       fi
     fi
@@ -2815,9 +3257,13 @@ verify(){
     wt_msg "$S_TITLE" "$S_VFY_SKIP"; return 0
   fi
 
-  wt_yesno "$S_TITLE" \
-    "$(printf "$S_VFY_ASK" "$(numfmt --to=iec "$size" 2>/dev/null || echo "$size")" "$TARGET")" \
-    || return 0
+  # The read-back costs minutes; unattended takes them, because a disk that does
+  # not match the image is exactly what nobody is there to notice.
+  if [ -z "$UNATTENDED" ]; then
+    wt_yesno "$S_TITLE" \
+      "$(printf "$S_VFY_ASK" "$(numfmt --to=iec "$size" 2>/dev/null || echo "$size")" "$TARGET")" \
+      || return 0
+  fi
 
   # Flush the cache: otherwise we read back RAM, not the disk -> useless check.
   sync; echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
@@ -2990,10 +3436,10 @@ finalize(){
   case $wifi_rc in
     3) : ;;                                    # wired: nothing to say
     0) logx "Wi-Fi profile injected into CONFIG/network of hassos-boot"
-       wt_msg "$S_TITLE" "$(printf "$S_WIFI_PUSH" "${WIFI_SSID:-Wi-Fi}")" ;;
-    2) wt_msg "$S_WARN" "$S_WIFI_PUSH_SKIP" ;; # deliberate refusal, already logged
+       [ -z "$UNATTENDED" ] && wt_msg "$S_TITLE" "$(printf "$S_WIFI_PUSH" "${WIFI_SSID:-Wi-Fi}")" ;;
+    2) [ -z "$UNATTENDED" ] && wt_msg "$S_WARN" "$S_WIFI_PUSH_SKIP" ;; # deliberate refusal, logged
     *) logx "FAILED to inject the Wi-Fi profile: HAOS will boot with no network"
-       wt_msg "$S_WARN" "$S_WIFI_PUSH_FAIL" ;;
+       [ -z "$UNATTENDED" ] && wt_msg "$S_WARN" "$S_WIFI_PUSH_FAIL" ;;
   esac
 
   # The image already contains \EFI\BOOT\bootx64.efi; safety net for fussy
@@ -3024,7 +3470,13 @@ finalize(){
   # from a virtual CD: reformatting it is impossible, and the warning used to
   # claim "the USB stick could not be reformatted" about a device that was never
   # a stick. Each skip is logged with its reason, so the next report says why.
-  if [ -z "${live_dev:-}" ]; then
+  if [ -n "$UNATTENDED" ]; then
+    # Unattended never reformats unless the config asked for it: turning the only
+    # installer someone has into a blank stick is not an assumed preference.
+    if [ "$CFG_FORMAT" = "yes" ] && [ -n "${live_dev:-}" ] && can_reformat_medium "$live_dev"; then
+      reformat_stick "$live_dev"; fmt_rc=$?
+    fi
+  elif [ -z "${live_dev:-}" ]; then
     logx "reformat not offered: boot medium not identified"
   elif ! can_reformat_medium "$live_dev"; then
     logx "reformat not offered: /dev/$live_dev is not a writable removable disk (type '$(lsblk -dno TYPE "/dev/$live_dev" 2>/dev/null | tr -d ' ')', rm '$(lsblk -dno RM "/dev/$live_dev" 2>/dev/null | tr -d ' ')')"
@@ -3033,14 +3485,32 @@ finalize(){
   fi
   case $fmt_rc in
     0) logmsg="$S_DONE_LOG" ;;
-    2) wt_msg "$S_WARN" "$S_FMT_FAIL" ;;     # stick intact
-    3) wt_msg "$S_WARN" "$S_FMT_BROKEN" ;;   # stick no longer bootable: say it
+    2) [ -z "$UNATTENDED" ] && wt_msg "$S_WARN" "$S_FMT_FAIL" ;;    # stick intact
+    3) [ -z "$UNATTENDED" ] && wt_msg "$S_WARN" "$S_FMT_BROKEN" ;;  # no longer bootable
                                              # 1 = deliberate refusal, nothing to say
   esac
 
   # 'toram' copied the live system to RAM: the stick is no longer used, so we can
   # ask for it to be removed NOW. The reboot then goes straight into HAOS, with
   # no risk of restarting the installer or removing the stick too early.
+  if [ -n "$UNATTENDED" ]; then
+    # The log is worth keeping whether or not the stick was reformatted: on a
+    # headless box it is the only evidence of what happened.
+    try_write_log "$LOG" >/dev/null 2>&1 || true
+    if [ "$CFG_POWEROFF" = "yes" ]; then
+      printf '%s\n' "$(printf "$S_UNAT_OFF_HALT" "$TARGET" | sed 's/\\n/\n/g')"
+    else
+      printf '%s\n' "$(printf "$S_UNAT_OFF_REBOOT" "$TARGET" | sed 's/\\n/\n/g')"
+    fi
+    sleep 15
+    if [ "$CFG_POWEROFF" = "yes" ]; then
+      logx "UNATTENDED: powering off (POWEROFF=yes)"
+      halt_now
+      exit 0                   # never fall through into the wizard screen
+    fi
+    logx "UNATTENDED: rebooting into Home Assistant OS"
+    clear; reboot
+  fi
   wt_msg "$S_TITLE" "$(printf "$S_DONE" "$TARGET")$logmsg"
   clear; reboot
 }
@@ -3055,6 +3525,19 @@ ISO_LABEL="HAOS Installer"
 LOGS_LABEL="HAOS_LOGS"
 HAOS_VERSION=""
 VER_SRC=""                    # source chosen for the version: traced in the log
+# Unattended mode (opt-in: a config file on a stick, or the kernel cmdline). All
+# of these stay empty in the normal wizard, which is what every branch below tests.
+UNATTENDED=""                 # "yes" once a config asked for it
+CFG_FILE=""                   # config file that was read (empty = kernel cmdline)
+CFG_MNT=""                    # where that file is mounted, for IMAGE= paths
+CFG_WIPE=""                   # WIPE=yes: consent to erase, replaces the typed YES
+CFG_DISK=""                   # DISK=: the target, or empty to take the only one
+CFG_IMAGE=""                  # IMAGE=: a .img.xz next to the config file
+CFG_LANG=""                   # LANG=: two-letter language
+CFG_KEYMAP=""                 # KEYBOARD=: console layout (default from LANG)
+CFG_POWEROFF=""               # POWEROFF=yes: power off instead of rebooting
+CFG_STREAM=""                 # STREAM=yes: allow erasing before the check
+CFG_FORMAT=""                 # FORMAT=yes: keep the reformat-the-stick offer
 IMG_URL=""
 TARGET=""
 WIFI_SSID=""
@@ -3108,7 +3591,12 @@ resolve_live_dev(){
 live_dev=$(resolve_live_dev)
 
 set_strings                 # EN defaults, replaced by the choice on screen 1
-choose_lang_keyboard
+load_config                 # opt-in: a config file on a stick, or the cmdline
+if [ -n "$UNATTENDED" ]; then
+  unattended_banner         # language and keyboard already set from the file
+else
+  choose_lang_keyboard
+fi
 # Requirements state in the log: it is the first thing to look at when HAOS does
 # not boot after an otherwise successful installation.
 logx "installer started -- language $UI_LANG, board $HAOS_BOARD"
@@ -3126,7 +3614,9 @@ if [ -n "$BUILD_STAMP" ]; then
   logx "installer build: $BUILD_STAMP"
   WELCOME_TEXT="$WELCOME_TEXT"$'\n\n'"$BUILD_STAMP"
 fi
-wt_msg "$S_TITLE" "$WELCOME_TEXT"
+# Unattended: the banner already said what is about to happen, and a box waiting
+# for an OK button is a box that never installs.
+[ -z "$UNATTENDED" ] && wt_msg "$S_TITLE" "$WELCOME_TEXT"
 STEP="2/6"
 choose_image_source         # download, or an image the user brings on a stick
 if [ -z "${IMG_FILE:-}" ]; then

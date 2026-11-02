@@ -36,6 +36,7 @@ boot the stick and follow the wizard. Everything below is detail.
 · [2 Write the stick](#step-2--write-the-iso-to-the-usb-stick)
 · [3 BIOS](#step-3--configure-the-pcs-biosuefi) · [Screens](#what-it-looks-like) · [4 Install](#step-4--install)
 · [When RAM is short](#when-ram-is-short--the-image-is-staged-on-a-usb-stick)
+· [Unattended](#unattended-installation)
 · [5 First boot](#step-5--first-boot) · [Troubleshooting](#if-something-goes-wrong)
 · [Building it yourself](BUILDING.md)
 
@@ -43,7 +44,7 @@ The wizard speaks **14 languages**, taken from the countries with the most Home
 Assistant installations — the top of
 [Home Assistant's public analytics](https://analytics.home-assistant.io/).
 German and English are the two largest, but English comes first and Danish second
-because this fork started in Danish. Adding a language later is 87 strings to
+because this fork started in Danish. Adding a language later is 104 strings to
 translate. You pick the language, and its keyboard layout is applied
 automatically — one line, nothing to match up:
 
@@ -373,6 +374,71 @@ written to the disk is correct.
 The media scan and the name gating are covered by `tests/image.sh`: target disk,
 boot medium, internal disk, iso9660/UDF, a file in a folder, a wrong board, two
 versions, and an already-mounted stick.
+
+## Unattended installation
+
+For a machine with no screen and no keyboard attached — a mini-PC in a cupboard,
+or a VM you would rather rebuild than click through. It is **opt-in twice**: the
+wizard runs as usual unless something asks for unattended mode, and even then it
+refuses to erase a disk unless `WIPE=yes` was written down. Booting this ISO and
+pressing Enter still gives you the normal wizard.
+
+There are two ways to ask for it:
+
+1. **A file on a USB stick** — `haos-installer.cfg`, in the root of the stick
+   (FAT32, exFAT, NTFS and ext4 all work). Plug it in before booting.
+2. **The kernel command line** — add `haos.unattended=yes` to the boot entry, for
+   a VM or a network boot where there is no stick to put a file on. The keys
+   below work with the same names: `haos.disk=/dev/sda`, `haos.wipe=yes`,
+   `haos.lang=da`, and so on.
+
+The file is plain text, one `KEY=value` per line, `#` starts a comment, and a
+file saved on Windows with CRLF line endings is fine:
+
+```ini
+# Mini-PC in the basement, reinstalled from a stick.
+UNATTENDED=yes
+WIPE=yes
+DISK=/dev/nvme0n1
+LANG=da
+POWEROFF=yes
+
+# Optional: the image next to this file -> no network needed at all.
+IMAGE=haos_generic-x86-64-18.1.img.xz
+```
+
+| Key | Meaning |
+| --- | --- |
+| `UNATTENDED=yes` | **Required.** Without it the file is ignored and the wizard runs. |
+| `WIPE=yes` | **Required.** This is the typed `YES` of the normal wizard: consent to erase. Without it nothing is erased and the run stops. |
+| `DISK=/dev/nvme0n1` | The target. Leave it out and the only eligible disk is used; two eligible disks stop the run instead of guessing. |
+| `IMAGE=…img.xz` | An image in the same folder as the config file. Skips the download and the network entirely. |
+| `LANG=da` | One of the 14 languages; its keyboard layout is applied. Default: English. |
+| `KEYBOARD=dk` | Override the layout on its own: `layout` or `layout\|variant` (`fr\|ch`). |
+| `POWEROFF=yes` | Power the PC off when done instead of rebooting into Home Assistant. |
+| `FORMAT=yes` | Allow the installer stick to be reformatted at the end, as the wizard offers. Off by default: it is the only way back into the installer. |
+| `STREAM=yes` | Allow the one-pass write when RAM is too small and there is no medium to stage the image on. That write erases the disk **before** the download is checked; off by default. |
+
+What it does on its own: skips the language, welcome and image-source screens,
+waits up to 20 s for an Ethernet link, resolves the version, picks the disk, then
+shows the same progress screens as the wizard. It always runs the read-back check
+at the end — minutes nobody is there to spend, but also nobody is there to notice
+a disk that does not match.
+
+What it refuses to do, and why: erase without `WIPE=yes`; pick between two usable
+disks; accept a `DISK=` that the wizard would not have offered (the boot medium,
+the stick holding the image, a Ventoy stick, anything carrying an ISO); write to a
+disk under 32 GB; download when there is no network and no local image; and use
+the destructive one-pass write unless `STREAM=yes` says so.
+
+If anything fails, the log is copied to a stick if one is mounted, the reason is
+printed on screen, and the PC powers off after 20 seconds rather than waiting for
+a keypress. Every decision is in the log, including which disk was chosen and why
+the others were not.
+
+The config parsing and the disk eligibility rules are covered by
+`tests/unattended.sh`: CRLF and quoted values, lowercase keys, unknown keys,
+comments, `WIPE` never assumed, and the same exclusions the menu applies.
 
 ## Step 5 — First boot
 

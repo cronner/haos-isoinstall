@@ -38,9 +38,15 @@ jobs:
       - name: Offline image discovery
         run: bash tests/image.sh
 
+      # Unattended mode erases a disk with nobody in front of the screen, so the
+      # parsing that authorises it and the rules that pick the disk are tested
+      # rather than reviewed.
+      - name: Unattended mode
+        run: bash tests/unattended.sh
+
       - name: ShellCheck
         run: |
           # Warnings stay informative so that style does not break anything;
           # only real errors block.
-          shellcheck -S warning build-iso.sh haos-installer.sh tests/strings.sh tests/stage.sh tests/image.sh || true
-          shellcheck -S error build-iso.sh haos-installer.sh tests/strings.sh tests/stage.sh tests/image.sh
+          shellcheck -S warning build-iso.sh haos-installer.sh tests/strings.sh tests/stage.sh tests/image.sh tests/unattended.sh || true
+          shellcheck -S error build-iso.sh haos-installer.sh tests/strings.sh tests/stage.sh tests/image.sh tests/unattended.sh
