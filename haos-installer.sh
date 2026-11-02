@@ -1554,6 +1554,15 @@ wt_dims(){                                  # <text> -> WT_H, WT_W, WT_SCROLL
 
 wt_msg(){                                   # <title> <text>
   local t="$1"
+  # Unattended means nobody is at the screen. A box waiting for an OK is a box
+  # that never finishes, and the verification screen is the very last place to
+  # stall: the install is done, the disk is written, and the run sits there for
+  # ever. The text goes to the log instead, so the stick still explains it.
+  if [ -n "${UNATTENDED:-}" ]; then
+    logx "screen skipped (unattended): $t"
+    printf '%s\n' "$2" >> "$LOG"      # as-is: it is text, not a format
+    return 0
+  fi
   [ -n "${STEP:-}" ] && t="$t  [$STEP]"    # language-neutral progress marker
   wt_dims "$2"
   whiptail --title "$t" $WT_SCROLL --msgbox "$2" "$WT_H" "$WT_W"

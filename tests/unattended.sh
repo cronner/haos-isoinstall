@@ -23,7 +23,8 @@ ko(){ fail=$((fail + 1)); printf '  FAIL  %s\n' "$*"; }
 
 # ---- extract the functions under test --------------------------------------
 for fn in cfg_clean config_supported_lang default_keymap parse_config_line parse_config_file \
-        cfg_has_keys cfg_candidate cfg_medium_disk cfg_source load_config target_rows; do
+        cfg_has_keys cfg_candidate cfg_medium_disk cfg_source load_config target_rows \
+        wt_msg; do
   chunk=$(awk -v n="$fn" '$0 ~ "^" n "\\(\\)\\{" {f=1} f{print} f&&/^}$/{exit}' "$SRC")
   [ -n "$chunk" ] || { printf '%s not found in %s\n' "$fn" "$SRC"; exit 1; }
   eval "$chunk"
@@ -355,6 +356,26 @@ load_config || ko 'the config with a command line layer did not load'
 [ "$UI_LANG" = de ] || ko "the kernel command line did not win (UI_LANG='$UI_LANG')"
 CFG_NEXT=""; HAOS_CMDLINE=""; HAOS_IMAGE_CFG="$tmp/none.cfg"
 [ "$(cfg_source)" != "" ] || ko 'cfg_source prints nothing'
+
+# ---- 18. unattended never waits for a keypress -----------------------------
+# The verification screen is the last place to stall: install done, disk written,
+# and the run sits on an OK button for ever because nobody is there. wt_msg is
+# the box with that button, so under UNATTENDED it must not open one.
+WHIPTAIL_CALLS=0
+whiptail(){ WHIPTAIL_CALLS=$((WHIPTAIL_CALLS + 1)); return 0; }
+wt_dims(){ WT_H=10; WT_W=60; WT_SCROLL=""; }
+UNATTENDED=yes
+wt_msg "Home Assistant OS installation" "Verification passed."
+[ "$WHIPTAIL_CALLS" -eq 0 ] \
+  || ko 'unattended opened a message box: the run would wait for an OK'
+UNATTENDED=""
+wt_msg "Home Assistant OS installation" "Verification passed."
+[ "$WHIPTAIL_CALLS" -eq 1 ] || ko 'the wizard lost its message box'
+
+# The steps that must not even be reached unattended: no image menu, no disk
+# menu, no typed YES. A prompt here is a hang, and the run has no timeout.
+grep -q 'unattended_image_source' "$SRC" || ko 'no unattended image source'
+grep -q 'unattended_target' "$SRC" || ko 'no unattended disk choice'
 
 grep -q 'HAOS_VARIANT' build-iso.sh || ko 'build-iso.sh has no variant switch'
 grep -q 'haos-installer.cfg.unattended' build-iso.sh \
