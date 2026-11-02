@@ -53,7 +53,7 @@ EOS
   bash "$tmp/dump.sh"
 }
 
-LANGS="en fr de da xx"          # xx: anything unknown must fall back to English
+LANGS="en fr de da nl es it pl sv pt ru cs no fi xx"   # xx: anything unknown must fall back to English
 for l in $LANGS; do
   dump "$l" > "$tmp/$l.txt" || ko "set_strings crashed for UI_LANG=$l"
   [ -s "$tmp/$l.txt" ] || { ko "no string at all for UI_LANG=$l"; continue; }
@@ -74,7 +74,7 @@ done
 # the value, so whiptail shows a message with a missing word in it.
 placeholders(){ awk -F'\t' '{ n = gsub(/%s/, "%s"); print $1 "\t" n }' "$1"; }
 placeholders "$tmp/en.txt" > "$tmp/ph-en.txt"
-for l in fr de da xx; do
+for l in $LANGS; do
   placeholders "$tmp/$l.txt" > "$tmp/ph-$l.txt"
   diffs=$(diff "$tmp/ph-en.txt" "$tmp/ph-$l.txt" | grep '^[<>]' || true)
   [ -z "$diffs" ] || ko "$l has a different number of %s: $(printf '%s\n' "$diffs" | head -6)"
