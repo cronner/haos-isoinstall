@@ -1,35 +1,53 @@
 # haos-isoinstall — install Home Assistant OS on a PC, without a command line
 
+[![Checks](https://github.com/cronner/haos-isoinstall/actions/workflows/checks.yml/badge.svg)](https://github.com/cronner/haos-isoinstall/actions/workflows/checks.yml)
+[![Build ISO](https://github.com/cronner/haos-isoinstall/actions/workflows/build-iso.yml/badge.svg)](https://github.com/cronner/haos-isoinstall/actions/workflows/build-iso.yml)
+
 Bootable USB stick that installs **Home Assistant OS** on a PC through a guided
 wizard: network setup (Ethernet or Wi-Fi), disk selection, download and writing
 of the official image. Nothing to type.
 
-The wizard speaks **14 languages**. Language and keyboard layout are two
-separate choices, so a French speaker can pick a US QWERTY — nothing is
-inferred from one to the other:
+**Quick start** — download the ISO from [Releases] and check it
+(`sha256sum -c *.iso.sha256`), write it to a USB stick with Etcher or Rufus (not
+by copying the file), turn **Secure Boot off** and SATA to **AHCI** in the BIOS,
+boot the stick and follow the wizard. Everything below is detail.
 
-| Language | Menu entry | Keyboard layouts offered |
-| -------- | ---------- | ------------------------ |
-| English | `English` | QWERTY (United States), QWERTY (United Kingdom), QWERTZ (Germany) |
-| Danish | `Dansk` | QWERTY (Denmark) |
-| Czech | `Cestina` | QWERTZ (Czechia) |
-| Dutch | `Nederlands` | QWERTY (Netherlands) |
-| Finnish | `Suomi` | QWERTY (Finland) |
-| French | `French` | AZERTY (France), AZERTY (Belgium), QWERTZ (Switzerland), QWERTY (Canada), QWERTY (United States) |
-| German | `Deutsch` | QWERTZ (Germany), QWERTZ (Switzerland) |
-| Italian | `Italiano` | QWERTY (Italy) |
-| Norwegian | `Norsk` | QWERTY (Norway) |
-| Polish | `Polski` | QWERTY (Poland) |
-| Portuguese | `Portugues` | QWERTY (Portugal) |
-| Russian | `Russkiy` | YTsUKEN (Russia) |
-| Spanish | `Espanol` | QWERTY (Spain) |
-| Swedish | `Svenska` | QWERTY (Sweden) |
+**Contents:** [What you need](#what-you-need) · [1 Download](#step-1--download-the-iso)
+· [2 Write the stick](#step-2--write-the-iso-to-the-usb-stick)
+· [3 BIOS](#step-3--configure-the-pcs-biosuefi) · [4 Install](#step-4--install)
+· [When RAM is short](#when-ram-is-short--the-image-is-staged-on-a-usb-stick)
+· [5 First boot](#step-5--first-boot) · [Troubleshooting](#if-something-goes-wrong)
+· [Building your own](#1-where-to-build) · [Credits](#origin-and-credits)
 
-That is 21 menu entries in all, in this order: English first, then Danish, then
-the rest alphabetically. The menu labels are kept in plain ASCII so they
-stay readable on the text console; the translated messages themselves use the
-language's own characters. A language code that is not in this table falls back
-to English and US QWERTY.
+The wizard speaks **14 languages**. You pick the language, and its keyboard
+layout is applied automatically — one line, nothing to match up:
+
+| Language | Keyboard layout set automatically |
+| -------- | --------------------------------- |
+| English | QWERTY (United States) |
+| Danish | QWERTY (Denmark) |
+| Czech | QWERTZ (Czechia) |
+| Dutch | QWERTY (Netherlands) |
+| Finnish | QWERTY (Finland) |
+| French | AZERTY (France) |
+| German | QWERTZ (Germany) |
+| Italian | QWERTY (Italy) |
+| Norwegian | QWERTY (Norway) |
+| Polish | QWERTY (Poland) |
+| Portuguese | QWERTY (Portugal) |
+| Russian | YTsUKEN (Russia) |
+| Spanish | QWERTY (Spain) |
+| Swedish | QWERTY (Sweden) |
+
+A layout belongs to the keyboard, not to the language, so the last line of the
+menu — *Keyboard layout only (another country)* — holds the full set of pairs:
+QWERTY (United Kingdom) and QWERTZ (Germany) for English, AZERTY (Belgium),
+QWERTZ (Switzerland), QWERTY (Canada) and QWERTY (United States) for French, and
+QWERTZ (Switzerland) for German. Nobody else ever sees that line.
+
+Menu labels stay in plain ASCII so they remain readable on the text console; the
+translated messages themselves use the language's own characters. A language code
+that is not in the table falls back to English and US QWERTY.
 
 The ISO does **not** contain HAOS: the image is downloaded during the
 installation ("network install" approach). It therefore stays small (**~450 MB**) and
@@ -131,7 +149,7 @@ otherwise keep priority and start the installer again.
 Plug in the stick, boot. The wizard starts on its own:
 
 1. Welcome screen and reminders
-2. Language and keyboard layout — 14 languages, 21 layout choices (table above)
+2. Language — 14 languages, each with its keyboard layout applied (table above)
 3. Network connection — automatic over Ethernet, otherwise Wi-Fi selection
 4. **Disk selection** — check the size and model; the current contents are
    displayed, and you must type `YES` to confirm (anything else stops)

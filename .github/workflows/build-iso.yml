@@ -7,6 +7,13 @@ on:
   pull_request:
     paths: ['build-iso.sh', 'haos-installer.sh']
 
+# A build takes several minutes. Pushing twice in a row used to queue two builds,
+# the second of which nobody waits for: cancel the superseded one instead.
+# A tag is never cancelled -- that build produces the release.
+concurrency:
+  group: build-iso-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
 # The Debian container runs 'run' steps with sh (dash) by default, which ignores
 # bashisms (e.g. ${VAR//x/y}). We force bash everywhere.
 defaults:
@@ -20,6 +27,7 @@ jobs:
     # as the dev environment), on an Ubuntu host.
     # --privileged is required: live-build needs the loop devices and chroot.
     runs-on: ubuntu-24.04
+    timeout-minutes: 40
     container:
       image: debian:trixie
       options: --privileged
@@ -27,6 +35,18 @@ jobs:
       contents: write          # required to create the release on tag
     steps:
       - uses: actions/checkout@v7
+
+      # The downloads are the slow part of the install steps below. The key
+      # carries the workflow file, so editing the package list still gets a
+      # clean cache instead of a stale one.
+      - name: Cache the Debian package index
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/cache/apt/archives
+            /var/lib/apt/lists
+          key: apt-trixie-${{ hashFiles('.github/workflows/build-iso.yml') }}
+          restore-keys: apt-trixie-
 
       - name: Syntax check
         run: |
@@ -125,12 +145,28 @@ jobs:
             ${{ steps.iso.outputs.name }}
             ${{ steps.iso.outputs.name }}.sha256
           body: |
-            Home Assistant OS installation ISO (bare metal) — automatic build.
+            Guided **Home Assistant OS** installer, as a bootable USB image for
+            x86-64 PCs and VMs. Built from `${{ github.sha }}`.
+
+            **14 languages**, each with its keyboard layout applied automatically:
+            English, Danish, Czech, Dutch, Finnish, French, German, Italian,
+            Norwegian, Polish, Portuguese, Russian, Spanish, Swedish.
+
+            The Home Assistant OS image is **not** inside the ISO: it is downloaded
+            during the installation, so this stays small (~470 MiB) and always
+            installs the latest published version.
+
+            **Requirements:** x86-64 PC, UEFI (CSM off), Secure Boot **disabled**,
+            SATA in **AHCI**, a disk of at least 32 GB, and an Internet connection.
+
+            Verify the download before writing it:
+
+            ```
+            sha256sum -c haos-isoinstall-v1.0.0-amd64.iso.sha256
+            ```
 
             **Provided as is, with no warranty and no support.** This tool
-            completely erases the selected disk. See the README and the LICENSE.
+            completely erases the disk you select. Read the README first.
 
             Unofficial project, not affiliated with the Open Home Foundation
             or Nabu Casa.
-
-            Check the integrity with the attached `.sha256` file.
