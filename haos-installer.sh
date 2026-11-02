@@ -1850,24 +1850,53 @@ parse_config_file(){
   return 0
 }
 
+# Whether a config file asks for anything at all. The ISO ships a template with
+# every key commented out, and such a file must not end the search: a real config
+# further along would never be reached.
+cfg_has_keys(){
+  local line
+  [ -r "$1" ] || return 1
+  while IFS= read -r line || [ -n "$line" ]; do
+    line=$(cfg_clean "$line")
+    case "$line" in ""|\#*) continue ;; esac
+    case "$line" in *=*) return 0 ;; esac
+  done < "$1"
+  return 1
+}
+
+# One candidate path: a config when it asks for something, a note for the log
+# when it does not (someone copied the template and forgot to uncomment it).
+cfg_candidate(){
+  [ -f "$1" ] || return 1
+  if cfg_has_keys "$1"; then
+    CFG_FILE="$1"; CFG_MNT=$(dirname "$1"); return 0
+  fi
+  [ -n "${CFG_EMPTY:-}" ] || CFG_EMPTY="$1"
+  return 1
+}
+
 # Finds haos-installer.cfg: first in whatever is already mounted (a stick the
 # live system mounted, or an ISO someone remastered with a config inside), then
 # by mounting removable partitions read-only, the same candidates find_images()
 # walks. Read-only on purpose: looking for a config must not touch the stick.
+#
+# The partitions of the boot stick are searched too: this image is written to a
+# USB stick, and on a Ventoy or hand-partitioned stick the data partition's root
+# is exactly where a config belongs. The partition carrying the live system is
+# iso9660 and is skipped below, and the boot disk is never a target, so a config
+# found there cannot point the installer at the stick it booted from.
 find_config(){
   local m p pk fs
+  CFG_EMPTY=""
   while read -r m; do
     [ -n "$m" ] || continue
-    if [ -f "$m/haos-installer.cfg" ]; then
-      CFG_FILE="$m/haos-installer.cfg"; CFG_MNT="$m"; return 0
-    fi
+    cfg_candidate "$m/haos-installer.cfg" && return 0
   done < <(findmnt -rno TARGET 2>/dev/null)
 
   while read -r p; do
     [ -n "$p" ] || continue
     pk=$(lsblk -no PKNAME "/dev/$p" 2>/dev/null | head -1 | tr -d ' ')
     [ -n "$pk" ] || continue
-    [ -n "${live_dev:-}" ] && [ "$pk" = "$live_dev" ] && continue
     case "$(lsblk -dno TRAN "/dev/$pk" 2>/dev/null | tr -d ' ')/$(lsblk -dno RM "/dev/$pk" 2>/dev/null | tr -d ' ')" in
       *usb*|*1*) ;;
       *) continue ;;
@@ -1876,11 +1905,11 @@ find_config(){
     case "$fs" in iso9660|udf|"") continue ;; esac
     mkdir -p /mnt/cfg 2>/dev/null || continue
     mount -o ro "/dev/$p" /mnt/cfg 2>>"$LOG" || continue
-    if [ -f /mnt/cfg/haos-installer.cfg ]; then
-      CFG_FILE=/mnt/cfg/haos-installer.cfg; CFG_MNT=/mnt/cfg; return 0
-    fi
+    cfg_candidate /mnt/cfg/haos-installer.cfg && return 0
     umount /mnt/cfg 2>>"$LOG" || true
   done < <(lsblk -lno NAME,TYPE 2>/dev/null | awk '$2=="part"{print $1}')
+
+  [ -n "$CFG_EMPTY" ] && logx "config file at $CFG_EMPTY sets nothing (every key commented out): ignored"
   return 1
 }
 
@@ -1910,12 +1939,6 @@ load_config(){
 
   if [ -n "$CFG_FILE" ]; then
     parse_config_file "$CFG_FILE" || logx "config file could not be read"
-    # The ISO carries an all-commented template under this exact name, so a
-    # plain wizard run finds a file that says nothing. Say that out loud: a
-    # reader of the log should not have to guess whether a config was applied.
-    if [ -z "$CFG_UNATTENDED$CFG_WIPE$CFG_DISK$CFG_IMAGE$CFG_LANG$CFG_KEYMAP$CFG_POWEROFF$CFG_STREAM$CFG_FORMAT" ]; then
-      logx "that file sets nothing (every key commented out): nothing applied"
-    fi
     CFG_DISK_DEV=$(cfg_medium_disk)
     [ -n "$CFG_DISK_DEV" ] && logx "config medium is /dev/$CFG_DISK_DEV: never a target"
   fi

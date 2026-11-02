@@ -393,11 +393,16 @@ There are two ways to ask for it:
    `haos.lang=da`, and so on.
 
 The ISO carries a template for the file: `haos-installer.cfg` in its root, every
-key commented out, plus `haos-installer.cfg.example` in
-`/usr/local/share/doc/haos-isoinstall/` on the running system. It sets nothing,
-so a normal boot still gives the wizard -- the log says it found a config that
-sets nothing, which is that file. An ISO is read-only, so copy it to a stick
-before editing it; in this repository it is `haos-installer.cfg.example`.
+key commented out, and a copy named `haos-installer.cfg.example` in
+`/usr/local/share/doc/haos-isoinstall/` on the running system. A file that sets
+nothing is not a config, so it is skipped and the log says so -- and it cannot be
+edited where it sits: the partition carrying the live system is iso9660, which is
+read-only whether the image went to a disc or to a stick.
+
+On a USB stick that leaves three ways: a data partition on the same stick
+(Ventoy, or a stick partitioned by hand) with the file in its root -- the
+installer searches the boot stick's own partitions, but never the iso9660 one; a
+second stick, as above; or the kernel command line, which needs nothing prepared.
 
 The file is plain text, one `KEY=value` per line, `#` starts a comment, and a
 file saved on Windows with CRLF line endings is fine:

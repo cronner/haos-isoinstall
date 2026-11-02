@@ -126,13 +126,22 @@ disk. That exclusion only exists because a stick with a config on it used to be
 the second "eligible disk" — if you are testing an older ISO, expect that stop.
 
 You do not have to write that file from scratch: the ISO carries it already, all
-keys commented out, at its root (`haos-installer.cfg`), and `build-iso.sh`
-copies it from `haos-installer.cfg.example` here. Mount the ISO, copy the file
-onto a FAT32 stick, uncomment two lines. Editing it in place does not work -- an
-ISO is read-only, and a stick written from one inherits that. The log of every
-boot names that template (`config file found: .../haos-installer.cfg`) and says
-on the next line that it sets nothing, so the file existing on the medium does
-not mean mode is on.
+keys commented out, at its root (`haos-installer.cfg`), and `build-iso.sh` copies
+it from `haos-installer.cfg.example` here. Copy it somewhere writable and
+uncomment two lines. Where it sits it cannot be edited: the partition that
+carries the live system is iso9660, on a stick and on a disc alike, which is also
+why Windows cannot reformat an Etcher-written stick.
+
+A second stick is the obvious carrier, but one stick can do: on a Ventoy stick,
+or any stick with a FAT32/exFAT data partition beside the image, the config is
+read from that partition's root. The search covers the boot stick's own
+partitions -- never the iso9660 one that carries the live system -- because this
+image is made to be written to a USB stick. The boot disk is still never a
+target, so a config found there cannot aim the installer at the stick it booted
+from.
+
+Every boot names the template it skipped (`... sets nothing (every key commented
+out): ignored`), so a file sitting on the medium never passes for mode being on.
 
 After the run the stick holds `haos-install-*.log`: on a headless machine that
 file is the only evidence of what happened.

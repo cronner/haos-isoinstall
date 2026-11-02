@@ -23,7 +23,7 @@ ko(){ fail=$((fail + 1)); printf '  FAIL  %s\n' "$*"; }
 
 # ---- extract the functions under test --------------------------------------
 for fn in cfg_clean config_supported_lang default_keymap parse_config_line parse_config_file \
-        cfg_medium_disk load_config target_rows; do
+        cfg_has_keys cfg_candidate cfg_medium_disk load_config target_rows; do
   chunk=$(awk -v n="$fn" '$0 ~ "^" n "\\(\\)\\{" {f=1} f{print} f&&/^}$/{exit}' "$SRC")
   [ -n "$chunk" ] || { printf '%s not found in %s\n' "$fn" "$SRC"; exit 1; }
   eval "$chunk"
@@ -254,6 +254,21 @@ else
   parse_config_file "$TPL"
   [ -z "$CFG_UNATTENDED$CFG_WIPE$CFG_DISK$CFG_IMAGE$CFG_LANG$CFG_KEYMAP$CFG_POWEROFF$CFG_STREAM$CFG_FORMAT" ] \
     || ko "the shipped template must set nothing, got UNATTENDED='$CFG_UNATTENDED' WIPE='$CFG_WIPE' DISK='$CFG_DISK'"
+  # ... and it must not count as a config at all, or it would end the search
+  # before a real file on another partition is reached.
+  cfg_has_keys "$TPL" && ko 'the shipped template must not read as a config'
+  printf '#DISK=/dev/sda\n#WIPE=yes\n' > "$tmp/commented.cfg"
+  cfg_has_keys "$tmp/commented.cfg" && ko 'an all-commented file must not read as a config'
+  printf 'DISK=/dev/sda\n' > "$tmp/active.cfg"
+  cfg_has_keys "$tmp/active.cfg" || ko 'a file with one active key must read as a config'
+  printf 'WIPE=n\n' > "$tmp/typo.cfg"
+  cfg_has_keys "$tmp/typo.cfg" || ko 'a file with only a worthless key still asks for something'
+  CFG_EMPTY=""; CFG_FILE=""
+  cfg_candidate "$tmp/commented.cfg" && ko 'cfg_candidate must refuse an empty file'
+  [ "$CFG_FILE" = "" ] || ko "cfg_candidate must not set CFG_FILE for an empty file, got '$CFG_FILE'"
+  cfg_candidate "$tmp/active.cfg" || ko 'cfg_candidate must accept a file with keys'
+  [ "$CFG_FILE" = "$tmp/active.cfg" ] || ko "cfg_candidate picked the wrong file: '$CFG_FILE'"
+  [ "$CFG_MNT" = "$tmp" ] || ko "cfg_candidate set the wrong mount point: '$CFG_MNT'"
   # ... and the build has to actually ship it, or the guard above guards air.
   grep -q 'haos-installer.cfg.example' build-iso.sh \
     || ko 'build-iso.sh does not copy the template into the ISO'
