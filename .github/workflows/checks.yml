@@ -26,9 +26,15 @@ jobs:
       - name: Syntax, functions and string tables
         run: bash tests/strings.sh
 
+      # The medium chosen to stage the image on is the one place where a wrong
+      # answer destroys data, so its decision logic is tested with stubs rather
+      # than trusted to review.
+      - name: Staging-medium selection
+        run: bash tests/stage.sh
+
       - name: ShellCheck
         run: |
           # Warnings stay informative so that style does not break anything;
           # only real errors block.
-          shellcheck -S warning build-iso.sh haos-installer.sh tests/strings.sh || true
-          shellcheck -S error build-iso.sh haos-installer.sh tests/strings.sh
+          shellcheck -S warning build-iso.sh haos-installer.sh tests/strings.sh tests/stage.sh || true
+          shellcheck -S error build-iso.sh haos-installer.sh tests/strings.sh tests/stage.sh

@@ -139,16 +139,46 @@ Plug in the stick, boot. The wizard starts on its own:
    own progress bar (percentage, rate, ETA). The image is fetched and verified
    before the disk is touched, so a network failure leaves the disk intact, and
    an interrupted download resumes instead of starting over.
-   On a machine with too little RAM to hold the image, the wizard says so and
-   asks for a USB stick or external disk to keep it on, naming the exact path it
-   will use; only if there is none does it fall back to writing in one pass,
-   where the disk is erased first.
+   On a machine with too little RAM the image is staged on a USB stick instead —
+   see *When RAM is short* below.
    **Do not power off the PC**
 6. **Remove the USB stick**, then confirm: the PC reboots straight into Home
    Assistant. The installer runs from memory, so the stick is no longer needed
    at this point.
 
 Lines of text scroll by during boot: that is normal, it has not crashed.
+
+## When RAM is short — the image is staged on a USB stick
+
+The wizard keeps the downloaded image off the target disk until it has been
+checked, so a failed download cannot cost you a disk. That needs room for the
+compressed image (~430 MB) plus headroom — about twice its size in free memory,
+because it stages it in RAM, and `/tmp` is a tmpfs, half of RAM by default.
+
+Below that, the wizard does not silently drop the guarantee:
+
+1. It says how much memory is free and asks for a **writable USB stick or
+external disk** with at least as much free space (FAT32, exFAT, NTFS and ext4 all
+work), then offers **Retry**.
+2. Once one is found it shows the exact path it will use, downloads there,
+checks the file against the image's `.xz` checksums, and only then erases the
+disk.
+3. The file is deleted from the medium and the medium unmounted again once the
+write is done, so a stick you plugged in for this is left as you gave it.
+
+It never uses the installer stick itself: that one carries a read-only ISO9660
+filesystem, and writing there would mean reformatting it — destroying the only
+way back into the installer before Home Assistant is installed. The installation
+disk and the boot medium are excluded too; only USB or external media qualify.
+
+With no such medium, the last button is **Write in one pass**: the target disk is
+erased first and the download and the writing happen in one stream, so a network
+drop at that point leaves an empty disk. The dialog spells that out before you
+pick it.
+
+The choice of medium — what qualifies and what must be refused — is tested by
+`tests/stage.sh` (internal disk, installation disk, boot medium,
+ISO9660/UDF, too little room, read-only mount, and which candidate wins).
 
 ## Step 5 — First boot
 
