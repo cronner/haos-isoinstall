@@ -216,6 +216,18 @@ chmod +x config/hooks/live/9000-haos.hook.chroot
 #   - grub: the templates define no timeout -> GRUB waits forever.
 #     On some screens (old laptops) the menu does not even show up: black screen
 #     and the user has to press Enter blindly. Hence timeout_style=hidden.
+#
+# The unattended image is the exception: it is what people boot in a VM to try a
+# key on the kernel line, and 'e' is unreachable on a menu that hides itself
+# after one second. Five seconds, menu shown.
+MENU_TIMEOUT=10
+GRUB_TIMEOUT=1
+GRUB_STYLE=hidden
+if [ "$VARIANT" = unattended ]; then
+  MENU_TIMEOUT=50
+  GRUB_TIMEOUT=5
+  GRUB_STYLE=menu
+fi
 # NB: lb config already creates an EMPTY config/bootloaders/. A "cp -r src dst"
 #     would create dst/bootloaders/ instead of filling it -> we copy the CONTENT (src/.).
 mkdir -p config/bootloaders
@@ -224,15 +236,18 @@ cp -r /usr/share/live/build/bootloaders/. config/bootloaders/
 for f in config/bootloaders/isolinux/isolinux.cfg \
          config/bootloaders/syslinux/syslinux.cfg \
          config/bootloaders/extlinux/extlinux.conf; do
-  [ -f "$f" ] && sed -i 's/^timeout 0$/timeout 10/' "$f"
+  if [ -f "$f" ]; then sed -i "s/^timeout 0$/timeout $MENU_TIMEOUT/" "$f"; fi
 done
 
 # GRUB: inject the timeout into every .cfg of the template
 for f in config/bootloaders/grub-pc/*.cfg config/bootloaders/grub-efi/*.cfg; do
   [ -f "$f" ] || continue
-  grep -q '^set timeout=' "$f" \
-    && sed -i 's/^set timeout=.*/set timeout=1/' "$f" \
-    || sed -i '1i set timeout=1\nset timeout_style=hidden' "$f"
+  if grep -q '^set timeout=' "$f"; then
+    sed -i "s/^set timeout=.*/set timeout=$GRUB_TIMEOUT/" "$f"
+    sed -i "s/^set timeout_style=.*/set timeout_style=$GRUB_STYLE/" "$f"
+  else
+    sed -i "1i set timeout=$GRUB_TIMEOUT\nset timeout_style=$GRUB_STYLE" "$f"
+  fi
 done
 
 echo ">>> Timeouts applied:"

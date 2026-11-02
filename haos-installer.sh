@@ -1888,14 +1888,6 @@ cfg_candidate(){
 find_config(){
   local m p pk fs
   CFG_EMPTY=""
-  # A config built into the image itself, which is what the unattended ISO is:
-  # two images, one Installer, one of them with this file in /etc. It is checked
-  # BEFORE any medium so that a config stick left in a port cannot quietly
-  # redirect an image whose whole purpose is to run without anyone present; the
-  # kernel command line still wins, because it is applied after this. Overridable
-  # so tests/unattended.sh can point it at a file without touching /etc.
-  cfg_candidate "${HAOS_IMAGE_CFG:-/etc/haos-installer.cfg}" && return 0
-
   while read -r m; do
     [ -n "$m" ] || continue
     cfg_candidate "$m/haos-installer.cfg" && return 0
@@ -1932,23 +1924,45 @@ cfg_medium_disk(){
   lsblk -no PKNAME "$src" 2>/dev/null | head -1 | tr -d ' '
 }
 
+# Where the decisions came from, for the log and the banner: the image's own
+# config, a file on a medium and the kernel command line can all have spoken,
+# and a bug report that names only the last one is a report about the wrong file.
+cfg_source(){
+  local s=""
+  [ -n "${CFG_IMAGE_FILE:-}" ] && s="$CFG_IMAGE_FILE"
+  [ -n "${CFG_FILE:-}" ] && s="${s:+$s + }$CFG_FILE"
+  printf '%s' "${s:-/proc/cmdline}"
+}
+
 # Decides whether this run is unattended, and stops at once when a config asks
 # for a disk to be erased without saying WIPE=yes. The kernel command line is
 # applied last, so the person who just edited the boot entry wins over a file
 # left on the stick.
 load_config(){
-  local p kv
+  local p kv baked
   # Overridable so that tests/unattended.sh can feed it a canned command line
   # without touching the machine it runs on.
   local cmd="${HAOS_CMDLINE:-/proc/cmdline}"
+  baked="${HAOS_IMAGE_CFG:-/etc/haos-installer.cfg}"
 
-  find_config && logx "config file found: $CFG_FILE" \
-              || logx "no config file on any medium"
+  # Layered, weakest first: the config a build put into the image (the
+  # unattended ISO has one), then a file found on a medium, then the kernel
+  # command line. Each layer only sets the keys it names, so a two-line stick
+  # changes LANG= or POWEROFF= on the unattended image without rebuilding it --
+  # and a layer above cannot silently drop a decision made below it.
+  if [ -f "$baked" ] && cfg_has_keys "$baked"; then
+    CFG_IMAGE_FILE="$baked"
+    parse_config_file "$baked" || logx "config built into the image could not be read"
+    logx "config built into the image: $baked"
+  fi
 
-  if [ -n "$CFG_FILE" ]; then
+  if find_config; then
+    logx "config file found: $CFG_FILE"
     parse_config_file "$CFG_FILE" || logx "config file could not be read"
     CFG_DISK_DEV=$(cfg_medium_disk)
     [ -n "$CFG_DISK_DEV" ] && logx "config medium is /dev/$CFG_DISK_DEV: never a target"
+  else
+    logx "no config file on any medium"
   fi
 
   for p in $(cat "$cmd" 2>/dev/null); do
@@ -1961,7 +1975,7 @@ load_config(){
   done
 
   if [ "$CFG_UNATTENDED" != "yes" ]; then
-    [ -n "$CFG_FILE" ] && logx "UNATTENDED is not yes in $CFG_FILE: normal wizard"
+    logx "UNATTENDED is not yes in $(cfg_source): normal wizard"
     return 0
   fi
   UNATTENDED=yes
@@ -1984,15 +1998,15 @@ load_config(){
   # Erasing a disk with nobody in front of the screen needs consent written down:
   # WIPE=yes is that signature, and its absence stops the run here.
   if [ "$CFG_WIPE" != "yes" ]; then
-    die "$(printf "$S_UNAT_NOWIPE" "${CFG_FILE:-/proc/cmdline}")"
+    die "$(printf "$S_UNAT_NOWIPE" "$(cfg_source)")"
   fi
   return 0
 }
 
 unattended_banner(){
-  logx "UNATTENDED: config ${CFG_FILE:-kernel command line} | language $UI_LANG | disk ${CFG_DISK:-<the only one>} | image ${CFG_IMAGE:-download} | poweroff ${CFG_POWEROFF:-no} | stream ${CFG_STREAM:-no} | format ${CFG_FORMAT:-no}"
+  logx "UNATTENDED: config $(cfg_source) | language $UI_LANG | disk ${CFG_DISK:-<the only one>} | image ${CFG_IMAGE:-download} | poweroff ${CFG_POWEROFF:-no} | stream ${CFG_STREAM:-no} | format ${CFG_FORMAT:-no}"
   whiptail --title "$S_TITLE" --infobox \
-    "$(printf "$S_UNAT_ACTIVE" "${CFG_FILE:-/proc/cmdline}" "$UI_LANG")" 13 68
+    "$(printf "$S_UNAT_ACTIVE" "$(cfg_source)" "$UI_LANG")" 13 68
   sleep 2
 }
 
@@ -3582,6 +3596,7 @@ UNATTENDED=""                 # "yes" once a config asked for it
 CFG_FILE=""                   # config file that was read (empty = kernel cmdline)
 CFG_MNT=""                    # where that file is mounted, for IMAGE= paths
 CFG_EMPTY=""                  # a template-only file seen on the way: only logged
+CFG_IMAGE_FILE=""             # config built into the image itself (unattended ISO)
 CFG_DISK_DEV=""                    # disk carrying that file: never a target
 # Declared although no branch below needs it: parse_config_line writes it, so a
 # config could, and 'set -u' turns reading a config *without* UNATTENDED= into a

@@ -75,9 +75,12 @@ sudo ./build-iso.sh unattended     # erases the disk it picks, no questions
 
 The unattended variant installs `haos-installer.cfg.unattended` as
 `/etc/haos-installer.cfg` inside the image, and puts the same file on the ISO
-surface where it can be read before booting. It is checked before any medium,
-because a config stick left in a port should not redirect an image meant to run
-with nobody present.
+surface where it can be read before booting. It is the weakest of three layers:
+a config on a stick is applied on top of it, key by key, and the kernel command
+line on top of both. That is deliberate -- needing to rebuild an image to change
+`POWEROFF=` in a VM would make the variant useless exactly where it is easiest to
+try. The unattended image also shows its GRUB menu for five seconds, while the
+plain one hides it after one, so `e` is reachable there.
 
 The boot timeouts that were applied are displayed **within the first seconds**:
 if the list is empty, there is no point waiting for the end.
@@ -152,6 +155,11 @@ the end of a run, which is the only way it becomes writable again.
 `/etc/haos-installer.cfg` as the config it read. That is the fastest check that
 the baked file survived the build -- the plain image would show the template on
 the ISO root instead, and that one sets nothing.
+
+To change one key without rebuilding anything, either press `e` at the menu (it
+stays for five seconds on this image) and add e.g. `haos.lang=da
+haos.poweroff=yes`, or put a two-line file on a stick: the log then names both
+layers, and only the keys your file sets are overridden.
 
 A second stick is the obvious carrier, but one stick can do: on a Ventoy stick,
 or any stick with a FAT32/exFAT data partition beside the image, the config is

@@ -411,10 +411,12 @@ On a USB stick that leaves three ways: a data partition on the same stick
 installer searches the boot stick's own partitions, but never the iso9660 one; a
 second stick, as above; or the kernel command line, which needs nothing prepared.
 
-On the unattended image the baked config is the one that counts: a stick left in
-a port must not be able to redirect an image whose whole purpose is to run with
-nobody in front of it. The kernel command line still wins over both, so
-`haos.disk=` at the boot menu overrides even the baked file.
+Three layers can speak, weakest first: the config baked into the image (only the
+unattended image has one), a `haos-installer.cfg` found on a medium, and the
+kernel command line. Each layer sets only the keys it names, so a two-line stick
+changes `LANG=` or `POWEROFF=` on the unattended image without an image being
+rebuilt, and `haos.disk=` typed at the boot menu overrides everything. The log
+names every layer that was read and every key that won.
 
 The file is plain text, one `KEY=value` per line, `#` starts a comment, and a
 file saved on Windows with CRLF line endings is fine:

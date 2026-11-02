@@ -16,5 +16,10 @@
 # with two or more it stops and logs which ones it saw instead of guessing. Add
 # DISK=/dev/sda (or /dev/nvme0n1) to choose one, and LANG=/POWEROFF= if wanted:
 # every key in haos-installer.cfg.example works here as well.
+#
+# This file is the weakest of the three layers that can speak, so it is not the
+# only way to change them: a haos-installer.cfg on a stick is applied on top of
+# it, key by key, and so is anything typed on the kernel command line
+# (haos.lang=da haos.poweroff=yes). Rebuilding for one key is never necessary.
 UNATTENDED=yes
 WIPE=yes

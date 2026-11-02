@@ -23,7 +23,7 @@ ko(){ fail=$((fail + 1)); printf '  FAIL  %s\n' "$*"; }
 
 # ---- extract the functions under test --------------------------------------
 for fn in cfg_clean config_supported_lang default_keymap parse_config_line parse_config_file \
-        cfg_has_keys cfg_candidate cfg_medium_disk load_config target_rows; do
+        cfg_has_keys cfg_candidate cfg_medium_disk cfg_source load_config target_rows; do
   chunk=$(awk -v n="$fn" '$0 ~ "^" n "\\(\\)\\{" {f=1} f{print} f&&/^}$/{exit}' "$SRC")
   [ -n "$chunk" ] || { printf '%s not found in %s\n' "$fn" "$SRC"; exit 1; }
   eval "$chunk"
@@ -290,26 +290,30 @@ done
 
 # ---- 16. the unattended image carries a config inside the image ------------
 # It cannot sit at the ISO root: find_config() skips the iso9660 partition, since
-# that one carries the live system. So the build puts it in the chroot and the
-# search looks there first. Exercised against the real find_config(), with the
-# media search stubbed out (this runs on a developer machine, not a live ISO).
+# that one carries the live system. So the build puts it in the chroot, and
+# load_config() reads it as the weakest layer. Exercised against the real
+# find_config() where it matters, with the media search stubbed out (this runs on
+# a developer machine, not a live ISO).
 STUB_FIND_CONFIG=$(declare -f find_config)
 eval "$(awk -v n=find_config '$0 ~ "^" n "\\(\\)\\{" {f=1} f{print} f&&/^}$/{exit}' "$SRC")"
-findmnt(){ case "$*" in *TARGET*) [ -n "$FINDMNT_TARGETS" ] && printf '%s\n' "$FINDMNT_TARGETS"; return 0 ;; esac; return 1; }
+# A stub that prints the one mount point the search should walk, if any.
+findmnt(){
+  case "$*" in
+    *TARGET*) if [ -n "$FINDMNT_TARGETS" ]; then printf '%s\n' "$FINDMNT_TARGETS"; fi; return 0 ;;
+  esac
+  return 1
+}
 mount(){ return 1; }
 
 reset
 printf 'UNATTENDED=yes\nWIPE=yes\n' > "$tmp/baked.cfg"
 printf 'UNATTENDED=yes\nWIPE=yes\nDISK=/dev/sdz\n' > "$tmp/haos-installer.cfg"
+# find_config() searches media only: the image's own file is load_config()'s
+# business, so a stick must still be found when one is built in.
 HAOS_IMAGE_CFG="$tmp/baked.cfg"; FINDMNT_TARGETS="$tmp"; CFG_FILE=""
-find_config || ko 'the config built into the image was not found'
-[ "$CFG_FILE" = "$tmp/baked.cfg" ] \
-  || ko "a config stick must not override the image's own config (got '$CFG_FILE')"
-
-CFG_FILE=""; HAOS_IMAGE_CFG="$tmp/nope.cfg"
-find_config || ko 'the medium search broke once the baked config was absent'
+find_config || ko 'a mounted medium is not searched'
 [ "$CFG_FILE" = "$tmp/haos-installer.cfg" ] \
-  || ko "a mounted medium is not searched (got '$CFG_FILE')"
+  || ko "find_config returned '$CFG_FILE' instead of the medium's file"
 
 eval "$STUB_FIND_CONFIG"           # load_config() above needs its fixed answer
 FINDMNT_TARGETS=""
@@ -323,6 +327,34 @@ parse_config_file haos-installer.cfg.unattended
 [ "$CFG_WIPE" = yes ] || ko 'the unattended image does not carry the consent'
 rest="$CFG_DISK$CFG_IMAGE$CFG_LANG$CFG_KEYMAP$CFG_POWEROFF$CFG_STREAM$CFG_FORMAT"
 [ -z "$rest" ] || ko "the unattended image sets more than it should: '$rest'"
+
+# ---- 17. the layers: image, then medium, then kernel command line -----------
+# The point of the layering: changing one key on the unattended image must not
+# mean rebuilding an image. A two-line file on a stick has to win over the baked
+# one, while the keys it does not mention stay as the image set them.
+reset
+printf 'UNATTENDED=yes\nWIPE=yes\nPOWEROFF=yes\nLANG=da\n' > "$tmp/baked17.cfg"
+printf 'LANG=sv\n' > "$tmp/disk17.cfg"
+HAOS_IMAGE_CFG="$tmp/baked17.cfg"; CFG_NEXT="$tmp/disk17.cfg"
+UI_LANG=en; HAOS_CMDLINE=""
+load_config || ko 'the layered config did not load'
+[ "$UNATTENDED" = yes ]      || ko 'the UNATTENDED=yes from the image was lost'
+[ "$CFG_POWEROFF" = yes ]    || ko 'POWEROFF=yes from the image config was lost'
+[ "$UI_LANG" = sv ]          || ko "a key on the medium did not win (UI_LANG='$UI_LANG')"
+[ "$CFG_IMAGE_FILE" = "$tmp/baked17.cfg" ] || ko 'the image config was not recorded as its own layer'
+
+# ... and the kernel command line still wins over both, which is how a VM is
+# given one key without any file at all.
+reset
+printf 'UNATTENDED=yes\nWIPE=yes\nLANG=da\n' > "$tmp/baked17b.cfg"
+printf 'LANG=sv\n' > "$tmp/disk17b.cfg"
+printf 'quiet haos.lang=de\n' > "$tmp/cmd17"
+HAOS_IMAGE_CFG="$tmp/baked17b.cfg"; CFG_NEXT="$tmp/disk17b.cfg"
+UI_LANG=en; HAOS_CMDLINE="$tmp/cmd17"
+load_config || ko 'the config with a command line layer did not load'
+[ "$UI_LANG" = de ] || ko "the kernel command line did not win (UI_LANG='$UI_LANG')"
+CFG_NEXT=""; HAOS_CMDLINE=""; HAOS_IMAGE_CFG="$tmp/none.cfg"
+[ "$(cfg_source)" != "" ] || ko 'cfg_source prints nothing'
 
 grep -q 'HAOS_VARIANT' build-iso.sh || ko 'build-iso.sh has no variant switch'
 grep -q 'haos-installer.cfg.unattended' build-iso.sh \
