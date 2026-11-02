@@ -3573,7 +3573,12 @@ VER_SRC=""                    # source chosen for the version: traced in the log
 UNATTENDED=""                 # "yes" once a config asked for it
 CFG_FILE=""                   # config file that was read (empty = kernel cmdline)
 CFG_MNT=""                    # where that file is mounted, for IMAGE= paths
+CFG_EMPTY=""                  # a template-only file seen on the way: only logged
 CFG_DISK_DEV=""                    # disk carrying that file: never a target
+# Declared although no branch below needs it: parse_config_line writes it, so a
+# config could, and 'set -u' turns reading a config *without* UNATTENDED= into a
+# crash of the whole wizard. Every CFG_* key read anywhere needs its line here.
+CFG_UNATTENDED=""              # UNATTENDED=yes: the opt-in itself
 CFG_WIPE=""                   # WIPE=yes: consent to erase, replaces the typed YES
 CFG_DISK=""                   # DISK=: the target, or empty to take the only one
 CFG_IMAGE=""                  # IMAGE=: a .img.xz next to the config file

@@ -74,11 +74,16 @@ lsblk(){
   return 1
 }
 
+# The installer declares its own defaults on one line each, just before it
+# starts. Taking them from there instead of keeping a list here means a key that
+# is used but never declared -- fatal under 'set -u', which is how unattended
+# mode could die on the ISO while this test stayed green -- fails here instead.
+DECLS=$(grep -E '^(UNATTENDED|CFG_[A-Z_]+|TARGET|IMG_URL|WIFI_[A-Z_]+)=' "$SRC")
+
 reset(){
   DISKS=(); FSTYPE=(); LABEL=(); SIZE=(); MODEL=(); VENDOR=(); TRAN=(); RM=()
-  TARGET=""; live_dev=""; IMG_DISK=""; CFG_DISK_DEV=""; CFG_MNT=""
-  CFG_UNATTENDED=""; CFG_WIPE=""; CFG_DISK=""; CFG_IMAGE=""; CFG_LANG=""
-  CFG_KEYMAP=""; CFG_POWEROFF=""; CFG_STREAM=""; CFG_FORMAT=""
+  eval "$DECLS"                  # the same empty defaults the real script starts with
+  live_dev=""; IMG_DISK=""
 }
 
 # Prints the /dev/name field of every record target_rows() emits.
@@ -274,12 +279,22 @@ else
     || ko 'build-iso.sh does not copy the template into the ISO'
 fi
 
+# ---- 15. every key the script reads is declared (see DECLS above) ----------
+# 'set -u' is on in the script: a CFG_* key read but never declared stops the
+# wizard dead -- on the ISO that is a service that restarts into the same error,
+# with no menu at all. Nothing here would have noticed before.
+for v in $(grep -oE '\$\{?(CFG_[A-Z_]+|UNATTENDED)\b' "$SRC" | tr -d '${' | sort -u); do
+  grep -qE "^$v=" "$SRC" || ko "$v is read but never declared: 'set -u' would end the run"
+done
+[ -n "$DECLS" ] || ko "no declarations extracted from $SRC"
+
 rm -rf "$tmp"
 
 if [ "$fail" -ne 0 ]; then
   printf '\n%s check(s) failed\n' "$fail"
   exit 1
 fi
+
 printf 'ok    unattended: CRLF, quotes, lowercase and unknown keys handled, WIPE\n'
 printf '      never assumed, consent gate stops a config without it, cmdline wins\n'
 printf '      over the file, language keys right, and the same disk exclusions\n'
