@@ -43,9 +43,7 @@ The wizard speaks **14 languages**, taken from the countries with the most Home
 Assistant installations — the top of
 [Home Assistant's public analytics](https://analytics.home-assistant.io/).
 German and English are the two largest, but English comes first and Danish second
-because this fork started in Danish. Together they cover every European country
-in the analytics top 25 except Romania, Ukraine and Hungary; Chinese, at number
-six, is the largest gap at the time of writing. A new language is 87 strings to
+because this fork started in Danish. Adding a language later is 87 strings to
 translate. You pick the language, and its keyboard layout is applied
 automatically — one line, nothing to match up:
 
