@@ -288,7 +288,17 @@ Plug in the stick, boot. The wizard starts on its own:
    On a machine with too little RAM the image is staged on a USB stick instead —
    see *When RAM is short* below.
    **Do not power off the PC**
-6. **Remove the USB stick**, then confirm: the PC reboots straight into Home
+6. **Read-back check** — optional, and recommended. The wizard offers to read
+   the written bytes back off the disk and hash them, then compare that hash
+   with the hash of the image it wrote. The page cache is dropped first, so it
+   reads the disk and not RAM. One to three minutes. This is how a worn SSD, a
+   marginal SATA cable or bad memory is caught *now* rather than as a machine
+   that boots to a black screen. If the two hashes differ the wizard stops and
+   tells you not to use the installation; declining the check is allowed and
+   changes nothing else.
+   It proves the copy is correct today; it cannot promise the disk will still be
+   correct next year.
+7. **Remove the USB stick**, then confirm: the PC reboots straight into Home
    Assistant. The installer runs from memory, so the stick is no longer needed
    at this point.
 
