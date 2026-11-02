@@ -87,6 +87,8 @@ not to this repository.
 
 ## What you need
 
+- A **x86-64 PC with UEFI** — the ISO is 64-bit only, and Home Assistant needs
+  UEFI (no Legacy/CSM mode, see step 3)
 - A PC **dedicated** to Home Assistant — **its disk will be completely erased**
 - **32 GB of disk** minimum, **2 GB of RAM** minimum
 - A **USB stick** of 1 GB or more (its contents will be erased)
@@ -340,7 +342,7 @@ Ethernet cable.
 
 | Setup | Status |
 |---|---|
-| Physical PC (Dell Inspiron, Wi-Fi) | ✅ |
+| Physical PC (x86-64, UEFI, built-in Wi-Fi) | ✅ |
 | Proxmox (q35 + OVMF, Secure Boot off) | ✅ |
 | Unraid (QEMU/KVM, OVMF, Secure Boot off) | ✅ reported |
 | virt-manager / libvirt, Incus, LXD | ◻ same settings, not tested here |
