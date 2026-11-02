@@ -39,13 +39,15 @@ boot the stick and follow the wizard. Everything below is detail.
 · [5 First boot](#step-5--first-boot) · [Troubleshooting](#if-something-goes-wrong)
 · [Building it yourself](BUILDING.md)
 
-The wizard speaks **14 languages**, chosen from the languages most used by Home
-Assistant installations: the larger European ones, with English first and Danish
-second because this fork started in Danish. Home Assistant publishes where its
-installations are, not which language they pick, so the list is a judgement from
-its user base rather than a count. Others — Chinese, Japanese, Arabic — are not
-there yet; each new one is 87 strings to translate. You pick the language, and
-its keyboard layout is applied automatically — one line, nothing to match up:
+The wizard speaks **14 languages**, taken from the countries with the most Home
+Assistant installations — the top of
+[Home Assistant's public analytics](https://analytics.home-assistant.io/).
+German and English are the two largest, but English comes first and Danish second
+because this fork started in Danish. Together they cover every European country
+in the analytics top 25 except Romania, Ukraine and Hungary; Chinese, at number
+six, is the largest gap at the time of writing. A new language is 87 strings to
+translate. You pick the language, and its keyboard layout is applied
+automatically — one line, nothing to match up:
 
 | Language | Keyboard layout set automatically |
 | -------- | --------------------------------- |
