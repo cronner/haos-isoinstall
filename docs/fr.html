@@ -105,6 +105,16 @@
     padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
   }
   footer p { margin: 0.4rem 0; }
+  .btn {
+    display: inline-block; margin: 0.35rem 0 0.6rem;
+    background: #0a7ea4; color: #fff;
+    padding: 0.55rem 1rem; border-radius: 8px;
+    font-weight: 600; font-size: 0.95rem; text-decoration: none;
+  }
+  .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  @media (prefers-color-scheme: dark) {
+    .btn { background: #4cc2e6; color: #10161c; }
+  }
 </style>
 </head>
 <body>
@@ -155,7 +165,7 @@
     <li>Un ordinateur dont vous pouvez vous passer (Intel ou AMD), qui démarre en mode UEFI. Il deviendra votre machine Home Assistant.</li>
     <li>Une clé USB de 2 Go ou plus.</li>
     <li>Internet — sauf si vous avez déjà le fichier sur une clé.</li>
-    <li>Environ une demi-heure. L'essentiel est de l'attente.</li>
+    <li>Environ une demi-heure. L'essentiel, c'est l'attente.</li>
   </ul>
 
   <h2 id="steps">Étape par étape</h2>
@@ -163,6 +173,7 @@
     <li>
       <h3>Télécharger le fichier</h3>
       <p>Sur la page des versions, prenez le fichier qui finit par .iso (environ 470 Mo). Vous ne choisissez pas de version : la clé récupère la plus récente.</p>
+      <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Télécharger le fichier ISO</a></p>
     </li>
     <li>
       <h3>L'écrire sur la clé USB</h3>

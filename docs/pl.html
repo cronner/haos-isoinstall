@@ -105,6 +105,16 @@
     padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
   }
   footer p { margin: 0.4rem 0; }
+  .btn {
+    display: inline-block; margin: 0.35rem 0 0.6rem;
+    background: #0a7ea4; color: #fff;
+    padding: 0.55rem 1rem; border-radius: 8px;
+    font-weight: 600; font-size: 0.95rem; text-decoration: none;
+  }
+  .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  @media (prefers-color-scheme: dark) {
+    .btn { background: #4cc2e6; color: #10161c; }
+  }
 </style>
 </head>
 <body>
@@ -163,6 +173,7 @@
     <li>
       <h3>Pobierz plik</h3>
       <p>Na stronie wydań weź plik kończący się na .iso (około 470 MB). Nie wybierasz wersji: pendrive sam pobierze najnowszą.</p>
+      <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Pobierz plik ISO</a></p>
     </li>
     <li>
       <h3>Zapisz go na pendrive</h3>

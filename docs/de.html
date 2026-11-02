@@ -105,6 +105,16 @@
     padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
   }
   footer p { margin: 0.4rem 0; }
+  .btn {
+    display: inline-block; margin: 0.35rem 0 0.6rem;
+    background: #0a7ea4; color: #fff;
+    padding: 0.55rem 1rem; border-radius: 8px;
+    font-weight: 600; font-size: 0.95rem; text-decoration: none;
+  }
+  .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  @media (prefers-color-scheme: dark) {
+    .btn { background: #4cc2e6; color: #10161c; }
+  }
 </style>
 </head>
 <body>
@@ -152,7 +162,7 @@
 
   <h2 id="need">Das brauchst du</h2>
   <ul class="need">
-    <li>Einen Rechner, den du entbehren kannst (Intel oder AMD), der im UEFI-Modus startet. Er wird deine Home-Assistant-Maschine.</li>
+    <li>Einen Rechner, den du entbehren kannst (Intel oder AMD), der im UEFI-Modus startet. Er wird zu deiner Home-Assistant-Maschine.</li>
     <li>Einen USB-Stick mit 2 GB oder mehr.</li>
     <li>Internet — außer du hast die Datei schon auf einem Stick.</li>
     <li>Etwa eine halbe Stunde. Das meiste ist Warten.</li>
@@ -163,6 +173,7 @@
     <li>
       <h3>Datei herunterladen</h3>
       <p>Auf der Releases-Seite lädst du die Datei, die auf .iso endet (etwa 470 MB). Du wählst keine Version: der Stick holt selbst die neueste.</p>
+      <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">ISO-Datei herunterladen</a></p>
     </li>
     <li>
       <h3>Auf den USB-Stick schreiben</h3>
@@ -178,11 +189,11 @@
     </li>
     <li>
       <h3>Die Fragen beantworten</h3>
-      <p>Sprache (14 möglich, die Tastatur folgt), woher die Datei kommen soll, Netzwerk und welche Platte gelöscht werden darf — YES eintippen.</p>
+      <p>Sprache (14 Sprachen, die Tastatur folgt), woher die Datei kommen soll, Netzwerk und welche Platte gelöscht werden darf — YES eintippen.</p>
     </li>
     <li>
       <h3>Warten, dann Stick abziehen</h3>
-      <p>Er lädt und prüft die Datei, schreibt sie und bietet am Ende an, die Platte zurückzulesen und zu vergleichen. Sag ja. Zieh den Stick ab, wenn er fertig meldet.</p>
+      <p>Er lädt und prüft die Datei, schreibt sie und bietet am Ende an, die Platte zurückzulesen und zu vergleichen. Sag ja. Zieh den Stick ab, wenn er meldet, dass er fertig ist.</p>
     </li>
   </ol>
 

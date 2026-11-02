@@ -105,6 +105,16 @@
     padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
   }
   footer p { margin: 0.4rem 0; }
+  .btn {
+    display: inline-block; margin: 0.35rem 0 0.6rem;
+    background: #0a7ea4; color: #fff;
+    padding: 0.55rem 1rem; border-radius: 8px;
+    font-weight: 600; font-size: 0.95rem; text-decoration: none;
+  }
+  .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  @media (prefers-color-scheme: dark) {
+    .btn { background: #4cc2e6; color: #10161c; }
+  }
 </style>
 </head>
 <body>
@@ -163,6 +173,7 @@
     <li>
       <h3>Last ned filen</h3>
       <p>På releases-siden tar du filen som slutter på .iso (cirka 470 MB). Du velger ingen versjon: pinnen henter den nyeste selv.</p>
+      <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Last ned ISO-filen</a></p>
     </li>
     <li>
       <h3>Skriv den til USB-pinnen</h3>
@@ -182,7 +193,7 @@
     </li>
     <li>
       <h3>Vent, og ta ut pinnen</h3>
-      <p>Den henter og sjekker filen, skriver den, og tilbyr til slutt å lese disken tilbake og sammenligne. Si ja. Ta ut pinnen når den sier den er ferdig.</p>
+      <p>Den henter og sjekker filen, skriver den, og tilbyr til slutt å lese disken tilbake og sammenligne. Si ja. Ta ut pinnen når den sier at den er ferdig.</p>
     </li>
   </ol>
 
@@ -200,7 +211,7 @@
     <dt>Skjermen er svart</dt>
     <dd>Sjekk i innstillingene at Secure Boot er slått av, la pinnen sitte og prøv igjen.</dd>
     <dt>Den finner ingen disk</dt>
-    <dd>Lagringen står trolig på RAID i stedet for AHCI. Endre det og start på nytt.</dd>
+    <dd>Lagringen er trolig satt til RAID i stedet for AHCI. Endre det og start på nytt.</dd>
     <dt>Adressen åpner ikke</dt>
     <dd>Prøv http://homeassistant.local:8123, eller maskinens adresse fra ruteren med :8123.</dd>
   </dl>

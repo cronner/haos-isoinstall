@@ -105,6 +105,16 @@
     padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
   }
   footer p { margin: 0.4rem 0; }
+  .btn {
+    display: inline-block; margin: 0.35rem 0 0.6rem;
+    background: #0a7ea4; color: #fff;
+    padding: 0.55rem 1rem; border-radius: 8px;
+    font-weight: 600; font-size: 0.95rem; text-decoration: none;
+  }
+  .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  @media (prefers-color-scheme: dark) {
+    .btn { background: #4cc2e6; color: #10161c; }
+  }
 </style>
 </head>
 <body>
@@ -141,7 +151,7 @@
 
   <div class="hero">
     <h1>Installare Home Assistant su un PC</h1>
-    <p class="lede">Home Assistant gestisce la tua casa intelligente da un computer in casa tua. Continua a funzionare quando internet non c'e, e i tuoi dati restano tuoi.</p>
+    <p class="lede">Home Assistant gestisce la tua casa intelligente da un computer in casa tua. Continua a funzionare quando internet non c'è, e i tuoi dati restano tuoi.</p>
     <p class="lede">Questa guida va dal download al primo avvio. Non serve sapere Linux e non devi digitare nessun comando.</p>
 
     <div class="notice">
@@ -152,17 +162,18 @@
 
   <h2 id="need">Cosa ti serve</h2>
   <ul class="need">
-    <li>Un computer di cui puoi fare a meno (Intel o AMD) che si avvii in modalita UEFI. Diventera la tua macchina Home Assistant.</li>
-    <li>Una chiavetta USB da 2 GB o piu.</li>
-    <li>Internet, a meno che tu non abbia gia il file su una chiavetta.</li>
-    <li>Circa mezz'ora. La maggior parte e attesa.</li>
+    <li>Un computer di cui puoi fare a meno (Intel o AMD) che si avvii in modalità UEFI. Diventerà la tua macchina Home Assistant.</li>
+    <li>Una chiavetta USB da 2 GB o più.</li>
+    <li>Internet, a meno che tu non abbia già il file su una chiavetta.</li>
+    <li>Circa mezz'ora. La maggior parte è attesa.</li>
   </ul>
 
   <h2 id="steps">Passo per passo</h2>
   <ol class="steps">
     <li>
       <h3>Scaricare il file</h3>
-      <p>Nella pagina delle versioni prendi il file che finisce in .iso (circa 470 MB). Non scegli la versione: la chiavetta prende la piu recente.</p>
+      <p>Nella pagina delle versioni prendi il file che finisce in .iso (circa 470 MB). Non scegli la versione: la chiavetta prende la più recente.</p>
+      <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Scarica il file ISO</a></p>
     </li>
     <li>
       <h3>Scriverlo sulla chiavetta</h3>
@@ -170,7 +181,7 @@
     </li>
     <li>
       <h3>Cambiare due impostazioni</h3>
-      <p>All'avvio premi F2 o Canc. Disattiva Secure Boot e metti la modalita SATA su AHCI. Salva ed esci.</p>
+      <p>All'avvio premi F2 o Canc. Disattiva Secure Boot e metti la modalità SATA su AHCI. Salva ed esci.</p>
     </li>
     <li>
       <h3>Avviare dalla chiavetta</h3>
@@ -178,19 +189,19 @@
     </li>
     <li>
       <h3>Rispondere alle domande</h3>
-      <p>Lingua (14 disponibili, la tastiera si imposta da sola), da dove arriva il file, la rete e quale disco si puo cancellare: scrivi YES.</p>
+      <p>Lingua (14 disponibili, la tastiera si imposta da sola), da dove arriva il file, la rete e quale disco si può cancellare: scrivi YES.</p>
     </li>
     <li>
       <h3>Aspettare e togliere la chiavetta</h3>
-      <p>Scarica e controlla il file, lo scrive e alla fine propone di rileggere il disco e confrontarlo. Di si. Togli la chiavetta quando dice che ha finito.</p>
+      <p>Scarica e controlla il file, lo scrive e alla fine propone di rileggere il disco e confrontarlo. Di sì. Togli la chiavetta quando dice che ha finito.</p>
     </li>
   </ol>
 
   <h2 id="first">Primo avvio</h2>
   <ul class="need">
     <li>Collega il PC al router con un cavo e accendilo.</li>
-    <li>Apri http://homeassistant.local: "Preparing Home Assistant" puo richiedere venti minuti.</li>
-    <li>Crea il tuo account e annota la password: non si puo recuperare.</li>
+    <li>Apri http://homeassistant.local — “Preparing Home Assistant” può richiedere venti minuti.</li>
+    <li>Crea il tuo account e annota la password: non si può recuperare.</li>
   </ul>
 
   <h2 id="problem">Se qualcosa non va</h2>
@@ -200,7 +211,7 @@
     <dt>Lo schermo resta nero</dt>
     <dd>Controlla nelle impostazioni che Secure Boot sia disattivato, lascia la chiavetta e riprova.</dd>
     <dt>Non trova nessun disco</dt>
-    <dd>Lo storage e probabilmente in RAID invece di AHCI. Cambialo e riparti.</dd>
+    <dd>Lo storage è probabilmente in RAID invece di AHCI. Cambialo e riparti.</dd>
     <dt>L'indirizzo non si apre</dt>
     <dd>Prova http://homeassistant.local:8123, oppure l'indirizzo del PC visto dal router con :8123.</dd>
   </dl>

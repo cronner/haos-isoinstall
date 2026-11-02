@@ -105,6 +105,16 @@
     padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
   }
   footer p { margin: 0.4rem 0; }
+  .btn {
+    display: inline-block; margin: 0.35rem 0 0.6rem;
+    background: #0a7ea4; color: #fff;
+    padding: 0.55rem 1rem; border-radius: 8px;
+    font-weight: 600; font-size: 0.95rem; text-decoration: none;
+  }
+  .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  @media (prefers-color-scheme: dark) {
+    .btn { background: #4cc2e6; color: #10161c; }
+  }
 </style>
 </head>
 <body>
@@ -163,6 +173,7 @@
     <li>
       <h3>Hent filen</h3>
       <p>På releases-siden henter du den fil der ender på .iso (cirka 470 MB). Du vælger ikke version: pinden henter selv den nyeste.</p>
+      <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Hent ISO-filen</a></p>
     </li>
     <li>
       <h3>Skriv den til USB-pinden</h3>
@@ -182,13 +193,13 @@
     </li>
     <li>
       <h3>Vent, og tag pinden ud</h3>
-      <p>Den henter og tjekker filen, skriver den, og tilbyder til sidst at læse disken tilbage og sammenligne. Sig ja. Tag pinden ud når den siger det er færdigt.</p>
+      <p>Den henter og tjekker filen, skriver den, og tilbyder til sidst at læse disken tilbage og sammenligne. Sig ja. Tag pinden ud, når den siger, at den er færdig.</p>
     </li>
   </ol>
 
   <h2 id="first">Første start</h2>
   <ul class="need">
-    <li>Sæt pc'en til routeren med et kabel, og tænd den.</li>
+    <li>Forbind pc'en til routeren med et kabel, og tænd den.</li>
     <li>Åbn http://homeassistant.local — “Preparing Home Assistant” kan tage tyve minutter.</li>
     <li>Lav din konto, og skriv adgangskoden ned: den kan ikke gendannes.</li>
   </ul>
@@ -198,9 +209,9 @@
     <dt>Pc'en starter sit gamle system</dt>
     <dd>Genstart og tryk F12 for at vælge pinden. Står den ikke på listen, så skriv pinden igen med Etcher.</dd>
     <dt>Skærmen er sort</dt>
-    <dd>Se i indstillingerne at Secure Boot er slået fra, lad pinden sidde, og prøv igen.</dd>
+    <dd>Se i indstillingerne, at Secure Boot er slået fra, lad pinden sidde, og prøv igen.</dd>
     <dt>Den finder ingen disk</dt>
-    <dd>Lageret står sandsynligvis til RAID i stedet for AHCI. Skift det, og start igen.</dd>
+    <dd>Lageret er sandsynligvis sat til RAID i stedet for AHCI. Skift det, og start igen.</dd>
     <dt>Adressen åbner ikke</dt>
     <dd>Prøv http://homeassistant.local:8123, eller pc'ens adresse fra routeren med :8123 bagpå.</dd>
   </dl>

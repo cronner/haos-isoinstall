@@ -105,6 +105,16 @@
     padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
   }
   footer p { margin: 0.4rem 0; }
+  .btn {
+    display: inline-block; margin: 0.35rem 0 0.6rem;
+    background: #0a7ea4; color: #fff;
+    padding: 0.55rem 1rem; border-radius: 8px;
+    font-weight: 600; font-size: 0.95rem; text-decoration: none;
+  }
+  .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  @media (prefers-color-scheme: dark) {
+    .btn { background: #4cc2e6; color: #10161c; }
+  }
 </style>
 </head>
 <body>
@@ -163,6 +173,7 @@
     <li>
       <h3>Het bestand downloaden</h3>
       <p>Op de releases-pagina neem je het bestand dat op .iso eindigt (ongeveer 470 MB). Je kiest geen versie: de stick haalt zelf de nieuwste.</p>
+      <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Download het ISO-bestand</a></p>
     </li>
     <li>
       <h3>Naar de USB-stick schrijven</h3>
@@ -178,11 +189,11 @@
     </li>
     <li>
       <h3>De vragen beantwoorden</h3>
-      <p>Taal (14 mogelijk, het toetsenbord volgt), waar het bestand vandaan komt, het netwerk en welke schijf gewist mag worden — typ YES.</p>
+      <p>Taal (14 talen, het toetsenbord volgt), waar het bestand vandaan komt, het netwerk en welke schijf gewist mag worden — typ YES.</p>
     </li>
     <li>
       <h3>Wachten en de stick eruit halen</h3>
-      <p>Hij haalt het bestand op, controleert het, schrijft het en biedt aan het slot aan de schijf terug te lezen en te vergelijken. Zeg ja. Haal de stick eruit als hij klaar meldt.</p>
+      <p>Hij haalt het bestand op, controleert het, schrijft het en biedt op het eind aan om de schijf terug te lezen en te vergelijken. Zeg ja. Haal de stick eruit als hij meldt dat hij klaar is.</p>
     </li>
   </ol>
 

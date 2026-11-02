@@ -120,11 +120,14 @@
 
   .btn {
     display: inline-block; margin: 0.35rem 0 0.6rem;
-    background: var(--accent); color: #fff;
+    background: #0a7ea4; color: #fff;
     padding: 0.55rem 1rem; border-radius: 8px;
     font-weight: 600; font-size: 0.95rem; text-decoration: none;
   }
   .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  @media (prefers-color-scheme: dark) {
+    .btn { background: #4cc2e6; color: #10161c; }
+  }
 
   .next {
     background: var(--card); border: 1px solid var(--line);
@@ -221,7 +224,7 @@
         It is a single file of about 450 MB. You don't have to choose a version:
         the stick fetches the newest Home Assistant for you when it installs.
       </p>
-      <a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Get the installer</a>
+      <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Get the ISO file</a></p>
       <p class="hint">On the Releases page, download the file ending in <strong>.iso</strong>. You can ignore the other file next to it.</p>
     </li>
 

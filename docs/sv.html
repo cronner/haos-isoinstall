@@ -105,6 +105,16 @@
     padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
   }
   footer p { margin: 0.4rem 0; }
+  .btn {
+    display: inline-block; margin: 0.35rem 0 0.6rem;
+    background: #0a7ea4; color: #fff;
+    padding: 0.55rem 1rem; border-radius: 8px;
+    font-weight: 600; font-size: 0.95rem; text-decoration: none;
+  }
+  .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  @media (prefers-color-scheme: dark) {
+    .btn { background: #4cc2e6; color: #10161c; }
+  }
 </style>
 </head>
 <body>
@@ -163,6 +173,7 @@
     <li>
       <h3>Ladda ner filen</h3>
       <p>På releases-sidan tar du filen som slutar på .iso (cirka 470 MB). Du väljer ingen version: minnet hämtar den senaste själv.</p>
+      <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Ladda ner ISO-filen</a></p>
     </li>
     <li>
       <h3>Skriv den till USB-minnet</h3>
@@ -200,7 +211,7 @@
     <dt>Skärmen är svart</dt>
     <dd>Kontrollera i inställningarna att Secure Boot är av, låt minnet sitta och försök igen.</dd>
     <dt>Den hittar ingen disk</dt>
-    <dd>Lagringen står troligen på RAID i stället för AHCI. Ändra det och starta igen.</dd>
+    <dd>Lagringen är troligen inställd på RAID i stället för AHCI. Ändra det och starta igen.</dd>
     <dt>Adressen öppnas inte</dt>
     <dd>Prova http://homeassistant.local:8123, eller datorns adress från routern med :8123.</dd>
   </dl>

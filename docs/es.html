@@ -105,6 +105,16 @@
     padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
   }
   footer p { margin: 0.4rem 0; }
+  .btn {
+    display: inline-block; margin: 0.35rem 0 0.6rem;
+    background: #0a7ea4; color: #fff;
+    padding: 0.55rem 1rem; border-radius: 8px;
+    font-weight: 600; font-size: 0.95rem; text-decoration: none;
+  }
+  .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  @media (prefers-color-scheme: dark) {
+    .btn { background: #4cc2e6; color: #10161c; }
+  }
 </style>
 </head>
 <body>
@@ -153,8 +163,8 @@
   <h2 id="need">Lo que necesitas</h2>
   <ul class="need">
     <li>Un ordenador del que puedas prescindir (Intel o AMD) que arranque en modo UEFI. Será tu máquina de Home Assistant.</li>
-    <li>Un lápiz USB de 2 GB o más.</li>
-    <li>Internet — salvo que ya tengas el archivo en un lápiz.</li>
+    <li>Un pendrive USB de 2 GB o más.</li>
+    <li>Internet — salvo que ya tengas el archivo en un pendrive.</li>
     <li>Unos treinta minutos. Casi todo es esperar.</li>
   </ul>
 
@@ -162,27 +172,28 @@
   <ol class="steps">
     <li>
       <h3>Descargar el archivo</h3>
-      <p>En la página de versiones, coge el archivo que termina en .iso (unos 470 MB). No eliges versión: el lápiz trae la más reciente.</p>
+      <p>En la página de versiones, coge el archivo que termina en .iso (unos 470 MB). No eliges versión: el pendrive trae la más reciente.</p>
+      <p><a class="btn" href="https://github.com/cronner/haos-isoinstall/releases">Descargar el archivo ISO</a></p>
     </li>
     <li>
-      <h3>Escribirlo en el lápiz USB</h3>
-      <p>Usa Etcher: elige el archivo, el lápiz y pulsa Flash. No arrastres el archivo al lápiz como una foto.</p>
+      <h3>Grabarlo en el pendrive USB</h3>
+      <p>Usa Etcher: elige el archivo, el pendrive y pulsa Flash. No arrastres el archivo al pendrive como una foto.</p>
     </li>
     <li>
       <h3>Cambiar dos ajustes</h3>
       <p>Pulsa F2 o Supr al arrancar. Desactiva Secure Boot y pon el modo SATA en AHCI. Guarda y sal.</p>
     </li>
     <li>
-      <h3>Arrancar desde el lápiz</h3>
-      <p>Deja el lápiz puesto y enciende el PC. Si arranca su sistema antiguo, pulsa F12 y elige el lápiz USB.</p>
+      <h3>Arrancar desde el pendrive</h3>
+      <p>Deja el pendrive puesto y enciende el PC. Si arranca su sistema antiguo, pulsa F12 y elige el pendrive USB.</p>
     </li>
     <li>
       <h3>Responder a las preguntas</h3>
       <p>Idioma (14 posibles, el teclado se ajusta solo), de dónde viene el archivo, la red y qué disco se puede borrar — escribe YES.</p>
     </li>
     <li>
-      <h3>Esperar y quitar el lápiz</h3>
-      <p>Descarga y comprueba el archivo, lo escribe y al final ofrece leer el disco y compararlo. Di que sí. Quita el lápiz cuando avise de que ha terminado.</p>
+      <h3>Esperar y quitar el pendrive</h3>
+      <p>Descarga y comprueba el archivo, lo escribe y al final ofrece leer el disco y compararlo. Di que sí. Quita el pendrive cuando avise de que ha terminado.</p>
     </li>
   </ol>
 
@@ -196,9 +207,9 @@
   <h2 id="problem">Si algo falla</h2>
   <dl class="faq">
     <dt>El PC arranca su sistema antiguo</dt>
-    <dd>Reinicia, pulsa F12 y elige el lápiz. Si no aparece, vuelve a escribirlo con Etcher.</dd>
+    <dd>Reinicia, pulsa F12 y elige el pendrive. Si no aparece, vuelve a grabarlo con Etcher.</dd>
     <dt>La pantalla se queda negra</dt>
-    <dd>Comprueba en los ajustes que Secure Boot está desactivado, deja el lápiz puesto y prueba otra vez.</dd>
+    <dd>Comprueba en los ajustes que Secure Boot está desactivado, deja el pendrive puesto y prueba otra vez.</dd>
     <dt>No encuentra ningún disco</dt>
     <dd>El almacenamiento estará en RAID en vez de AHCI. Cámbialo y vuelve a empezar.</dd>
     <dt>La dirección no abre</dt>
