@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Установка Home Assistant на ПК</title>
+<meta name="description" content="Установка Home Assistant на ПК">
+<style>
+  :root {
+    --bg: #fbfcfd;
+    --card: #ffffff;
+    --fg: #1b2733;
+    --muted: #5d6b7a;
+    --line: #dde5ec;
+    --accent: #0a7ea4;
+    --accent-soft: #e8f6fb;
+    --warn-bg: #fff8e6;
+    --warn-line: #e6c675;
+    --radius: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10161c;
+      --card: #172029;
+      --fg: #e7eef4;
+      --muted: #9db0c0;
+      --line: #26323d;
+      --accent: #4cc2e6;
+      --accent-soft: #122b35;
+      --warn-bg: #2a2313;
+      --warn-line: #6b5726;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 17.5px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .wrap { max-width: 44rem; margin: 0 auto; padding: 0 1.25rem; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:hover { text-decoration-thickness: 2px; }
+
+  header.top { border-bottom: 1px solid var(--line); background: var(--card); }
+  header.top .wrap {
+    display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem;
+    align-items: baseline; justify-content: space-between;
+    padding-top: 0.8rem; padding-bottom: 0.8rem;
+  }
+  header.top .name { font-weight: 650; font-size: 0.95rem; }
+  ul.langs {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 0.15rem 0.75rem;
+    margin: 0; padding: 0; font-size: 0.85rem;
+  }
+  ul.langs a { text-decoration: none; color: var(--muted); }
+  ul.langs a:hover { color: var(--accent); text-decoration: underline; }
+  ul.langs [aria-current="page"] { color: var(--fg); font-weight: 650; }
+
+  .hero { padding: 2.5rem 0 0.5rem; }
+  h1 { font-size: clamp(1.7rem, 4.5vw, 2.3rem); line-height: 1.18; letter-spacing: -0.02em; margin: 0 0 1rem; }
+  .lede { font-size: 1.05rem; margin: 0 0 0.9rem; }
+
+  h2 {
+    font-size: 1.25rem; letter-spacing: -0.01em;
+    margin: 2.3rem 0 0.9rem; padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+  p { margin: 0 0 1rem; }
+
+  .notice {
+    margin: 1.4rem 0 0; padding: 1rem 1.15rem;
+    background: var(--warn-bg); border: 1px solid var(--warn-line);
+    border-radius: var(--radius);
+  }
+  .notice strong { display: block; margin-bottom: 0.2rem; }
+
+  ul.need { margin: 0; padding-left: 1.2rem; }
+  ul.need li { margin: 0.45rem 0; }
+
+  ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+  ol.steps > li {
+    counter-increment: s; position: relative;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem 1rem 3.4rem; margin: 0 0 0.9rem;
+  }
+  ol.steps > li::before {
+    content: counter(s); position: absolute; left: 1rem; top: 0.95rem;
+    width: 1.7rem; height: 1.7rem; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent);
+    font-size: 0.9rem; font-weight: 700; display: grid; place-items: center;
+  }
+  ol.steps h3 { font-size: 1rem; margin: 0 0 0.3rem; }
+  ol.steps p { margin: 0; font-size: 0.96rem; }
+
+  dl.faq { margin: 0; }
+  dl.faq dt { font-weight: 650; margin-top: 1rem; }
+  dl.faq dd { margin: 0.2rem 0 0; }
+
+  footer {
+    margin-top: 3rem; border-top: 1px solid var(--line);
+    padding: 1.4rem 0 2.4rem; color: var(--muted); font-size: 0.86rem;
+  }
+  footer p { margin: 0.4rem 0; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <span class="name">haos-isoinstall</span>
+    <ul class="langs">
+      <li><a href="./" hreflang="en">English</a></li>
+      <li><a href="da.html" hreflang="da">Dansk</a></li>
+      <li><a href="cs.html" hreflang="cs">Čeština</a></li>
+      <li><a href="nl.html" hreflang="nl">Nederlands</a></li>
+      <li><a href="fi.html" hreflang="fi">Suomi</a></li>
+      <li><a href="fr.html" hreflang="fr">Français</a></li>
+      <li><a href="de.html" hreflang="de">Deutsch</a></li>
+      <li><a href="it.html" hreflang="it">Italiano</a></li>
+      <li><a href="no.html" hreflang="no">Norsk</a></li>
+      <li><a href="pl.html" hreflang="pl">Polski</a></li>
+      <li><a href="pt.html" hreflang="pt">Português</a></li>
+      <li><span aria-current="page">Русский</span></li>
+      <li><a href="es.html" hreflang="es">Español</a></li>
+      <li><a href="sv.html" hreflang="sv">Svenska</a></li>
+    </ul>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <h1>Установка Home Assistant на ПК</h1>
+    <p class="lede">Home Assistant управляет умным домом с компьютера у вас дома. Он работает, даже когда интернета нет, а ваши данные остаются с вами.</p>
+    <p class="lede">Это руководство ведёт от загрузки до первого запуска. Знать Linux не нужно, и никаких команд вводить не придётся.</p>
+
+    <div class="notice">
+      <strong>Диск компьютера будет полностью очищен.</strong>
+      Всё на нём будет стёрто без возможности восстановления. Используйте компьютер, который не жалко, — никогда не свой повседневный.
+    </div>
+  </div>
+
+  <h2>Что понадобится</h2>
+  <ul class="need">
+    <li>Компьютер, который не жалко (Intel или AMD), с загрузкой в режиме UEFI. Он станет вашей машиной Home Assistant.</li>
+    <li>USB-флешка на 2 ГБ или больше.</li>
+    <li>Интернет — если только файла ещё нет на флешке.</li>
+    <li>Около получаса. Большая часть — ожидание.</li>
+  </ul>
+
+  <h2>Шаг за шагом</h2>
+  <ol class="steps">
+    <li>
+      <h3>Скачайте файл</h3>
+      <p>На странице релизов возьмите файл, который заканчивается на .iso (около 470 МБ). Версию выбирать не нужно: флешка сама скачает свежую.</p>
+    </li>
+    <li>
+      <h3>Запишите его на флешку</h3>
+      <p>Используйте Etcher: выберите файл, выберите флешку, нажмите Flash. Не перетаскивайте файл на флешку, как картинку.</p>
+    </li>
+    <li>
+      <h3>Измените две настройки</h3>
+      <p>При включении нажмите F2 или Del. Отключите Secure Boot и поставьте режим SATA в AHCI. Сохраните и выйдите.</p>
+    </li>
+    <li>
+      <h3>Загрузитесь с флешки</h3>
+      <p>Оставьте флешку и включите компьютер. Если загрузится старая система, нажмите F12 и выберите USB-флешку.</p>
+    </li>
+    <li>
+      <h3>Ответьте на вопросы</h3>
+      <p>Язык (14 вариантов, раскладка подставится сама), откуда взять файл, сеть и какой диск можно стереть — введите YES.</p>
+    </li>
+    <li>
+      <h3>Подождите и выньте флешку</h3>
+      <p>Он скачает и проверит файл, запишет его и в конце предложит прочитать диск обратно и сравнить. Ответьте да. Выньте флешку, когда он сообщит, что готово.</p>
+    </li>
+  </ol>
+
+  <h2>Первый запуск</h2>
+  <ul class="need">
+    <li>Подключите компьютер к роутеру кабелем и включите его.</li>
+    <li>Откройте http://homeassistant.local — «Preparing Home Assistant» может занять двадцать минут.</li>
+    <li>Создайте учётную запись и запишите пароль: восстановить его нельзя.</li>
+  </ul>
+
+  <h2>Если что-то не работает</h2>
+  <dl class="faq">
+    <dt>Компьютер загружает старую систему</dt>
+    <dd>Перезагрузитесь, нажмите F12 и выберите флешку. Если её нет в списке, запишите её заново в Etcher.</dd>
+    <dt>Экран остаётся чёрным</dt>
+    <dd>Проверьте в настройках, что Secure Boot отключён, оставьте флешку и попробуйте снова.</dd>
+    <dt>Не находит ни одного диска</dt>
+    <dd>Скорее всего накопитель в режиме RAID, а не AHCI. Измените это и начните заново.</dd>
+    <dt>Адрес не открывается</dt>
+    <dd>Попробуйте http://homeassistant.local:8123 или адрес компьютера из роутера с :8123.</dd>
+  </dl>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Неофициальный проект, не связанный с Open Home Foundation, Nabu Casa или проектом Home Assistant. Написан с помощью ИИ, лицензия MIT, без гарантий и поддержки.</p>
+    <p>
+      <a href="https://github.com/cronner/haos-isoinstall/releases">Код и релизы</a> ·
+      <a href="https://github.com/cronner/haos-isoinstall/blob/main/README.md">Техническое руководство</a> ·
+      <a href="https://www.home-assistant.io/">Home Assistant</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
