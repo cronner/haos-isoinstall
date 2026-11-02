@@ -128,9 +128,10 @@ the second "eligible disk" — if you are testing an older ISO, expect that stop
 You do not have to write that file from scratch: the ISO carries it already, all
 keys commented out, at its root (`haos-installer.cfg`), and `build-iso.sh` copies
 it from `haos-installer.cfg.example` here. Copy it somewhere writable and
-uncomment two lines. Where it sits it cannot be edited: the partition that
-carries the live system is iso9660, on a stick and on a disc alike, which is also
-why Windows cannot reformat an Etcher-written stick.
+uncomment two lines. Where it sits it cannot be edited: a written stick exposes
+the partition that carries the live system as iso9660, which is read-only, and
+Windows will not even reformat such a stick -- the installer offers to do it at
+the end of a run, which is the only way it becomes writable again.
 
 A second stick is the obvious carrier, but one stick can do: on a Ventoy stick,
 or any stick with a FAT32/exFAT data partition beside the image, the config is

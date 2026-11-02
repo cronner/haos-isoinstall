@@ -2218,9 +2218,8 @@ secureboot_status(){
 
 # ---------------------------------------------------------------------------
 # Log: /tmp dies with the live system. We do NOT CREATE a partition on the
-# installation medium (fragile when mounted, breaks Ventoy, impossible on a CD,
-# lost on the next flash). Unnecessary anyway: a written stick already exposes
-# its ESP as FAT.
+# installation medium (fragile when mounted, breaks Ventoy, lost on the next
+# flash). Unnecessary anyway: a written stick already exposes its ESP as FAT.
 # Copies the log onto a partition. 0 = written, 1 = cannot mount,
 # 2 = mounted but too small (or copy refused).
 # NB: we query lsblk ONE COLUMN AT A TIME. With several columns, an empty value

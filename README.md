@@ -396,8 +396,8 @@ The ISO carries a template for the file: `haos-installer.cfg` in its root, every
 key commented out, and a copy named `haos-installer.cfg.example` in
 `/usr/local/share/doc/haos-isoinstall/` on the running system. A file that sets
 nothing is not a config, so it is skipped and the log says so -- and it cannot be
-edited where it sits: the partition carrying the live system is iso9660, which is
-read-only whether the image went to a disc or to a stick.
+edited where it sits: a written stick exposes the partition carrying the live
+system as iso9660, which is read-only, and Windows will not even reformat it.
 
 On a USB stick that leaves three ways: a data partition on the same stick
 (Ventoy, or a stick partitioned by hand) with the file in its root -- the

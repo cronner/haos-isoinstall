@@ -5,8 +5,8 @@
 # below is commented out, so a copy that nobody edited changes nothing: the
 # wizard asks its questions exactly as it always did.
 #
-# This same file sits on the ISO, where it cannot be edited: the partition
-# carrying the live system is read-only, on a disc and on a USB stick alike.
+# This same file sits on the ISO, where it cannot be edited: on the stick the
+# image was written to, the partition carrying the live system is read-only.
 # Copy it onto something writable first -- a second stick, or a FAT32/exFAT data
 # partition on the same stick (Ventoy, or one made by hand), with the file in
 # the root of that partition.
