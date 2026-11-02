@@ -4,8 +4,10 @@ Bootable USB stick that installs **Home Assistant OS** on a PC through a guided
 wizard: network setup (Ethernet or Wi-Fi), disk selection, download and writing
 of the official image. Nothing to type.
 
-The wizard speaks **English, Danish, German and French**, and sets the matching
-keyboard layout (QWERTY, QWERTZ or AZERTY).
+The wizard speaks **14 languages** — Czech, Danish, Dutch, English, Finnish,
+French, German, Italian, Norwegian, Polish, Portuguese, Russian, Spanish and
+Swedish — and sets the matching keyboard layout (QWERTY, QWERTZ, AZERTY or
+YTsUKEN).
 
 The ISO does **not** contain HAOS: the image is downloaded during the
 installation ("network install" approach). It therefore stays small (**~450 MB**) and
@@ -107,7 +109,7 @@ otherwise keep priority and start the installer again.
 Plug in the stick, boot. The wizard starts on its own:
 
 1. Welcome screen and reminders
-2. Language and keyboard layout — English, Danish, German or French
+2. Language and keyboard layout — 14 languages, each with its keyboard layout
 3. Network connection — automatic over Ethernet, otherwise Wi-Fi selection
 4. **Disk selection** — check the size and model; the current contents are
    displayed, and you must type `YES` to confirm (anything else stops)
@@ -392,8 +394,10 @@ by Sébastien CANAT. The wizard, the build script and the documentation started
 there, and `LICENSE` keeps his copyright notice next to this fork's — that is
 what the MIT licence requires, and it is simply true.
 
-What this fork changes: the wizard and this README are in English, Danish, German
-and French with matching keyboard layouts; the image is downloaded and
+What this fork changes: the wizard and this README are in English, and the
+wizard also speaks 13 other languages (Czech, Danish, Dutch, Finnish, French,
+German, Italian, Norwegian, Polish, Portuguese, Russian, Spanish, Swedish) with
+matching keyboard layouts; the image is downloaded and
 integrity-checked **before** a disk is erased, and an interrupted download
 resumes; a disk is only erased after typing `YES`; the closing reformat step is
 offered only on a medium that can actually be reformatted; the ISO is named after
