@@ -15,7 +15,10 @@ WORK="haos-installer-iso"
 [[ -f LICENSE ]] || { echo "LICENSE missing from the current folder"; exit 1; }
 [[ $EUID -eq 0 ]] || { echo "Run as root (live-build requires it)."; exit 1; }
 
+# Resolved before the cd below: live-build works in $WORK, so anything still
+# referenced relatively from here on would point into the build tree instead.
 SRC="$(pwd)/haos-installer.sh"
+DOCSRC="$(pwd)"
 rm -rf "$WORK"; mkdir -p "$WORK"; cd "$WORK"
 
 # BIOS boot currently only comes from live-build's DEFAULT (syslinux): nothing
@@ -93,9 +96,9 @@ cp "$SRC" config/includes.chroot/usr/local/bin/haos-installer.sh
 # same reason (and so the credits stay attached to the copy).
 DOCDIR=config/includes.chroot/usr/local/share/doc/haos-isoinstall
 mkdir -p "$DOCDIR"
-cp LICENSE "$DOCDIR/LICENSE"
+cp "$DOCSRC/LICENSE" "$DOCDIR/LICENSE"
 for f in README.md BUILDING.md; do
-  if [ -f "$f" ]; then cp "$f" "$DOCDIR/$f"; fi
+  if [ -f "$DOCSRC/$f" ]; then cp "$DOCSRC/$f" "$DOCDIR/$f"; fi
 done
 
 # --- Build stamp: the ISO carries no version string of its own. The
