@@ -162,7 +162,7 @@ jobs:
             Verify the download before writing it:
 
             ```
-            sha256sum -c haos-isoinstall-v1.0.0-amd64.iso.sha256
+            sha256sum -c ${{ steps.iso.outputs.name }}.sha256
             ```
 
             **Provided as is, with no warranty and no support.** This tool
