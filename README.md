@@ -10,10 +10,10 @@ inferred from one to the other:
 
 | Language | Menu entry | Keyboard layouts offered |
 | -------- | ---------- | ------------------------ |
-| Czech | `Cestina` | QWERTZ (CZ) |
-| Danish | `Dansk` | QWERTY (DK) |
-| Dutch | `Nederlands` | QWERTY (NL) |
 | English | `English` | QWERTY (US), QWERTY (UK), QWERTZ (DE) |
+| Danish | `Dansk` | QWERTY (DK) |
+| Czech | `Cestina` | QWERTZ (CZ) |
+| Dutch | `Nederlands` | QWERTY (NL) |
 | Finnish | `Suomi` | QWERTY (FI) |
 | French | `French` | AZERTY (FR), AZERTY (BE), QWERTZ (CH), QWERTY (CA), QWERTY (US) |
 | German | `Deutsch` | QWERTZ (DE), QWERTZ (CH) |
@@ -25,7 +25,8 @@ inferred from one to the other:
 | Spanish | `Espanol` | QWERTY (ES) |
 | Swedish | `Svenska` | QWERTY (SE) |
 
-That is 21 menu entries in all. The menu labels are kept in plain ASCII so they
+That is 21 menu entries in all, in this order: English first, then Danish, then
+the rest alphabetically. The menu labels are kept in plain ASCII so they
 stay readable on the text console; the translated messages themselves use the
 language's own characters. A language code that is not in this table falls back
 to English and US QWERTY.

@@ -1458,27 +1458,27 @@ choose_lang_keyboard(){
   sel=$(whiptail --title "Language & keyboard" --menu \
     "Choose language and keyboard layout" \
     22 72 15 \
-    "en|us|"    "English   |  QWERTY   (US)" \
-    "en|gb|"    "English   |  QWERTY   (UK)" \
-    "en|de|"    "English   |  QWERTZ   (DE)" \
-    "da|dk|"    "Dansk     |  QWERTY   (DK)" \
-    "de|de|"    "Deutsch   |  QWERTZ   (DE)" \
-    "de|ch|de"  "Deutsch   |  QWERTZ   (CH)" \
-    "fr|fr|"    "French    |  AZERTY   (France)" \
-    "fr|be|"    "French    |  AZERTY   (Belgium)" \
-    "fr|ch|fr"  "French    |  QWERTZ   (Switzerland)" \
-    "fr|ca|"    "French    |  QWERTY   (Canada)" \
-    "fr|us|"    "French    |  QWERTY   (US)" \
-    "nl|nl|"    "Nederlands  |  QWERTY   (NL)" \
-    "es|es|"    "Espanol     |  QWERTY   (ES)" \
-    "it|it|"    "Italiano    |  QWERTY   (IT)" \
-    "pl|pl|"    "Polski      |  QWERTY   (PL)" \
-    "pt|pt|"    "Portugues   |  QWERTY   (PT)" \
-    "sv|se|"    "Svenska     |  QWERTY   (SE)" \
-    "ru|ru|"    "Russkiy     |  YTsUKEN  (RU)" \
-    "cs|cz|"    "Cestina     |  QWERTZ   (CZ)" \
-    "no|no|"    "Norsk       |  QWERTY   (NO)" \
-    "fi|fi|"    "Suomi       |  QWERTY   (FI)" \
+    "en|us|"     "English    |  QWERTY   (US)" \
+    "en|gb|"     "English    |  QWERTY   (UK)" \
+    "en|de|"     "English    |  QWERTZ   (DE)" \
+    "da|dk|"     "Dansk      |  QWERTY   (DK)" \
+    "cs|cz|"     "Cestina    |  QWERTZ   (CZ)" \
+    "nl|nl|"     "Nederlands |  QWERTY   (NL)" \
+    "fi|fi|"     "Suomi      |  QWERTY   (FI)" \
+    "fr|fr|"     "French     |  AZERTY   (France)" \
+    "fr|be|"     "French     |  AZERTY   (Belgium)" \
+    "fr|ch|fr"   "French     |  QWERTZ   (Switzerland)" \
+    "fr|ca|"     "French     |  QWERTY   (Canada)" \
+    "fr|us|"     "French     |  QWERTY   (US)" \
+    "de|de|"     "Deutsch    |  QWERTZ   (DE)" \
+    "de|ch|de"   "Deutsch    |  QWERTZ   (CH)" \
+    "it|it|"     "Italiano   |  QWERTY   (IT)" \
+    "no|no|"     "Norsk      |  QWERTY   (NO)" \
+    "pl|pl|"     "Polski     |  QWERTY   (PL)" \
+    "pt|pt|"     "Portugues  |  QWERTY   (PT)" \
+    "ru|ru|"     "Russkiy    |  YTsUKEN  (RU)" \
+    "es|es|"     "Espanol    |  QWERTY   (ES)" \
+    "sv|se|"     "Svenska    |  QWERTY   (SE)" \
     3>&1 1>&2 2>&3) || sel="en|us|"
 
   UI_LANG="${sel%%|*}"
