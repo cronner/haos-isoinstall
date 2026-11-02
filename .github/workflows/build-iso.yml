@@ -98,7 +98,7 @@ jobs:
         run: |
           ISO=$(ls haos-installer-iso/live-image-*.iso | head -1)
           REF=$(echo "${GITHUB_REF_NAME:-manual}" | tr '/' '-')
-          NAME="haos-netinstall-${REF}-amd64.iso"
+          NAME="haos-isoinstall-${REF}-amd64.iso"
           mv "$ISO" "$NAME"
           sha256sum "$NAME" > "$NAME.sha256"
           echo "name=$NAME" >> "$GITHUB_OUTPUT"

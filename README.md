@@ -1,4 +1,4 @@
-# haos-netinstall — install Home Assistant OS on a PC, without a command line
+# haos-isoinstall — install Home Assistant OS on a PC, without a command line
 
 Bootable USB stick that installs **Home Assistant OS** on a PC through a guided
 wizard: network setup (Ethernet or Wi-Fi), disk selection, download and writing
@@ -8,7 +8,7 @@ The wizard speaks **English, Danish, German and French**, and sets the matching
 keyboard layout (QWERTY, QWERTZ or AZERTY).
 
 The ISO does **not** contain HAOS: the image is downloaded during the
-installation ("netinstall" approach). It therefore stays small (**~450 MB**) and
+installation ("network install" approach). It therefore stays small (**~450 MB**) and
 always installs the **latest published version** of Home Assistant OS.
 
 ## ⚠️ READ THIS BEFORE ANYTHING ELSE
@@ -65,7 +65,7 @@ Take the `.iso` file from the *Assets* section. The `.sha256` file next to it
 lets you check that the download is not corrupted (optional):
 
 ```bash
-sha256sum -c haos-netinstall-*.iso.sha256
+sha256sum -c haos-isoinstall-*.iso.sha256
 ```
 
 ## Step 2 — Write the ISO to the USB stick
@@ -77,7 +77,7 @@ With one of these tools, your choice:
 - **[Ventoy](https://www.ventoy.net/)** — simply copy the `.iso` onto the stick
 - **Linux, from the command line**:
   ```bash
-  sudo dd if=haos-netinstall-*.iso of=/dev/sdX bs=4M status=progress conv=fsync
+  sudo dd if=haos-isoinstall-*.iso of=/dev/sdX bs=4M status=progress conv=fsync
   ```
   ⚠️ Check `/dev/sdX` with `lsblk` — a mistake here erases the wrong disk.
 
