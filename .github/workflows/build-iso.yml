@@ -173,6 +173,10 @@ jobs:
             sha256sum -c ${{ steps.iso.outputs.name }}.sha256
             ```
 
+            Licensed **MIT**: the licence and both guides travel inside the
+            image (`LICENSE` at the ISO root, and
+            `/usr/local/share/doc/haos-isoinstall` in the live system).
+
             **Provided as is, with no warranty and no support.** This tool
             completely erases the disk you select. Read the README first.
 

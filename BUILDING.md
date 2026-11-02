@@ -237,6 +237,12 @@ and is not covered by this licence — see `LICENSE` for the details.
 
 [MIT](LICENSE) for the scripts in this repository.
 
+Every ISO build carries that notice with it, because an ISO handed to someone
+else is a copy: `LICENSE` sits at the root of the image (readable from a mounted
+ISO) and, together with both guides, in `/usr/local/share/doc/haos-isoinstall`
+inside the live system. The build fails if the licence cannot be found on the
+finished image, so the copy cannot quietly lose its notice.
+
 Debian, the non-free firmwares and Home Assistant OS remain subject to their
 respective licences — see the details in the [LICENSE](LICENSE) file.
 
