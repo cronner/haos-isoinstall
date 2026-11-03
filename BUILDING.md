@@ -172,8 +172,11 @@ from.
 Every boot names the template it skipped (`... sets nothing (every key commented
 out): ignored`), so a file sitting on the medium never passes for mode being on.
 
-After the run the stick holds `haos-install-*.log`: on a headless machine that
-file is the only evidence of what happened.
+After the run the stick holds `haos-install-*.log`, and beside it
+`haos-install-info.txt` with the disk, the verification result, its checksum and
+the installer's address on the network. Check the info file first: if the
+read-back line is missing or says skipped, the log explains why (no reference
+checksum means the version could not be resolved).
 
 **Negative tests, first.** They take seconds and prove the guards rather than the
 happy path, which is the part that costs you a disk if it is wrong:

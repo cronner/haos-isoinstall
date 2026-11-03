@@ -2359,11 +2359,48 @@ write_log_to(){
     rc=2
   elif cp "$src" "$mp/haos-install-$(date +%Y%m%d-%H%M).log" 2>>"$LOG"; then
     sync
+    write_info_txt "$mp" || logx "summary file could not be written to $mp"
   else
     rc=3                      # mounted but not writable: this is NOT "full"
   fi
   [ "$owned" -eq 1 ] && { umount "$mp" 2>/dev/null || true; }
   return $rc
+}
+
+# A summary a human can read without opening the log: which disk was written,
+# whether the read-back matched it, and the address this machine had while it
+# installed. The question a headless install leaves behind is "where is it
+# now?", and the log answers that only for someone willing to read 900 lines.
+# Written with CRLF, so Notepad on Windows shows lines and not one long one.
+write_info_txt(){                      # <directory, already mounted read-write>
+  local dir="${1:-}" nic nicaddr model gb
+  [ -n "$dir" ] && [ -d "$dir" ] || return 1
+  nic=$(nmcli -t -f DEVICE,STATE device status 2>/dev/null \
+        | awk -F: '$2=="connected"{print $1; exit}')
+  nicaddr=""
+  [ -n "$nic" ] && nicaddr=$(nmcli -g IP4.ADDRESS device show "$nic" 2>/dev/null \
+                             | head -1 | cut -d/ -f1)
+  model=$(lsblk -dno MODEL "/dev/${TARGET:-none}" 2>/dev/null | xargs)
+  gb=$(( $(blockdev --getsize64 "/dev/${TARGET:-none}" 2>/dev/null || echo 0) / 1000000000 ))
+  {
+    printf 'Home Assistant OS installer -- summary\r\n'
+    printf '\r\n'
+    printf 'Written:       %s\r\n' "$(date '+%Y-%m-%d %H:%M')"
+    [ -n "${BUILD_STAMP:-}" ] && printf 'Installer:     %s\r\n' "$BUILD_STAMP"
+    printf 'Disk written:  %s %s (%s GB)\r\n' "${TARGET:-not chosen}" "$model" "$gb"
+    printf 'Verification:  %s\r\n' "${VERIFY_STATE:-not run}"
+    [ -n "${VERIFY_SHA:-}" ] && printf 'Checksum:      %s\r\n' "$VERIFY_SHA"
+    printf 'Network:       %s %s\r\n' "${nic:-no connected interface}" "$nicaddr"
+    printf '\r\n'
+    printf 'Home Assistant asks the same network for an address of its own, so\r\n'
+    printf 'the line above is a hint rather than the answer. Try\r\n'
+    printf 'http://homeassistant.local:8123 first; if that does not work, look\r\n'
+    printf 'for the machine in the router list of connected clients.\r\n'
+    printf '\r\n'
+    printf 'The full installer log is next to this file (haos-install-*.log).\r\n'
+  } > "$dir/haos-install-info.txt" 2>>"$LOG" || return 1
+  sync
+  logx "summary written to $dir/haos-install-info.txt"
 }
 
 # Tries to write the log. Prints the device used, or returns:
@@ -2523,6 +2560,7 @@ reformat_stick(){
   mkdir -p "$mnt"
   mount "/dev/$p" "$mnt" 2>>"$LOG" || { logx "reformat: mounting /dev/$p impossible"; return 3; }
   cp "$LOG" "$mnt/haos-install-$(date +%Y%m%d-%H%M).log" 2>>"$LOG" || true
+  write_info_txt "$mnt" || logx "reformat: summary file could not be written"
   sync; umount "$mnt" 2>>"$LOG" || true
   logx "stick $dev reformatted as FAT32 ($LOGS_LABEL), log copied"
   return 0
@@ -3328,6 +3366,7 @@ verify(){
 
   if ! [[ "$size" =~ ^[0-9]+$ ]] || ! [[ "$expect" =~ ^[0-9a-f]{64}$ ]]; then
     logx "verification impossible: reference checksum or size unavailable"
+    VERIFY_STATE="skipped (no reference checksum)"
     wt_msg "$S_TITLE" "$S_VFY_SKIP"; return 0
   fi
 
@@ -3348,6 +3387,8 @@ verify(){
 
   if [ "$actual" = "$expect" ]; then
     logx "verification OK: disk sha256 matches the image ($expect)"
+    VERIFY_STATE="read back from the disk and matched the image"
+    VERIFY_SHA="$expect"
     wt_msg "$S_TITLE" "$(printf "$S_VFY_OK" "${expect:0:32}")"
   else
     logx "VERIFICATION FAILED: expected $expect, read $actual"
@@ -3606,6 +3647,8 @@ CFG_FILE=""                   # config file that was read (empty = kernel cmdlin
 CFG_MNT=""                    # where that file is mounted, for IMAGE= paths
 CFG_EMPTY=""                  # a template-only file seen on the way: only logged
 CFG_IMAGE_FILE=""             # config built into the image itself (unattended ISO)
+VERIFY_STATE=""               # what the read-back check concluded, for the summary
+VERIFY_SHA=""                 # the checksum the written disk should carry
 CFG_DISK_DEV=""                    # disk carrying that file: never a target
 # Declared although no branch below needs it: parse_config_line writes it, so a
 # config could, and 'set -u' turns reading a config *without* UNATTENDED= into a

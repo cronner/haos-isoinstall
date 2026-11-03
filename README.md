@@ -465,6 +465,15 @@ printed on screen, and the PC powers off after 20 seconds rather than waiting fo
 a keypress. Every decision is in the log, including which disk was chosen and why
 the others were not.
 
+Next to the log you get `haos-install-info.txt`, a dozen lines meant to be read
+by a person: which disk was written and its size, whether the read-back matched
+the image and with which checksum, and the address this machine had while it
+installed. That address is a hint rather than the answer — Home Assistant asks the
+same network for a lease of its own — so the file also names
+`http://homeassistant.local:8123` and tells you to look in the router's client
+list if that does not work. It is plain text in Windows line endings, so Notepad
+shows it as lines.
+
 The config parsing and the disk eligibility rules are covered by
 `tests/unattended.sh`: CRLF and quoted values, lowercase keys, unknown keys,
 comments, `WIPE` never assumed, and the same exclusions the menu applies.
@@ -473,6 +482,10 @@ Watching a whole run in a VM, and the negative tests that prove the guards, are
 described in [BUILDING.md §3.1](BUILDING.md#31-testing-unattended-mode).
 
 ## Step 5 — First boot
+
+Cannot find the machine? If you plugged in a stick, its root now holds
+`haos-install-info.txt` with the installer's own address and the disk it wrote;
+the same information, plus every decision, is in `haos-install-*.log` beside it.
 
 Leave the network cable plugged in and **wait 2 to 5 minutes**: Home Assistant
 finishes its installation, the screen may look frozen. Then, from another

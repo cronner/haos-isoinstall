@@ -24,7 +24,7 @@ ko(){ fail=$((fail + 1)); printf '  FAIL  %s\n' "$*"; }
 # ---- extract the functions under test --------------------------------------
 for fn in cfg_clean config_supported_lang default_keymap parse_config_line parse_config_file \
         cfg_has_keys cfg_candidate cfg_medium_disk cfg_source load_config target_rows \
-        wt_msg; do
+        wt_msg write_info_txt; do
   chunk=$(awk -v n="$fn" '$0 ~ "^" n "\\(\\)\\{" {f=1} f{print} f&&/^}$/{exit}' "$SRC")
   [ -n "$chunk" ] || { printf '%s not found in %s\n' "$fn" "$SRC"; exit 1; }
   eval "$chunk"
@@ -376,6 +376,40 @@ wt_msg "Home Assistant OS installation" "Verification passed."
 # menu, no typed YES. A prompt here is a hang, and the run has no timeout.
 grep -q 'unattended_image_source' "$SRC" || ko 'no unattended image source'
 grep -q 'unattended_target' "$SRC" || ko 'no unattended disk choice'
+
+# ---- 19. the summary file a human can read --------------------------------
+# The log explains everything and is unreadable to the person who just wants the
+# address of a machine in a cupboard. The summary has to name the disk, say
+# whether the read-back matched, and carry the address -- in CRLF, or Notepad
+# shows one very long line.
+reset
+TARGET=/dev/sda; VERIFY_STATE="read back from the disk and matched the image"
+VERIFY_SHA=deadbeefcafe; BUILD_STAMP="build 2026-11-02 aff04a4"
+nmcli(){
+  case "$*" in
+    *IP4.ADDRESS*)   printf '192.168.1.42/24\n' ;;
+    *DEVICE,STATE*)  printf 'eth0:connected\n'    ;;
+    *) return 1 ;;
+  esac
+}
+mkdir -p "$tmp/info"
+write_info_txt "$tmp/info" || ko 'write_info_txt failed'
+info="$tmp/info/haos-install-info.txt"
+[ -s "$info" ] || ko 'no summary file was written'
+grep -q '/dev/sda' "$info"            || ko 'the summary does not name the disk'
+grep -q 'matched the image' "$info"   || ko 'the summary does not say the disk was verified'
+grep -q '192.168.1.42' "$info"        || ko 'the summary does not carry the address'
+grep -q 'homeassistant.local' "$info" || ko 'the summary does not hint at the mDNS name'
+# Checked with od: MSYS grep on Windows drops the CR before matching, so a
+# 'grep $'\r'' passes on LF and proves nothing here.
+od -An -v -c "$info" | grep -q '\\r' \
+  || ko 'the summary is not CRLF: Windows shows it as one line'
+write_info_txt "$tmp/absent" && ko 'write_info_txt accepted a directory that does not exist'
+
+# It has to be written where the log goes, or a user finds one file and not the
+# other -- the two calls are in copy_log_to_part() and reformat_stick().
+[ "$(grep -c 'write_info_txt' "$SRC")" -ge 3 ] \
+  || ko 'the summary is not written next to the log'
 
 grep -q 'HAOS_VARIANT' build-iso.sh || ko 'build-iso.sh has no variant switch'
 grep -q 'haos-installer.cfg.unattended' build-iso.sh \
