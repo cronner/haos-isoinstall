@@ -437,7 +437,7 @@ IMAGE=haos_generic-x86-64-18.1.img.xz
 | --- | --- |
 | `UNATTENDED=yes` | **Required.** Without it the file is ignored and the wizard runs. |
 | `WIPE=yes` | **Required.** This is the typed `YES` of the normal wizard: consent to erase. Without it nothing is erased and the run stops. |
-| `DISK=/dev/nvme0n1` | The target. Leave it out and the only eligible disk is used; two eligible disks stop the run instead of guessing. |
+| `DISK=/dev/nvme0n1` | The target. Leave it out and the only usable disk is taken; two of them stop the run instead of guessing, listing each with its size and model. "Usable" includes the 32 GB minimum, so a small disk beside a big one does not turn into a second candidate. |
 | `IMAGE=…img.xz` | An image in the same folder as the config file. Skips the download and the network entirely. |
 | `LANG=da` | One of the 14 languages; its keyboard layout is applied. Default: English. |
 | `KEYBOARD=dk` | Override the layout on its own: `layout` or `layout\|variant` (`fr\|ch`). |

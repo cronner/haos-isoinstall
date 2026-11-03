@@ -186,7 +186,9 @@ happy path, which is the part that costs you a disk if it is wrong:
 | delete `WIPE=yes` | stops at once, naming the config file |
 | `WIPE=maybe` | same: a typo is not consent |
 | `DISK=/dev/sdb`, stick is on `sdb` | stops: it is not an eligible disk |
-| a second 32 GB disk, no `DISK=` | stops and lists both instead of picking |
+| a second 32 GB disk, no `DISK=` | stops and lists both, with size and model, instead of picking |
+| a 16 GB disk beside a 500 GB one, no `DISK=` | the small one is not counted at all; the big one installs |
+| only a 16 GB disk | stops: no disk of 32 GB or more, naming the one it saw |
 | `LANG=xx` | English, with a line in the log, and the run continues |
 | `DISK=` a disk of 16 GB | stops before writing: below 32 GB |
 

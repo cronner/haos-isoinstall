@@ -24,7 +24,7 @@ ko(){ fail=$((fail + 1)); printf '  FAIL  %s\n' "$*"; }
 # ---- extract the functions under test --------------------------------------
 for fn in cfg_clean config_supported_lang default_keymap parse_config_line parse_config_file \
         cfg_has_keys cfg_candidate cfg_medium_disk cfg_source load_config target_rows \
-        wt_msg write_info_txt; do
+        unattended_target disk_gb wt_msg write_info_txt; do
   chunk=$(awk -v n="$fn" '$0 ~ "^" n "\\(\\)\\{" {f=1} f{print} f&&/^}$/{exit}' "$SRC")
   [ -n "$chunk" ] || { printf '%s not found in %s\n' "$fn" "$SRC"; exit 1; }
   eval "$chunk"
@@ -39,7 +39,10 @@ logx(){ :; }                      # the installer logs to a file; not needed her
 # only records what it was told. set_strings()/apply_keymap() need a terminal.
 CFG_NEXT=""
 find_config(){ [ -n "$CFG_NEXT" ] && { CFG_FILE="$CFG_NEXT"; CFG_MNT=$(dirname "$CFG_NEXT"); return 0; }; return 1; }
-die(){ DIE_MSG="$1"; }
+# die() ends the run in the real script, so only its FIRST message can ever be
+# seen; the stub keeps that property, or a second die further down would
+# overwrite the one under test.
+die(){ [ -n "$DIE_MSG" ] || DIE_MSG="$1"; }
 set_strings(){ :; }
 apply_keymap(){ KEYMAP_USED="$1|$2"; }
 DIE_MSG=""; KEYMAP_USED=""
@@ -52,6 +55,14 @@ HAOS_CMDLINE=""""
 # ---- stubs -----------------------------------------------------------------
 declare -a DISKS=()
 declare -A FSTYPE=() LABEL=() SIZE=() MODEL=() VENDOR=() TRAN=() RM=()
+declare -A BLOCKDEV=()          # exact byte size per disk, for disk_gb()
+blockdev(){ local last="${*: -1}"; printf '%s\n' "${BLOCKDEV[${last#/dev/}]:-0}"; }
+S_UNAT_MULTI='%s usable disks found:\n%s'
+S_UNAT_NODISK='DISK=%s is not a usable disk here.'
+S_UNAT_TOOSMALL='No disk of 32 GB or more was found:\n%s'
+S_DISK_SMALL='The disk %s is %s GB. Home Assistant needs at least 32 GB.'
+S_DISK_NONE='No internal disk detected.'
+describe_part(){ printf 'described'; }
 
 lsblk(){
   local args="$*" last="${*: -1}" dev d
@@ -83,6 +94,7 @@ DECLS=$(grep -E '^(UNATTENDED|CFG_[A-Z_]+|TARGET|IMG_URL|WIFI_[A-Z_]+)=' "$SRC")
 
 reset(){
   DISKS=(); FSTYPE=(); LABEL=(); SIZE=(); MODEL=(); VENDOR=(); TRAN=(); RM=()
+  BLOCKDEV=()
   eval "$DECLS"                  # the same empty defaults the real script starts with
   live_dev=""; IMG_DISK=""
 }
@@ -410,6 +422,46 @@ write_info_txt "$tmp/absent" && ko 'write_info_txt accepted a directory that doe
 # other -- the two calls are in copy_log_to_part() and reformat_stick().
 [ "$(grep -c 'write_info_txt' "$SRC")" -ge 3 ] \
   || ko 'the summary is not written next to the log'
+
+# ---- 20. the disk count is what a person can act on ------------------------
+# A disk under 32 GB can never be the target: the write dies AFTER erasing. It
+# must therefore not turn "one usable disk" into "two found" and stop a machine
+# that was ready -- and when the run does stop, the refusal has to say which disk
+# is which, or two identical drives are just /dev/sda and /dev/sdb.
+reset
+DISKS=(sda sdb); BLOCKDEV[sda]=500000000000; BLOCKDEV[sdb]=16000000000
+SIZE[sda]="465.8G"; MODEL[sda]="Samsung"; SIZE[sdb]="14.9G"; MODEL[sdb]="OldStick"
+CFG_DISK=""; TARGET=""; DIE_MSG=""
+unattended_target
+[ -z "$DIE_MSG" ] || ko "a 16 GB disk stopped a machine with one usable disk: $DIE_MSG"
+[ "$TARGET" = /dev/sda ] || ko "the 500 GB disk was not chosen (TARGET='$TARGET')"
+
+reset
+DISKS=(sda sdb); BLOCKDEV[sda]=500000000000; BLOCKDEV[sdb]=2000000000000
+SIZE[sda]="465.8G"; MODEL[sda]="Samsung"; SIZE[sdb]="1.8T"; MODEL[sdb]="WD"
+CFG_DISK=""; TARGET=""; DIE_MSG=""
+unattended_target
+case "$DIE_MSG" in *2*) ;; *) ko "the refusal does not say how many: '$DIE_MSG'" ;; esac
+case "$DIE_MSG" in *"/dev/sda"*|*"/dev/sdb"*) ;; *) ko "the refusal does not name the disks: '$DIE_MSG'" ;; esac
+case "$DIE_MSG" in *"465.8G"*) ;; *) ko "the refusal does not show sizes: '$DIE_MSG'" ;; esac
+[ -z "$TARGET" ] || ko "a target was chosen with two usable disks: $TARGET"
+
+reset
+DISKS=(sda sdb); BLOCKDEV[sda]=500000000000; BLOCKDEV[sdb]=16000000000
+SIZE[sdb]="14.9G"; CFG_DISK=/dev/sdb; TARGET=""; DIE_MSG=""
+unattended_target
+case "$DIE_MSG" in *16*) ;; *) ko "DISK= on a small disk lost its size: '$DIE_MSG'" ;; esac
+
+reset
+DISKS=(sda); BLOCKDEV[sda]=16000000000; SIZE[sda]="14.9G"
+CFG_DISK=""; TARGET=""; DIE_MSG=""
+unattended_target
+case "$DIE_MSG" in *"/dev/sda"*) ;; *) ko "only a small disk: the refusal does not name it: '$DIE_MSG'" ;; esac
+
+# No new message may be added in one language only: the strings tests check the
+# key sets, this one checks the one key added last didn't slip through.
+[ "$(grep -c 'S_UNAT_TOOSMALL=' "$SRC")" -eq 14 ] \
+  || ko 'S_UNAT_TOOSMALL is not in all 14 languages'
 
 grep -q 'HAOS_VARIANT' build-iso.sh || ko 'build-iso.sh has no variant switch'
 grep -q 'haos-installer.cfg.unattended' build-iso.sh \
