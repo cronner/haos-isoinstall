@@ -205,6 +205,18 @@ chmod +x /usr/local/bin/haos-installer.sh
 systemctl enable NetworkManager.service
 systemctl enable haos-installer.service
 systemctl set-default multi-user.target
+
+# --- Where the megabytes go -------------------------------------------------
+# The chroot is deleted when the build ends, so this is the only moment these
+# numbers exist. Installed-Size is dpkg's own KiB, uncompressed; the squashfs
+# line further down is what actually ends up in the image. Answered here rather
+# than guessed: the package list is short, but live-build's defaults are not.
+echo ">>> Largest packages (Installed-Size, KiB):"
+dpkg-query -Wf '${Installed-Size}\t${Package}\n' 2>/dev/null | sort -rn | head -25 || true
+echo ">>> Total installed: $(dpkg-query -Wf '${Installed-Size}\n' 2>/dev/null \
+  | awk '{s+=$1} END{printf "%d KiB in %d packages", s, NR}')"
+echo ">>> apt lists inside the image: $(du -sk /var/lib/apt/lists 2>/dev/null | cut -f1) KiB"
+echo ">>> Installed as dependencies, not by our list: $(apt-mark showauto 2>/dev/null | wc -l)"
 EOF
 chmod +x config/hooks/live/9000-haos.hook.chroot
 
@@ -267,6 +279,15 @@ ISO=$(ls -1 live-image-*.iso 2>/dev/null | head -1)
 # The installer now offers to reformat the whole stick as FAT32 and drop the log
 # onto it, which also makes it reusable -- Windows cannot reformat an Etcher-written
 # stick on its own.
+# The pieces of the image, so the next question ("what if we drop X?") has a
+# number to argue with instead of an intuition.
+SQ=$(ls -1 binary/live/filesystem.squashfs 2>/dev/null | head -1 || true)
+if [ -n "$SQ" ]; then
+  printf '>>> %-24s %8s\n' "$(basename "$SQ")" "$(du -h "$SQ" | cut -f1)"
+  for f in binary/live/initrd.img* binary/live/vmlinuz*; do
+    [ -f "$f" ] && printf '>>> %-24s %8s\n' "$(basename "$f")" "$(du -h "$f" | cut -f1)"
+  done
+fi
 echo ">>> ISO: $ISO  ($(du -h "$ISO" | cut -f1))  variant=$VARIANT"
 echo ">>> Partitions:"
 fdisk -l "$ISO" 2>/dev/null | tail -6 || true
