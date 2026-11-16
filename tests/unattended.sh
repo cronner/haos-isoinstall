@@ -24,7 +24,7 @@ ko(){ fail=$((fail + 1)); printf '  FAIL  %s\n' "$*"; }
 # ---- extract the functions under test --------------------------------------
 for fn in cfg_clean config_supported_lang default_keymap parse_config_line parse_config_file \
         cfg_has_keys cfg_candidate cfg_medium_disk cfg_source load_config target_rows \
-        unattended_target disk_gb wt_msg write_info_txt prefer_haos_boot; do
+        unattended_target disk_gb disk_has_haos wt_msg write_info_txt prefer_haos_boot; do
   chunk=$(awk -v n="$fn" '$0 ~ "^" n "\\(\\)\\{" {f=1} f{print} f&&/^}$/{exit}' "$SRC")
   [ -n "$chunk" ] || { printf '%s not found in %s\n' "$fn" "$SRC"; exit 1; }
   eval "$chunk"
@@ -60,6 +60,7 @@ blockdev(){ local last="${*: -1}"; printf '%s\n' "${BLOCKDEV[${last#/dev/}]:-0}"
 S_UNAT_MULTI='%s usable disks found:\n%s'
 S_UNAT_NODISK='DISK=%s is not a usable disk here.'
 S_UNAT_TOOSMALL='No disk of 32 GB or more was found:\n%s'
+S_UNAT_INSTALLED='%s already holds a Home Assistant installation. Add REINSTALL=yes to wipe it.'
 S_DISK_SMALL='The disk %s is %s GB. Home Assistant needs at least 32 GB.'
 S_DISK_NONE='No internal disk detected.'
 describe_part(){ printf 'described'; }
@@ -463,20 +464,27 @@ case "$DIE_MSG" in *"/dev/sda"*) ;; *) ko "only a small disk: the refusal does n
 # boot order, the installer runs again and erases the disk it just wrote. The
 # HAOS entry is moved in front of everything else -- this checks the order we
 # hand to efibootmgr, and that nothing is moved when there is nothing to move.
-EFI_OUT=""; EFI_SET=""
+EFI_OUT=""; EFI_SET=""; EFI_NEXT=""; EFI_FAIL_ORDER=0
+# -o writes the order, -n writes BootNext, neither writes anything else.
 efibootmgr(){
-  local a setnext=0
+  local a setnext=0 next=0
   for a in "$@"; do
     case "$a" in
       -o|-O) setnext=1; continue ;;
+      -n|-N) next=1; continue ;;
     esac
-    if [ "$setnext" = 1 ]; then EFI_SET="$a"; return 0; fi
+    if [ "$setnext" = 1 ]; then
+      EFI_SET="$a"
+      [ "$EFI_FAIL_ORDER" = 1 ] && return 1
+      return 0
+    fi
+    if [ "$next" = 1 ]; then EFI_NEXT="$a"; return 0; fi
   done
   printf '%s\n' "$EFI_OUT"
 }
 BOOT_ORDER_STATE=""
 
-boot_case(){ EFI_OUT="$1"; EFI_SET=""; BOOT_ORDER_STATE=""; prefer_haos_boot; }
+boot_case(){ EFI_OUT="$1"; EFI_SET=""; EFI_NEXT=""; BOOT_ORDER_STATE=""; prefer_haos_boot; }
 
 boot_case 'BootCurrent: 0001
 BootOrder: 0001,0003
@@ -513,6 +521,55 @@ case "$BOOT_ORDER_STATE" in *unchanged*) ;; *) ko "a missing entry was not repor
 # An empty BootOrder: -o must get one bare entry, not a leading comma.
 boot_case 'Boot0003* HAOS	HD(1,GPT,x)'
 [ "$EFI_SET" = "0003" ] || ko "an empty boot order produced '$EFI_SET'"
+
+# Firmware that refuses the order may still take BootNext -- one boot only, the
+# one that must not fall back to the stick.
+EFI_FAIL_ORDER=1
+boot_case 'BootOrder: 0001,0003
+Boot0001* UEFI: SanDisk Cruzer 1.00
+Boot0003* HAOS	HD(1,GPT,x)'
+[ "$EFI_NEXT" = "0003" ] || ko "-o was refused and BootNext was not set ('$EFI_NEXT')"
+case "$BOOT_ORDER_STATE" in *next*) ;; *) ko "the BootNext fallback was not reported: '$BOOT_ORDER_STATE'" ;; esac
+EFI_FAIL_ORDER=0
+
+# Both refused: say so, and do not pretend it worked.
+EFI_FAIL_ORDER=1
+boot_case 'BootOrder: 0001,0003
+Boot0001* UEFI: SanDisk Cruzer 1.00
+Boot0003* HAOS	HD(1,GPT,x)'
+case "$BOOT_ORDER_STATE" in *unchanged*) ;; *) ko "nothing worked but the state says '$BOOT_ORDER_STATE'" ;; esac
+EFI_FAIL_ORDER=0
+
+# ---- 22. a second unattended boot does not erase the first result ---------
+# WIPE=yes is standing consent, so without a guard the same stick booting again
+# erases the disk it just wrote -- and on Legacy/CSM there is no boot order to
+# fix that. A disk that already carries Home Assistant stops the run; wiping it
+# on purpose takes a written REINSTALL=yes.
+reset
+DISKS=(sda); BLOCKDEV[sda]=500000000000; SIZE[sda]="465.8G"; LABEL[sda]="hassos-boot"
+CFG_DISK=""; TARGET=""; DIE_MSG=""; CFG_REINSTALL=""
+unattended_target
+case "$DIE_MSG" in *"/dev/sda"*) ;; *) ko "a disk holding HAOS was not refused: '$DIE_MSG'" ;; esac
+case "$DIE_MSG" in *REINSTALL=yes*) ;; *) ko "the refusal does not name the override: '$DIE_MSG'" ;; esac
+
+reset
+DISKS=(sda); BLOCKDEV[sda]=500000000000; SIZE[sda]="465.8G"; LABEL[sda]="hassos-data"
+CFG_DISK=""; TARGET=""; DIE_MSG=""; CFG_REINSTALL="yes"
+unattended_target
+[ -z "$DIE_MSG" ] || ko "REINSTALL=yes did not let the wipe through: $DIE_MSG"
+[ "$TARGET" = /dev/sda ] || ko "REINSTALL=yes left no target: '$TARGET'"
+
+# A label that merely looks similar is not an installation: refusing there would
+# block a legitimate first install.
+reset
+DISKS=(sda); BLOCKDEV[sda]=500000000000; SIZE[sda]="465.8G"; LABEL[sda]="hassos-boot-old"
+CFG_DISK=""; TARGET=""; DIE_MSG=""; CFG_REINSTALL=""
+unattended_target
+[ -z "$DIE_MSG" ] || ko "a look-alike label stopped the install: $DIE_MSG"
+[ "$TARGET" = /dev/sda ] || ko "a look-alike label left no target: '$TARGET'"
+
+[ "$(grep -c 'S_UNAT_INSTALLED=' "$SRC")" -eq 14 ] \
+  || ko 'S_UNAT_INSTALLED is not in all 14 languages'
 
 # No new message may be added in one language only: the strings tests check the
 # key sets, this one checks the one key added last didn't slip through.

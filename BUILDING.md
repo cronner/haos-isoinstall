@@ -190,6 +190,8 @@ happy path, which is the part that costs you a disk if it is wrong:
 | a 16 GB disk beside a 500 GB one, no `DISK=` | the small one is not counted at all; the big one installs |
 | only a 16 GB disk | stops: no disk of 32 GB or more, naming the one it saw |
 | unattended on UEFI, stick left in after the write | log and summary say `Boot order: HAOS placed first`; the reboot goes into Home Assistant, not back into the installer |
+| unattended again, on the disk it just installed | stops with "already holds a Home Assistant installation"; adding `REINSTALL=yes` lets it wipe |
+| `REINSTALL=yes` on a disk with old Home Assistant | wipes and installs, as asked |
 | `LANG=xx` | English, with a line in the log, and the run continues |
 | `DISK=` a disk of 16 GB | stops before writing: below 32 GB |
 

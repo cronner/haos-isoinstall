@@ -414,9 +414,15 @@ start: a stick that is still plugged in *and* still first in the boot order
 starts the installer again, and that erases the disk it has just written. On
 UEFI the wizard moves its own `HAOS` entry to the front of the boot order to
 break the loop, and the summary file on the stick records whether that worked.
-Firmware that insists on removable media can still ignore it, and Legacy/CSM has
-no boot order to change — there `POWEROFF=yes` is the only guarantee, because
-the machine is switched off instead of restarted.
+Firmware that refuses the order outright gets asked for BootNext instead, which
+redirects that single boot and leaves the machine's own order alone.
+
+The second guard needs no firmware at all: a target that already carries Home
+Assistant is refused, because at that point the machine is either someone's
+working system or the same stick booting a second time. `REINSTALL=yes` in the
+config is the written answer for a deliberate reinstall — and on Legacy/CSM,
+where there is no boot order to change and no BootNext to set, that refusal is
+the loop protection.
 
 There are two ways to ask for it:
 
@@ -465,6 +471,7 @@ IMAGE=haos_generic-x86-64-18.1.img.xz
 | --- | --- |
 | `UNATTENDED=yes` | **Required.** Without it the file is ignored and the wizard runs. |
 | `WIPE=yes` | **Required.** This is the typed `YES` of the normal wizard: consent to erase. Without it nothing is erased and the run stops. |
+| `REINSTALL=yes` | Allow erasing a disk that already carries Home Assistant. Without it such a disk stops the run — which is what keeps a stick that boots twice from wiping its own result. |
 | `DISK=/dev/nvme0n1` | The target. Leave it out and the only usable disk is taken; two of them stop the run instead of guessing, listing each with its size and model. "Usable" includes the 32 GB minimum, so a small disk beside a big one does not turn into a second candidate. |
 | `IMAGE=…img.xz` | An image in the same folder as the config file. Skips the download and the network entirely. |
 | `LANG=da` | One of the 14 languages; its keyboard layout is applied. Default: English. |

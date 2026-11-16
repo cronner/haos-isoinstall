@@ -130,6 +130,7 @@ fr)
   S_UNAT_NODISK="Installation sans surveillance refusée.\n\nDISK=%s n'est pas un disque utilisable ici.\n\nRien n'a été modifié."
   S_UNAT_MULTI="Installation sans surveillance refusée.\n\n%s disques utilisables trouvés :\n%s\n\nIndique DISK= pour l'un d'eux dans le fichier de\nconfiguration. Rien n'a été modifié."
   S_UNAT_TOOSMALL="Installation sans surveillance refusée.\n\nAucun disque de 32 Go ou plus trouvé :\n%s\n\nHome Assistant demande au moins 32 Go.\nRien n'a été modifié."
+  S_UNAT_INSTALLED="Installation sans surveillance refusee.\n\n%s contient deja une installation de Home Assistant.\n\nSoit la machine est un systeme utilise par quelqu'un, soit\ncette cle a deja installe une fois et a redemarre -- la\npartition serait alors effacee une seconde fois et il ne\nresterait rien a demarrer.\n\nAjoute REINSTALL=yes a la configuration pour l'effacer\nvolontairement. Rien n'a ete modifie."
   S_UNAT_NONET="Installation sans surveillance en échec.\n\nPas de réseau et pas d'image sur une clé :\nrien ne peut être téléchargé.\n\nRien n'a été modifié."
   S_UNAT_NOSTAGE="Installation sans surveillance refusée.\n\nPas assez de RAM libre pour l'image (%s), et aucun\nsupport inscriptible pour la stocker.\n\nAjoute STREAM=yes pour accepter d'effacer le disque\navant la vérification du téléchargement.\nRien n'a été écrit."
   S_UNAT_OFF_REBOOT="Installation terminée.\n\nHome Assistant OS est installé sur %s.\n\nRetire la clé USB maintenant.\nLe PC redémarre dans 15 secondes."
@@ -237,6 +238,7 @@ de)
   S_UNAT_NODISK="Unbeaufsichtigte Installation abgelehnt.\n\nDISK=%s ist hier keine nutzbare Platte.\n\nEs wurde nichts geändert."
   S_UNAT_MULTI="Unbeaufsichtigte Installation abgelehnt.\n\n%s nutzbare Platten gefunden:\n%s\n\nSetze DISK= auf eine davon in der Konfigurations-\ndatei. Es wurde nichts geändert."
   S_UNAT_TOOSMALL="Unbeaufsichtigte Installation abgelehnt.\n\nKeine Platte mit mindestens 32 GB gefunden:\n%s\n\nHome Assistant braucht mindestens 32 GB.\nEs wurde nichts geändert."
+  S_UNAT_INSTALLED="Unbeaufsichtigte Installation abgelehnt.\n\n%s enthaelt bereits eine Home-Assistant-Installation.\n\nEntweder ist der Rechner ein System, das jemand nutzt,\noder dieser Stick hat schon einmal installiert und ist\nerneut gestartet -- dann wuerde die Platte ein zweites Mal\ngeloescht, und es bliebe nichts zum Starten uebrig.\n\nREINSTALL=yes in der Konfiguration erlaubt das Loeschen.\nEs wurde nichts geaendert."
   S_UNAT_NONET="Unbeaufsichtigte Installation fehlgeschlagen.\n\nKein Netzwerk und kein Image auf einem Stick:\nes kann nichts geladen werden.\n\nEs wurde nichts geändert."
   S_UNAT_NOSTAGE="Unbeaufsichtigte Installation abgelehnt.\n\nZu wenig freier RAM für das Image (%s) und kein\nbeschreibbarer Datenträger dafür.\n\nFüge STREAM=yes hinzu, um das Löschen der Platte vor\nder Prüfung des Downloads zu erlauben.\nEs wurde nichts geschrieben."
   S_UNAT_OFF_REBOOT="Installation abgeschlossen.\n\nHome Assistant OS ist auf %s installiert.\n\nZiehe jetzt den USB-Stick ab.\nDer PC startet in 15 Sekunden neu."
@@ -344,6 +346,7 @@ da)
   S_UNAT_NODISK="Unattended installation afvist.\n\nDISK=%s er ikke en brugbar disk her.\n\nIntet er blevet ændret."
   S_UNAT_MULTI="Unattended installation afvist.\n\nFandt %s brugbare diske:\n%s\n\nSæt DISK= til en af dem i konfigurationsfilen.\nIntet er blevet ændret."
   S_UNAT_TOOSMALL="Ubetjent installation afvist.\n\nIngen disk på 32 GB eller mere blev fundet:\n%s\n\nHome Assistant kræver mindst 32 GB.\nDer er ikke ændret noget."
+  S_UNAT_INSTALLED="Ubetjent installation afvist.\n\n%s indeholder allerede en Home Assistant-installation.\n\nEnten er maskinen et system, nogen bruger, eller ogsaa har\ndette stik installeret en gang og er startet igen -- saa\nville disken blive slettet endnu en gang, og der ville\nikke vaere noget tilbage at starte.\n\nTilfoej REINSTALL=yes til konfigurationen for at slette\nden med vilje. Der er ikke aendret noget."
   S_UNAT_NONET="Unattended installation mislykkedes.\n\nIntet netværk og ingen image-fil på en stick:\nder kan ikke hentes noget.\n\nIntet er blevet ændret."
   S_UNAT_NOSTAGE="Unattended installation afvist.\n\nFor lidt ledig RAM til image-filen (%s), og intet\nskrivbart medie at lægge den på.\n\nTilføj STREAM=yes for at acceptere at disken slettes,\nfør downloadet er kontrolleret. Intet er skrevet."
   S_UNAT_OFF_REBOOT="Installationen er færdig.\n\nHome Assistant OS er installeret på %s.\n\nTag USB-sticken ud nu.\nPC'en genstarter om 15 sekunder."
@@ -451,6 +454,7 @@ nl)
   S_UNAT_NODISK="Installatie zonder toezicht geweigerd.\n\nDISK=%s is hier geen bruikbare schijf.\n\nEr is niets gewijzigd."
   S_UNAT_MULTI="Installatie zonder toezicht geweigerd.\n\n%s bruikbare schijven gevonden:\n%s\n\nZet DISK= op een daarvan in het configuratie-\nbestand. Er is niets gewijzigd."
   S_UNAT_TOOSMALL="Installatie zonder toezicht geweigerd.\n\nGeen schijf van 32 GB of meer gevonden:\n%s\n\nHome Assistant heeft minstens 32 GB nodig.\nEr is niets gewijzigd."
+  S_UNAT_INSTALLED="Installatie zonder toezicht geweigerd.\n\n%s bevat al een Home Assistant-installatie.\n\nOfwel is de machine een systeem dat iemand gebruikt, ofwel\nheeft deze stick al eens geinstalleerd en is opnieuw\nopgestart -- dan zou de schijf een tweede keer gewist\nworden en bleef er niets over om te starten.\n\nVoeg REINSTALL=yes toe aan de configuratie om hem met\nopzet te wissen. Er is niets gewijzigd."
   S_UNAT_NONET="Installatie zonder toezicht mislukt.\n\nGeen netwerk en geen image op een stick:\ner kan niets worden gedownload.\n\nEr is niets gewijzigd."
   S_UNAT_NOSTAGE="Installatie zonder toezicht geweigerd.\n\nTe weinig vrij RAM voor het image (%s) en geen\nbeschrijfbaar medium om het op te zetten.\n\nVoeg STREAM=yes toe om het wissen van de schijf\nvóór de downloadcontrole toe te staan.\nEr is niets geschreven."
   S_UNAT_OFF_REBOOT="Installatie voltooid.\n\nHome Assistant OS staat op %s.\n\nHaal de USB-stick er nu uit.\nDe PC start over 15 seconden opnieuw."
@@ -558,6 +562,7 @@ es)
   S_UNAT_NODISK="Instalación desatendida rechazada.\n\nDISK=%s no es un disco utilizable aquí.\n\nNo se ha cambiado nada."
   S_UNAT_MULTI="Instalación desatendida rechazada.\n\nSe encontraron %s discos utilizables:\n%s\n\nPon DISK= en uno de ellos en el archivo de\nconfiguración. No se ha cambiado nada."
   S_UNAT_TOOSMALL="Instalación desatendida rechazada.\n\nNo se encontró ningún disco de 32 GB o más:\n%s\n\nHome Assistant necesita al menos 32 GB.\nNo se ha cambiado nada."
+  S_UNAT_INSTALLED="Instalacion desatendida rechazada.\n\n%s ya contiene una instalacion de Home Assistant.\n\nO la maquina es un sistema que alguien usa, o este\npendrive ya instalo una vez y ha arrancado de nuevo -- en\nese caso el disco se borraria por segunda vez y no quedaria\nnada que arrancar.\n\nAnade REINSTALL=yes a la configuracion para borrarlo a\nproposito. No se ha cambiado nada."
   S_UNAT_NONET="La instalación desatendida falló.\n\nSin red y sin imagen en un lápiz:\nno se puede descargar nada.\n\nNo se ha cambiado nada."
   S_UNAT_NOSTAGE="Instalación desatendida rechazada.\n\nPoca RAM libre para la imagen (%s) y ningún\nmedio escribible donde guardarla.\n\nAñade STREAM=yes para aceptar borrar el disco\nantes de comprobar la descarga.\nNo se ha escrito nada."
   S_UNAT_OFF_REBOOT="Instalación completada.\n\nHome Assistant OS está instalado en %s.\n\nRetira el lápiz USB ahora.\nEl PC se reinicia en 15 segundos."
@@ -665,6 +670,7 @@ it)
   S_UNAT_NODISK="Installazione senza assistenza rifiutata.\n\nDISK=%s non è un disco utilizzabile qui.\n\nNon è stato modificato nulla."
   S_UNAT_MULTI="Installazione senza assistenza rifiutata.\n\nTrovati %s dischi utilizzabili:\n%s\n\nImposta DISK= su uno di essi nel file di\nconfigurazione. Non è stato modificato nulla."
   S_UNAT_TOOSMALL="Installazione senza sorveglianza rifiutata.\n\nNessun disco da 32 GB o più trovato:\n%s\n\nHome Assistant richiede almeno 32 GB.\nNon è stato modificato nulla."
+  S_UNAT_INSTALLED="Installazione senza sorveglianza rifiutata.\n\n%s contiene gia un'installazione di Home Assistant.\n\nO la macchina e un sistema che qualcuno usa, oppure questa\nchiavetta ha gia installato una volta ed e ripartita -- in\nquel caso il disco verrebbe cancellato una seconda volta e\nnon resterebbe nulla da avviare.\n\nAggiungi REINSTALL=yes alla configurazione per cancellarlo\ndi proposito. Non e stato modificato nulla."
   S_UNAT_NONET="Installazione senza assistenza fallita.\n\nNessuna rete e nessuna immagine su una chiavetta:\nnon si può scaricare nulla.\n\nNon è stato modificato nulla."
   S_UNAT_NOSTAGE="Installazione senza assistenza rifiutata.\n\nRAM libera insufficiente per l'immagine (%s) e\nnessun supporto scrivibile per tenerla.\n\nAggiungi STREAM=yes per accettare di cancellare\nil disco prima del controllo del download.\nNon è stato scritto nulla."
   S_UNAT_OFF_REBOOT="Installazione completata.\n\nHome Assistant OS è installato su %s.\n\nRimuovi ora la chiavetta USB.\nIl PC si riavvia tra 15 secondi."
@@ -772,6 +778,7 @@ pl)
   S_UNAT_NODISK="Instalacja bezobsługowa odrzucona.\n\nDISK=%s nie jest tutaj użytecznym dyskiem.\n\nNic nie zostało zmienione."
   S_UNAT_MULTI="Instalacja bezobsługowa odrzucona.\n\nZnaleziono %s użytecznych dysków:\n%s\n\nUstaw DISK= na jeden z nich w pliku konfiguracji.\nNic nie zostało zmienione."
   S_UNAT_TOOSMALL="Instalacja bez nadzoru odrzucona.\n\nNie znaleziono dysku 32 GB lub większego:\n%s\n\nHome Assistant wymaga co najmniej 32 GB.\nNic nie zostało zmienione."
+  S_UNAT_INSTALLED="Instalacja bez nadzoru odrzucona.\n\n%s zawiera juz instalacje Home Assistant.\n\nAlbo maszyna jest systemem, z ktorego ktos korzysta, albo\nten pendrive juz raz zainstalowal i wystartowal ponownie --\nwtedy dysk zostalby wyczyszczony po raz drugi i nie\nozostaloby nic do uruchomienia.\n\nDodaj REINSTALL=yes do konfiguracji, aby wyczyscic go\nswiadomie. Nic nie zostalo zmienione."
   S_UNAT_NONET="Instalacja bezobsługowa nie powiodła się.\n\nBrak sieci i brak obrazu na pendrivie:\nnie można niczego pobrać.\n\nNic nie zostało zmienione."
   S_UNAT_NOSTAGE="Instalacja bezobsługowa odrzucona.\n\nZa mało wolnego RAM na obraz (%s) i brak\nzapisywalnego nośnika, aby go trzymać.\n\nDodaj STREAM=yes, aby zgodzić się na skasowanie\ndysku przed sprawdzeniem pobrania.\nNic nie zostało zapisane."
   S_UNAT_OFF_REBOOT="Instalacja zakończona.\n\nHome Assistant OS jest zainstalowany na %s.\n\nWyjmij teraz pendrive USB.\nKomputer uruchomi się ponownie za 15 sekund."
@@ -879,6 +886,7 @@ sv)
   S_UNAT_NODISK="Obevakad installation nekad.\n\nDISK=%s är ingen användbar disk här.\n\nInget har ändrats."
   S_UNAT_MULTI="Obevakad installation nekad.\n\nHittade %s användbara diskar:\n%s\n\nSätt DISK= till en av dem i konfigurationsfilen.\nInget har ändrats."
   S_UNAT_TOOSMALL="Obevakad installation avvisad.\n\nIngen disk på 32 GB eller mer hittades:\n%s\n\nHome Assistant behöver minst 32 GB.\nIngenting har ändrats."
+  S_UNAT_INSTALLED="Obevakad installation avvisad.\n\n%s innehaller redan en Home Assistant-installation.\n\nAntingen ar maskinen ett system som nagon anvander, eller\nsa har det har sticket redan installerat en gang och startat\nigen -- da skulle disken raderas en andra gang och inget\nskulle finnas kvar att starta.\n\nLagg till REINSTALL=yes i konfigurationen for att radera\nden med avsikt. Ingenting har andrats."
   S_UNAT_NONET="Obevakad installation misslyckades.\n\nInget nätverk och ingen image på ett minne:\ninget kan hämtas.\n\nInget har ändrats."
   S_UNAT_NOSTAGE="Obevakad installation nekad.\n\nFör lite ledigt RAM för imagen (%s) och inget\nskrivbart medium att lägga den på.\n\nLägg till STREAM=yes för att acceptera att disken\nraderas före kontrollen av nedladdningen.\nInget har skrivits."
   S_UNAT_OFF_REBOOT="Installationen är klar.\n\nHome Assistant OS är installerat på %s.\n\nTa ut USB-minnet nu.\nDatorn startar om inom 15 sekunder."
@@ -986,6 +994,7 @@ pt)
   S_UNAT_NODISK="Instalação sem assistência recusada.\n\nDISK=%s não é um disco utilizável aqui.\n\nNada foi alterado."
   S_UNAT_MULTI="Instalação sem assistência recusada.\n\nEncontrados %s discos utilizáveis:\n%s\n\nDefina DISK= num deles no ficheiro de\nconfiguração. Nada foi alterado."
   S_UNAT_TOOSMALL="Instalação sem supervisão recusada.\n\nNenhum disco de 32 GB ou mais encontrado:\n%s\n\nO Home Assistant precisa de pelo menos 32 GB.\nNada foi alterado."
+  S_UNAT_INSTALLED="Instalacao sem supervisao recusada.\n\n%s ja contem uma instalacao do Home Assistant.\n\nOu a maquina e um sistema que alguem usa, ou esta pen ja\ninstalou uma vez e arrancou de novo -- nesse caso o disco\nseria apagado uma segunda vez e nao ficaria nada para\narrancar.\n\nAcrescenta REINSTALL=yes a configuracao para o apagar de\nproposito. Nada foi alterado."
   S_UNAT_NONET="A instalação sem assistência falhou.\n\nSem rede e sem imagem numa pen:\nnão é possível descarregar nada.\n\nNada foi alterado."
   S_UNAT_NOSTAGE="Instalação sem assistência recusada.\n\nPouca RAM livre para a imagem (%s) e nenhum\nsuporte gravável onde a guardar.\n\nAcrescente STREAM=yes para aceitar apagar o disco\nantes de verificar a transferência.\nNada foi escrito."
   S_UNAT_OFF_REBOOT="Instalação concluída.\n\nO Home Assistant OS está instalado em %s.\n\nRetire a pen USB agora.\nO PC reinicia dentro de 15 segundos."
@@ -1093,6 +1102,7 @@ ru)
   S_UNAT_NODISK="Автоустановка отклонена.\n\nDISK=%s здесь не подходящий диск.\n\nНичего не изменено."
   S_UNAT_MULTI="Автоустановка отклонена.\n\nНайдено %s подходящих дисков:\n%s\n\nУкажите DISK= для одного из них в файле\nнастроек. Ничего не изменено."
   S_UNAT_TOOSMALL="Установка без участия отклонена.\n\nНе найдено диска на 32 ГБ или больше:\n%s\n\nHome Assistant требует не менее 32 ГБ.\nНичего не изменено."
+  S_UNAT_INSTALLED="Установка без участия отклонена.\n\n%s уже содержит установку Home Assistant.\n\nЛибо это машина, которой кто-то пользуется, либо эта\nфлешка уже устанавливала систему и загрузилась снова --\nтогда диск был бы стёрт второй раз, и загружать было бы\nнечего.\n\nДобавьте REINSTALL=yes в конфигурацию, чтобы стереть его\nнамеренно. Ничего не изменено."
   S_UNAT_NONET="Автоустановка не удалась.\n\nНет сети и нет образа на флешке:\nскачать нечего.\n\nНичего не изменено."
   S_UNAT_NOSTAGE="Автоустановка отклонена.\n\nМало свободной памяти для образа (%s) и нет\nзаписываемого носителя, чтобы его сохранить.\n\nДобавьте STREAM=yes, чтобы разрешить стирание\nдиска до проверки загрузки.\nНичего не записано."
   S_UNAT_OFF_REBOOT="Установка завершена.\n\nHome Assistant OS установлен на %s.\n\nВыньте USB-флешку сейчас.\nКомпьютер перезагрузится через 15 секунд."
@@ -1200,6 +1210,7 @@ cs)
   S_UNAT_NODISK="Instalace bez obsluhy odmítnuta.\n\nDISK=%s zde není použitelný disk.\n\nNic nebylo změněno."
   S_UNAT_MULTI="Instalace bez obsluhy odmítnuta.\n\nNalezeno %s použitelných disků:\n%s\n\nNastav DISK= na jeden z nich v konfiguračním\nsouboru. Nic nebylo změněno."
   S_UNAT_TOOSMALL="Instalace bez obsluhy odmítnuta.\n\nNenalezen žádný disk o velikosti 32 GB nebo více:\n%s\n\nHome Assistant potřebuje alespoň 32 GB.\nNic nebylo změněno."
+  S_UNAT_INSTALLED="Instalace bez obsluhy odmitnuta.\n\n%s jiz obsahuje instalaci Home Assistant.\n\nBud je stroj system, ktery nekdo pouziva, nebo tento disk\nuz jednou instaloval a znovu se spustil -- pak by byl disk\nsmazan podruhe a nezustalo by nic ke spusteni.\n\nPridej REINSTALL=yes do konfigurace, aby se smazal\nzamerne. Nic nebylo zmeneno."
   S_UNAT_NONET="Instalace bez obsluhy selhala.\n\nŽádná síť a žádný obraz na disku:\nnení co stáhnout.\n\nNic nebylo změněno."
   S_UNAT_NOSTAGE="Instalace bez obsluhy odmítnuta.\n\nMálo volné RAM pro obraz (%s) a žádné\nzapisovatelné médium, kam ho uložit.\n\nPřidej STREAM=yes, aby se disk smazal ještě před\nkontrolou stažení.\nNic nebylo zapsáno."
   S_UNAT_OFF_REBOOT="Instalace dokončena.\n\nHome Assistant OS je nainstalován na %s.\n\nVyndej nyní USB flash disk.\nPočítač se restartuje za 15 sekund."
@@ -1307,6 +1318,7 @@ no)
   S_UNAT_NODISK="Ubetjent installasjon avvist.\n\nDISK=%s er ikke en brukbar disk her.\n\nIngenting er endret."
   S_UNAT_MULTI="Ubetjent installasjon avvist.\n\nFant %s brukbare disker:\n%s\n\nSett DISK= til en av dem i konfigurasjonsfilen.\nIngenting er endret."
   S_UNAT_TOOSMALL="Ubetjent installasjon avvist.\n\nFant ingen disk på 32 GB eller mer:\n%s\n\nHome Assistant krever minst 32 GB.\nIngenting er endret."
+  S_UNAT_INSTALLED="Ubetjent installasjon avvist.\n\n%s inneholder allerede en Home Assistant-installasjon.\n\nEnten er maskinen et system noen bruker, eller saa har\ndenne pennen installert en gang og startet igjen -- da\nville disken bli slettet en gang til, og det ville ikke\nvaere noe igjen aa starte.\n\nLegg til REINSTALL=yes i konfigurasjonen for aa slette den\nmed vilje. Ingenting er endret."
   S_UNAT_NONET="Ubetjent installasjon mislyktes.\n\nIngen nettverk og ingen image-fil på en penn:\ndet kan ikke lastes ned noe.\n\nIngenting er endret."
   S_UNAT_NOSTAGE="Ubetjent installasjon avvist.\n\nFor lite ledig RAM til image-filen (%s), og ingen\nskrivbart medium å legge den på.\n\nLegg til STREAM=yes for å godta at disken slettes\nfør nedlastingen er kontrollert.\nIngenting er skrevet."
   S_UNAT_OFF_REBOOT="Installasjonen er ferdig.\n\nHome Assistant OS er installert på %s.\n\nTa ut USB-pennen nå.\nPC-en starter på nytt om 15 sekunder."
@@ -1414,6 +1426,7 @@ fi)
   S_UNAT_NODISK="Valvomaton asennus hylätty.\n\nDISK=%s ei ole käyttökelpoinen levy tässä.\n\nMitään ei muutettu."
   S_UNAT_MULTI="Valvomaton asennus hylätty.\n\nLöytyi %s käyttökelpoista levyä:\n%s\n\nAseta DISK= johonkin niistä asetustiedostossa.\nMitään ei muutettu."
   S_UNAT_TOOSMALL="Valvomaton asennus hylätty.\n\nEi löytynyt 32 GB:n tai suurempaa levyä:\n%s\n\nHome Assistant tarvitsee vähintään 32 GB.\nMitään ei muutettu."
+  S_UNAT_INSTALLED="Valvomaton asennus hylatty.\n\n%s sisaltaa jo Home Assistant -asennuksen.\n\nJoko kone on jonkun kaytossa oleva jarjestelma, tai tama\ntikku on jo asentanut kerran ja kaynnistyi uudelleen --\nsilloin levy pyyhittaisiin toisen kerran eika mitaan jaisi\nkaynnistettavaksi.\n\nLisaa REINSTALL=yes asetukseen, jos haluat pyyhkia sen\ntarkoituksella. Mitaan ei ole muutettu."
   S_UNAT_NONET="Valvomaton asennus epäonnistui.\n\nEi verkkoa eikä levykuvaa tikulla:\nmitään ei voi ladata.\n\nMitään ei muutettu."
   S_UNAT_NOSTAGE="Valvomaton asennus hylätty.\n\nLiian vähän vapaata RAM-muistia levykuvalle (%s)\neikä kirjoitettavaa mediaa sen säilyttämiseen.\n\nLisää STREAM=yes, jos levy saa pyyhkiytyä ennen\nlatauksen tarkistusta.\nMitään ei kirjoitettu."
   S_UNAT_OFF_REBOOT="Asennus valmis.\n\nHome Assistant OS on asennettu levylle %s.\n\nIrrota USB-tikku nyt.\nTietokone käynnistyy uudelleen 15 sekunnissa."
@@ -1521,6 +1534,7 @@ fi)
   S_UNAT_NODISK="Unattended installation refused.\n\nDISK=%s is not a usable disk here.\n\nNothing has been changed."
   S_UNAT_MULTI="Unattended installation refused.\n\n%s usable disks found:\n%s\n\nSet DISK= to one of them in the config file.\nNothing has been changed."
   S_UNAT_TOOSMALL="Unattended installation refused.\n\nNo disk of 32 GB or more was found:\n%s\n\nHome Assistant needs at least 32 GB.\nNothing has been changed."
+  S_UNAT_INSTALLED="Unattended installation refused.\n\n%s already holds a Home Assistant installation.\n\nEither the machine is someone's working system, or this\nstick has installed once already and booted again -- in\nwhich case the disk would be erased a second time and\nnothing would be left to boot.\n\nAdd REINSTALL=yes to the config to wipe it on purpose.\nNothing has been changed."
   S_UNAT_NONET="Unattended installation failed.\n\nNo network and no image on a stick:\nnothing can be downloaded.\n\nNothing has been changed."
   S_UNAT_NOSTAGE="Unattended installation refused.\n\nToo little free RAM for the image (%s), and no\nwritable medium to keep it on.\n\nAdd STREAM=yes to accept erasing the disk before\nthe download is checked. Nothing has been written."
   S_UNAT_OFF_REBOOT="Installation complete.\n\nHome Assistant OS is installed on %s.\n\nRemove the USB stick now.\nThe PC restarts in 15 seconds."
@@ -1847,7 +1861,7 @@ parse_config_line(){
     \'*\') val=${val#\'}; val=${val%\'} ;;
   esac
   case "$key" in
-    UNATTENDED|WIPE|POWEROFF|STREAM|FORMAT)
+    UNATTENDED|WIPE|REINSTALL|POWEROFF|STREAM|FORMAT)
       case "${val,,}" in
         yes|1|true)  printf -v "CFG_$key" '%s' "yes" ;;
         no|0|false)  printf -v "CFG_$key" '%s' "" ;;
@@ -2062,6 +2076,14 @@ unattended_image_source(){
   return 0
 }
 
+# hassos-boot / hassos-data are the labels a Home Assistant OS install leaves
+# behind; the disk menu uses the same two to warn before erasing a working
+# system, so "installed already" means the same thing in both places.
+disk_has_haos(){
+  lsblk -no LABEL "${1:-/dev/none}" 2>/dev/null \
+    | grep -qix -e 'hassos-boot' -e 'hassos-data'
+}
+
 # Whole GB of a device, 0 when it cannot be read. One place for the size, so the
 # counting below and the guard after it can never disagree.
 disk_gb(){ printf '%s' $(( $(blockdev --getsize64 "${1:-/dev/none}" 2>/dev/null || echo 0) / 1000000000 )) ; }
@@ -2113,11 +2135,14 @@ unattended_target(){
     die "$(printf "$S_UNAT_MULTI" "${#devs[@]}" "$list")"
   fi
 
-  # Unattended is also how a box gets reinstalled, so an existing Home Assistant
-  # is not refused -- but it is said in the log, because WIPE=yes was signed for
-  # a disk that already held someone's house.
-  if lsblk -no LABEL "$TARGET" 2>/dev/null | grep -qix 'hassos-boot'; then
-    logx "unattended: $TARGET already carries a Home Assistant installation -- WIPE=yes covers it"
+  # Unattended reboots by itself, so the same stick can come back and erase the
+  # disk it has just written -- a loop nobody is there to break, and the case a
+  # boot order cannot settle on a Legacy/CSM machine. A disk that already carries
+  # Home Assistant means this has probably happened already (or the machine is
+  # somebody's working system), so the run stops and asks for a written
+  # REINSTALL=yes before it wipes anything.
+  if disk_has_haos "$TARGET" && [ "${CFG_REINSTALL:-}" != "yes" ]; then
+    die "$(printf "$S_UNAT_INSTALLED" "$TARGET")"
   fi
   logx "unattended: target $TARGET ($(describe_part "$TARGET"), $(disk_gb "$TARGET") GB)"
   return 0
@@ -3610,7 +3635,15 @@ prefer_haos_boot(){
   neworder="${rest:+$bootnum,}$rest"
   [ -n "$neworder" ] || neworder="$bootnum"      # empty BootOrder: one entry, no comma
   if ! efibootmgr -o "$neworder" >/dev/null 2>>"$LOG"; then
-    logx "boot order: efibootmgr -o failed, left alone"
+    # Firmware that refuses the order may still accept BootNext: a choice for the
+    # NEXT boot only, which is precisely the boot that must not go back to the
+    # stick. The user's own order is left exactly as it was.
+    if efibootmgr -n "$bootnum" >/dev/null 2>>"$LOG"; then
+      logx "boot order: -o refused, BootNext set to HAOS ($bootnum) instead"
+      BOOT_ORDER_STATE="HAOS set as next boot only (order unchanged)"
+      return 0
+    fi
+    logx "boot order: efibootmgr -o and -n both failed, left alone"
     BOOT_ORDER_STATE="unchanged (could not be set)"
     return 1
   fi
@@ -3738,6 +3771,7 @@ CFG_DISK_DEV=""                    # disk carrying that file: never a target
 # crash of the whole wizard. Every CFG_* key read anywhere needs its line here.
 CFG_UNATTENDED=""              # UNATTENDED=yes: the opt-in itself
 CFG_WIPE=""                   # WIPE=yes: consent to erase, replaces the typed YES
+CFG_REINSTALL=""              # REINSTALL=yes: wipe a disk that already holds HAOS
 CFG_DISK=""                   # DISK=: the target, or empty to take the only one
 CFG_IMAGE=""                  # IMAGE=: a .img.xz next to the config file
 CFG_LANG=""                   # LANG=: two-letter language

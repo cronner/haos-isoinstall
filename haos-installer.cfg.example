@@ -20,6 +20,11 @@
 #UNATTENDED=yes
 #WIPE=yes
 
+# A target that already carries Home Assistant is refused: a stick left in the
+# machine boots again and would erase the system it has just written. This key
+# is the written "yes, wipe that one too" -- a deliberate reinstall.
+#REINSTALL=yes
+
 # The disk to install on, as the wizard would name it (/dev/sda, /dev/nvme0n1).
 # Leave it out when the machine has exactly one eligible disk: that one is
 # taken. Two eligible disks stop the run instead of guessing, and the installer
