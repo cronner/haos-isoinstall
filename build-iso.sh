@@ -50,8 +50,20 @@ fi
 # (ISO_LABEL constant). The installer uses it to recognise the boot medium and
 # exclude it from the target disks -- 'toram' replacing /run/live/medium with a
 # tmpfs, that is the only reliable way to identify it. Keep both in step.
+# The apt lists are ~154 MB unpacked inside the image and nothing in the
+# installer runs apt or dpkg: they are pure ballast. Guarded the same way as the
+# bootloader option, because live-build versions differ.
+INDICES_OPT=()
+if lb config --help 2>&1 | grep -q -- '--apt-indices'; then
+  INDICES_OPT=(--apt-indices false)
+  echo ">>> --apt-indices supported: apt lists left out of the image."
+else
+  echo ">>> --apt-indices absent from this live-build version: apt lists kept."
+fi
+
 lb config \
   ${BOOTLOADERS_OPT[@]+"${BOOTLOADERS_OPT[@]}"} \
+  ${INDICES_OPT[@]+"${INDICES_OPT[@]}"} \
   --distribution trixie \
   --architecture amd64 \
   --binary-images iso-hybrid \
@@ -98,6 +110,11 @@ parted
 # format) cannot be mounted at all.
 exfatprogs
 ntfs-3g
+# NetworkManager's own translations, for 100+ languages. The wizard carries its
+# own 14, and nothing in the installer reads NM's: ~8.5 MB for strings nobody
+# sees. The trailing '-' is live-build's way of removing a package a dependency
+# would otherwise pull in.
+network-manager-l10n-
 EOF
 # --- Guided wizard ---
 mkdir -p config/includes.chroot/usr/local/bin
