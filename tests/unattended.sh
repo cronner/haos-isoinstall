@@ -24,7 +24,7 @@ ko(){ fail=$((fail + 1)); printf '  FAIL  %s\n' "$*"; }
 # ---- extract the functions under test --------------------------------------
 for fn in cfg_clean config_supported_lang default_keymap parse_config_line parse_config_file \
         cfg_has_keys cfg_candidate cfg_medium_disk cfg_source load_config target_rows \
-        unattended_target disk_gb wt_msg write_info_txt; do
+        unattended_target disk_gb wt_msg write_info_txt prefer_haos_boot; do
   chunk=$(awk -v n="$fn" '$0 ~ "^" n "\\(\\)\\{" {f=1} f{print} f&&/^}$/{exit}' "$SRC")
   [ -n "$chunk" ] || { printf '%s not found in %s\n' "$fn" "$SRC"; exit 1; }
   eval "$chunk"
@@ -457,6 +457,62 @@ DISKS=(sda); BLOCKDEV[sda]=16000000000; SIZE[sda]="14.9G"
 CFG_DISK=""; TARGET=""; DIE_MSG=""
 unattended_target
 case "$DIE_MSG" in *"/dev/sda"*) ;; *) ko "only a small disk: the refusal does not name it: '$DIE_MSG'" ;; esac
+
+# ---- 21. the boot loop is broken where Linux can break it -----------------
+# Unattended reboots by itself. If the stick is still first in the firmware's
+# boot order, the installer runs again and erases the disk it just wrote. The
+# HAOS entry is moved in front of everything else -- this checks the order we
+# hand to efibootmgr, and that nothing is moved when there is nothing to move.
+EFI_OUT=""; EFI_SET=""
+efibootmgr(){
+  local a setnext=0
+  for a in "$@"; do
+    case "$a" in
+      -o|-O) setnext=1; continue ;;
+    esac
+    if [ "$setnext" = 1 ]; then EFI_SET="$a"; return 0; fi
+  done
+  printf '%s\n' "$EFI_OUT"
+}
+BOOT_ORDER_STATE=""
+
+boot_case(){ EFI_OUT="$1"; EFI_SET=""; BOOT_ORDER_STATE=""; prefer_haos_boot; }
+
+boot_case 'BootCurrent: 0001
+BootOrder: 0001,0003
+Boot0001* UEFI: SanDisk Cruzer 1.00
+Boot0003* HAOS	HD(1,GPT,x)/File(\EFI\BOOT\bootx64.efi)'
+[ "$EFI_SET" = "0003,0001" ] || ko "the stick stayed first (efibootmgr -o '$EFI_SET')"
+
+boot_case 'BootOrder: 0001,0003
+Boot0001* UEFI: SanDisk Cruzer 1.00
+Boot0003* HAOS	HD(1,GPT,x)'
+[ "$EFI_SET" = "0003,0001" ] || ko "the other entries were not kept in order: '$EFI_SET'"
+
+# Every other entry, in its original order, exactly once.
+boot_case 'BootOrder: 0001,0003,0002
+Boot0001* UEFI: SanDisk Cruzer 1.00
+Boot0003* HAOS	HD(1,GPT,x)/File(\EFI\BOOT\bootx64.efi)
+Boot0002  Windows Boot Manager'
+[ "$EFI_SET" = "0003,0001,0002" ] || ko "three entries came out as '$EFI_SET'"
+
+# Already first: writing to NVRAM for no reason is a risk taken for nothing.
+boot_case 'BootOrder: 0003,0001
+Boot0001* UEFI: SanDisk Cruzer 1.00
+Boot0003* HAOS	HD(1,GPT,x)'
+[ -z "$EFI_SET" ] || ko "NVRAM written although HAOS was already first: '$EFI_SET'"
+case "$BOOT_ORDER_STATE" in *already*) ;; *) ko "an unchanged order was not reported: '$BOOT_ORDER_STATE'" ;; esac
+
+# A firmware entry that merely mentions HAOS is not our entry.
+boot_case 'BootOrder: 0001,0002
+Boot0001* UEFI: HAOS stick
+Boot0002* UEFI: SanDisk Cruzer 1.00'
+[ -z "$EFI_SET" ] || ko "a 'UEFI: HAOS stick' entry was taken for ours: '$EFI_SET'"
+case "$BOOT_ORDER_STATE" in *unchanged*) ;; *) ko "a missing entry was not reported: '$BOOT_ORDER_STATE'" ;; esac
+
+# An empty BootOrder: -o must get one bare entry, not a leading comma.
+boot_case 'Boot0003* HAOS	HD(1,GPT,x)'
+[ "$EFI_SET" = "0003" ] || ko "an empty boot order produced '$EFI_SET'"
 
 # No new message may be added in one language only: the strings tests check the
 # key sets, this one checks the one key added last didn't slip through.

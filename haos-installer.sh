@@ -2422,6 +2422,7 @@ write_info_txt(){                      # <directory, already mounted read-write>
     [ -n "${BUILD_STAMP:-}" ] && printf 'Installer:     %s\r\n' "$BUILD_STAMP"
     printf 'Disk written:  %s %s (%s GB)\r\n' "${TARGET:-not chosen}" "$model" "$gb"
     printf 'Verification:  %s\r\n' "${VERIFY_STATE:-not run}"
+    [ -n "${BOOT_ORDER_STATE:-}" ] && printf 'Boot order:    %s\r\n' "$BOOT_ORDER_STATE"
     [ -n "${VERIFY_SHA:-}" ] && printf 'Checksum:      %s\r\n' "$VERIFY_SHA"
     printf 'Network:       %s %s\r\n' "${nic:-no connected interface}" "$nicaddr"
     printf '\r\n'
@@ -3571,6 +3572,52 @@ push_wifi_config(){
   return $ok
 }
 
+# Puts the freshly created HAOS entry in front of the firmware's boot order.
+#
+# Unattended reboots by itself. A stick that is still first in that order boots
+# the installer again, which erases the disk it has just written -- a loop that
+# nobody is there to break. Moving the entry is the only lever Linux has, and it
+# is best-effort: some firmware keeps preferring removable media, and legacy
+# BIOS has no NVRAM to write at all. The outcome is logged and reported in the
+# summary file either way, so a loop that still happens can be explained. Only
+# the HAOS entry is moved; every other entry keeps its position.
+prefer_haos_boot(){
+  local -a ids=()
+  local out bootnum order neworder id rest=""
+
+  out=$(efibootmgr 2>>"$LOG") || { logx "boot order: efibootmgr failed, left alone"; return 1; }
+  # $1 is "Boot0003" (an asterisk marks an active entry), $2 is the label. The
+  # exact match on $2 keeps firmware entries such as "UEFI: HAOS stick" out.
+  bootnum=$(printf '%s\n' "$out" \
+    | awk '$1 ~ /^Boot[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\*?$/ && $2 == "HAOS" { print substr($1,5,4); exit }')
+  if [ -z "$bootnum" ]; then
+    logx "boot order: no HAOS entry found, left alone"
+    BOOT_ORDER_STATE="unchanged (no HAOS entry)"
+    return 1
+  fi
+  order=$(printf '%s\n' "$out" | sed -n 's/^BootOrder: //p' | tr -d ' \r')
+  logx "boot order before: ${order:-<empty>}"
+  if [ "${order%%,*}" = "$bootnum" ]; then
+    logx "boot order: HAOS ($bootnum) is already first"
+    BOOT_ORDER_STATE="HAOS was already first"
+    return 0
+  fi
+  IFS=',' read -r -a ids <<< "$order"
+  for id in ${ids[@]+"${ids[@]}"}; do
+    [ "$id" = "$bootnum" ] && continue
+    rest="${rest:+$rest,}$id"
+  done
+  neworder="${rest:+$bootnum,}$rest"
+  [ -n "$neworder" ] || neworder="$bootnum"      # empty BootOrder: one entry, no comma
+  if ! efibootmgr -o "$neworder" >/dev/null 2>>"$LOG"; then
+    logx "boot order: efibootmgr -o failed, left alone"
+    BOOT_ORDER_STATE="unchanged (could not be set)"
+    return 1
+  fi
+  logx "boot order after: $(efibootmgr 2>/dev/null | sed -n 's/^BootOrder: //p' | tr -d ' \r')"
+  BOOT_ORDER_STATE="HAOS placed first"
+}
+
 # ---------------------------------------------------------------------------
 finalize(){
   # Wi-Fi installation: inject the profile so that HAOS reconnects on its own.
@@ -3607,6 +3654,8 @@ finalize(){
     efibootmgr --create --disk "$TARGET" --part 1 \
       --label "HAOS" --loader '\EFI\BOOT\bootx64.efi' >/dev/null 2>&1 || true
     logx "UEFI entry 'HAOS' recreated on $TARGET"
+    # Against the boot loop: see prefer_haos_boot().
+    prefer_haos_boot || true
   fi
 
   # Offer the reformat BEFORE asking for the stick to be removed: this is the
@@ -3681,6 +3730,7 @@ CFG_MNT=""                    # where that file is mounted, for IMAGE= paths
 CFG_EMPTY=""                  # a template-only file seen on the way: only logged
 CFG_IMAGE_FILE=""             # config built into the image itself (unattended ISO)
 VERIFY_STATE=""               # what the read-back check concluded, for the summary
+BOOT_ORDER_STATE=""           # where HAOS ended up in the EFI boot order, for the summary
 VERIFY_SHA=""                 # the checksum the written disk should carry
 CFG_DISK_DEV=""                    # disk carrying that file: never a target
 # Declared although no branch below needs it: parse_config_line writes it, so a

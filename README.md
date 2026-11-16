@@ -180,9 +180,11 @@ This is **the step everybody trips over**. Power on the PC and immediately press
    switch on by hand, every time
 7. Save and exit (`F10`)
 
-Once Home Assistant boots on its own, put the **internal disk first** in the boot
-order again. The wizard does recreate a `HAOS` UEFI entry, but the stick would
-otherwise keep priority and start the installer again.
+On **UEFI** the wizard recreates a `HAOS` entry and moves it to the front of the
+boot order, so the internal disk starts even with the stick still plugged in.
+That is best-effort rather than a promise — some firmware keeps preferring
+removable media — so on a machine you cannot reach, set the internal disk first
+by hand once Home Assistant has booted.
 
 ## What it looks like
 
@@ -389,6 +391,15 @@ in a config baked into the image, so it starts erasing the disk it picks as soon
 as it boots. With one eligible disk it takes that one; with several it stops and
 logs which ones it saw instead of guessing. **Boot it only on the machine you
 mean to wipe**, and use the plain image to try the mode in the usual way.
+
+It also reboots by itself when the write is done, which is where a loop can
+start: a stick that is still plugged in *and* still first in the boot order
+starts the installer again, and that erases the disk it has just written. On
+UEFI the wizard moves its own `HAOS` entry to the front of the boot order to
+break the loop, and the summary file on the stick records whether that worked.
+Firmware that insists on removable media can still ignore it, and Legacy/CSM has
+no boot order to change — there `POWEROFF=yes` is the only guarantee, because
+the machine is switched off instead of restarted.
 
 There are two ways to ask for it:
 
