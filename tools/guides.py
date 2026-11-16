@@ -44,7 +44,7 @@ T["da"] = dict(
     ],
     steps_h="Trin for trin",
     steps=[
-        ("Hent filen", "På releases-siden henter du den fil der ender på .iso (cirka 470 MB). "
+        ("Hent filen", "På releases-siden henter du den fil der ender på .iso (cirka 410 MB). "
                        "Du vælger ikke version: pinden henter selv den nyeste."),
         ("Skriv den til USB-pinden", "Brug Etcher: vælg filen, vælg pinden, tryk Flash. "
                                      "Træk ikke filen over på pinden som et billede."),
@@ -98,7 +98,7 @@ T["de"] = dict(
     steps_h="Schritt für Schritt",
     steps=[
         ("Datei herunterladen", "Auf der Releases-Seite lädst du die Datei, die auf .iso endet "
-                                "(etwa 470 MB). Du wählst keine Version: der Stick holt selbst die neueste."),
+                                "(etwa 410 MB). Du wählst keine Version: der Stick holt selbst die neueste."),
         ("Auf den USB-Stick schreiben", "Nimm Etcher: Datei wählen, Stick wählen, Flash drücken. "
                                         "Zieh die Datei nicht wie ein Bild auf den Stick."),
         ("Zwei Einstellungen ändern", "Beim Start F2 oder Entf drücken. Secure Boot ausschalten "
@@ -151,7 +151,7 @@ T["fr"] = dict(
     steps_h="Étape par étape",
     steps=[
         ("Télécharger le fichier", "Sur la page des versions, prenez le fichier qui finit par .iso "
-                                   "(environ 470 Mo). Vous ne choisissez pas de version : la clé récupère la plus récente."),
+                                   "(environ 410 Mo). Vous ne choisissez pas de version : la clé récupère la plus récente."),
         ("L'écrire sur la clé USB", "Utilisez Etcher : choisissez le fichier, la clé, puis Flash. "
                                     "Ne faites pas glisser le fichier sur la clé comme une photo."),
         ("Changer deux réglages", "Appuyez sur F2 ou Suppr au démarrage. Désactivez Secure Boot "
@@ -204,7 +204,7 @@ T["es"] = dict(
     steps_h="Paso a paso",
     steps=[
         ("Descargar el archivo", "En la página de versiones, coge el archivo que termina en .iso "
-                                 "(unos 470 MB). No eliges versión: el lápiz trae la más reciente."),
+                                 "(unos 410 MB). No eliges versión: el lápiz trae la más reciente."),
         ("Escribirlo en el lápiz USB", "Usa Etcher: elige el archivo, el lápiz y pulsa Flash. "
                                        "No arrastres el archivo al lápiz como una foto."),
         ("Cambiar dos ajustes", "Pulsa F2 o Supr al arrancar. Desactiva Secure Boot y pon el modo "
@@ -257,7 +257,7 @@ T["it"] = dict(
     steps_h="Passo per passo",
     steps=[
         ("Scaricare il file", "Nella pagina delle versioni prendi il file che finisce in .iso "
-                              "(circa 470 MB). Non scegli la versione: la chiavetta prende la piu recente."),
+                              "(circa 410 MB). Non scegli la versione: la chiavetta prende la piu recente."),
         ("Scriverlo sulla chiavetta", "Usa Etcher: scegli il file, la chiavetta, premi Flash. "
                                       "Non trascinare il file sulla chiavetta come una foto."),
         ("Cambiare due impostazioni", "All'avvio premi F2 o Canc. Disattiva Secure Boot e metti "
@@ -310,7 +310,7 @@ T["nl"] = dict(
     steps_h="Stap voor stap",
     steps=[
         ("Het bestand downloaden", "Op de releases-pagina neem je het bestand dat op .iso eindigt "
-                                   "(ongeveer 470 MB). Je kiest geen versie: de stick haalt zelf de nieuwste."),
+                                   "(ongeveer 410 MB). Je kiest geen versie: de stick haalt zelf de nieuwste."),
         ("Naar de USB-stick schrijven", "Gebruik Etcher: kies het bestand, de stick, druk op Flash. "
                                         "Sleep het bestand niet als een foto naar de stick."),
         ("Twee instellingen aanpassen", "Druk bij het starten op F2 of Del. Zet Secure Boot uit en "
@@ -362,7 +362,7 @@ T["sv"] = dict(
     ],
     steps_h="Steg för steg",
     steps=[
-        ("Ladda ner filen", "På releases-sidan tar du filen som slutar på .iso (cirka 470 MB). "
+        ("Ladda ner filen", "På releases-sidan tar du filen som slutar på .iso (cirka 410 MB). "
                             "Du väljer ingen version: minnet hämtar den senaste själv."),
         ("Skriv den till USB-minnet", "Använd Etcher: välj filen, välj minnet, tryck Flash. "
                                       "Dra inte filen till minnet som en bild."),
@@ -415,7 +415,7 @@ T["no"] = dict(
     ],
     steps_h="Steg for steg",
     steps=[
-        ("Last ned filen", "På releases-siden tar du filen som slutter på .iso (cirka 470 MB). "
+        ("Last ned filen", "På releases-siden tar du filen som slutter på .iso (cirka 410 MB). "
                            "Du velger ingen versjon: pinnen henter den nyeste selv."),
         ("Skriv den til USB-pinnen", "Bruk Etcher: velg filen, velg pinnen, trykk Flash. "
                                      "Ikke dra filen over på pinnen som et bilde."),
@@ -468,7 +468,7 @@ T["fi"] = dict(
     ],
     steps_h="Askel askeleelta",
     steps=[
-        ("Lataa tiedosto", "Ota julkaisusivulta tiedosto, joka päättyy .iso (noin 470 MB). Et valitse "
+        ("Lataa tiedosto", "Ota julkaisusivulta tiedosto, joka päättyy .iso (noin 410 MB). Et valitse "
                            "versiota: muisti hakee itse uusimman."),
         ("Kirjoita se USB-muistille", "Käytä Etcheriä: valitse tiedosto, valitse muisti, paina Flash. "
                                       "Älä vedä tiedostoa muistille kuin kuvaa."),
@@ -521,7 +521,7 @@ T["pl"] = dict(
     ],
     steps_h="Krok po kroku",
     steps=[
-        ("Pobierz plik", "Na stronie wydań weź plik kończący się na .iso (około 470 MB). Nie wybierasz "
+        ("Pobierz plik", "Na stronie wydań weź plik kończący się na .iso (około 410 MB). Nie wybierasz "
                          "wersji: pendrive sam pobierze najnowszą."),
         ("Zapisz go na pendrive", "Użyj Etchera: wybierz plik, wybierz pendrive, naciśnij Flash. "
                                   "Nie przeciągaj pliku na pendrive jak zdjęcia."),
@@ -574,7 +574,7 @@ T["pt"] = dict(
     steps_h="Passo a passo",
     steps=[
         ("Transfere o ficheiro", "Na página das versões, escolhe o ficheiro que acaba em .iso "
-                                 "(cerca de 470 MB). Não escolhes versão: a pen vai buscar a mais recente."),
+                                 "(cerca de 410 MB). Não escolhes versão: a pen vai buscar a mais recente."),
         ("Grava-o na pen USB", "Usa o Etcher: escolhe o ficheiro, a pen, e carrega em Flash. "
                                "Não arrastes o ficheiro para a pen como uma fotografia."),
         ("Muda dois ajustes", "Carrega em F2 ou Del ao arrancar. Desliga o Secure Boot e põe o modo "
@@ -623,7 +623,7 @@ T["cs"] = dict(
     ],
     steps_h="Krok za krokem",
     steps=[
-        ("Stáhněte soubor", "Na stránce vydání vezměte soubor končící na .iso (asi 470 MB). "
+        ("Stáhněte soubor", "Na stránce vydání vezměte soubor končící na .iso (asi 410 MB). "
                             "Verzi nevybíráte: flash disk si stáhne tu nejnovější sám."),
         ("Zapište ho na USB flash disk", "Použijte Etcher: vyberte soubor, vyberte disk a stiskněte Flash. "
                                          "Nepřetahujte soubor na disk jako fotografii."),
@@ -676,7 +676,7 @@ T["ru"] = dict(
     steps_h="Шаг за шагом",
     steps=[
         ("Скачайте файл", "На странице релизов возьмите файл, который заканчивается на .iso "
-                          "(около 470 МБ). Версию выбирать не нужно: флешка сама скачает свежую."),
+                          "(около 410 МБ). Версию выбирать не нужно: флешка сама скачает свежую."),
         ("Запишите его на флешку", "Используйте Etcher: выберите файл, выберите флешку, нажмите Flash. "
                                    "Не перетаскивайте файл на флешку, как картинку."),
         ("Измените две настройки", "При включении нажмите F2 или Del. Отключите Secure Boot и "

@@ -62,7 +62,7 @@ sudo ./build-iso.sh
 ```
 
 The build takes **15 to 40 minutes** and produces
-`haos-installer-iso/live-image-amd64.hybrid.iso` (~450 MB). The script starts
+`haos-installer-iso/live-image-amd64.hybrid.iso` (~410 MB). The script starts
 from a clean folder on every run.
 
 Both published images come from this one script. The only difference is the
@@ -324,7 +324,8 @@ into it, reusable as it is.
 - **Embedded firmware** — only **network** firmware is included (Realtek,
   Intel, Atheros, Broadcom). `--firmware-chroot` is disabled: otherwise
   `live-build` pulls in every `firmware-*` package from the archive, including
-  GPU/audio blobs that are useless to a text-mode installer (851 MB → 450 MB).
+  GPU/audio blobs that are useless to a text-mode installer (851 MB → 450 MB at
+  the time; the apt lists were left out later, which brings it to ~410 MB).
   ⚠️ `firmware-realtek` also provides the Gigabit **Ethernet** blobs
   (`rtl_nic/rtl8168*`): do not remove it thinking you are only dropping Wi-Fi.
 - **Boot timeout** — `live-build` templates define none for GRUB, and
@@ -332,7 +333,7 @@ into it, reusable as it is.
   on some screens, `build-iso.sh` forces `timeout=1` +
   `timeout_style=hidden` via `config/bootloaders/`.
 - **`toram`** — the live system is copied to RAM at boot, so the USB stick can
-  be removed at any time. Cost: slower boot (~450 MB to copy) and ~2 GB of RAM.
+  be removed at any time. Cost: slower boot (~410 MB to copy) and ~2 GB of RAM.
   Remove `toram` from `--bootappend-live` on very low-spec machines.
 - **No `quiet`** — the kernel log scrolls by on purpose, just as HAOS itself
   does: it is the only sign of life while waiting, and a usable screen when

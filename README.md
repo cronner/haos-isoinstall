@@ -77,7 +77,7 @@ translated messages themselves use the language's own characters. A language cod
 that is not in the table falls back to English and US QWERTY.
 
 The ISO does **not** contain HAOS: the image is downloaded during the
-installation ("network install" approach). It therefore stays small (**~450 MB**) and
+installation ("network install" approach). It therefore stays small (**~410 MB**) and
 always installs the **latest published version** of Home Assistant OS. If you already
 have that image, you can bring it on a USB stick instead and skip the network
 entirely — see [Using an image you already have](#using-an-image-you-already-have).
