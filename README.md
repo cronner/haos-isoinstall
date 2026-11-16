@@ -156,7 +156,8 @@ With one of these tools, your choice:
 
 - **[Balena Etcher](https://etcher.balena.io/)** — the simplest, Windows/macOS/Linux
 - **[Rufus](https://rufus.ie/)** — Windows
-- **[Ventoy](https://www.ventoy.net/)** — simply copy the `.iso` onto the stick
+- **[Ventoy](https://www.ventoy.net/)** — install it from Windows or Linux (there is no
+  official macOS build), then simply copy the `.iso` onto the stick
 - **Linux, from the command line**:
   ```bash
   sudo dd if=haos-isoinstall-*.iso of=/dev/sdX bs=4M status=progress conv=fsync
