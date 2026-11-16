@@ -28,9 +28,10 @@ start goes, and what to do when a step stalls. This page is the reference
 manual for people who want the details.
 
 **Quick start** — download the ISO from [Releases] and check it
-(`sha256sum -c *.iso.sha256`), write it to a USB stick with Etcher or Rufus (not
-by copying the file), turn **Secure Boot off** and SATA to **AHCI** in the BIOS,
-boot the stick and follow the wizard. Everything below is detail.
+(`sha256sum -c *.iso.sha256`), write it to a USB stick with one of the [tools in
+step 2](#step-2--write-the-iso-to-the-usb-stick) — not by copying the file —
+turn **Secure Boot off** and SATA to **AHCI** in the BIOS, boot the stick and
+follow the wizard. Everything below is detail.
 
 **Contents:** [What you need](#what-you-need) · [1 Download](#step-1--download-the-iso)
 · [2 Write the stick](#step-2--write-the-iso-to-the-usb-stick)
@@ -152,17 +153,32 @@ sha256sum -c haos-isoinstall-*.iso.sha256
 
 ## Step 2 — Write the ISO to the USB stick
 
-With one of these tools, your choice:
+The `.iso` has to be **written as an image, not copied as a file**, or the stick
+will not boot. Four tools do that, and every desktop OS has at least two of them:
 
-- **[Balena Etcher](https://etcher.balena.io/)** — the simplest, Windows/macOS/Linux
-- **[Rufus](https://rufus.ie/)** — Windows
-- **[Ventoy](https://www.ventoy.net/)** — install it from Windows or Linux (there is no
-  official macOS build), then simply copy the `.iso` onto the stick
-- **Linux, from the command line**:
-  ```bash
-  sudo dd if=haos-isoinstall-*.iso of=/dev/sdX bs=4M status=progress conv=fsync
-  ```
-  ⚠️ Check `/dev/sdX` with `lsblk` — a mistake here erases the wrong disk.
+| Tool | Windows | macOS | Linux | What to watch |
+| --- | :-: | :-: | :-: | --- |
+| [balenaEtcher](https://etcher.balena.io/) | ✓ | ✓ | ✓ | Nothing: pick the ISO, pick the stick, **Flash**. It reads the write back afterwards. |
+| [Rufus](https://rufus.ie/) | ✓ | – | – | When it offers **ISO Image mode** or **DD Image mode**, take **DD**. |
+| [Ventoy](https://www.ventoy.net/) | ✓ | – | ✓ | Install it on the stick once, from Windows or Linux — there is no official macOS build — then copy the `.iso` across as an ordinary file. |
+| `dd` | – | – | ✓ | One wrong device name erases the wrong disk. See below. |
+
+- **balenaEtcher** is the one to reach for on a Mac, and the one that hides system
+disks so you cannot pick them by accident.
+- **Rufus** is the quickest route on Windows. Its ISO mode rebuilds the boot
+files and has no business with a hybrid image like this one; DD mode writes the
+file unchanged, which is what the image expects.
+- **Ventoy** is the tool for one stick holding several ISOs: install it once and
+later additions are a file copy, from macOS included. It is also how a
+`haos-installer.cfg` can sit on the same stick as the installer — in the data
+partition's root, since the ISO itself is read-only.
+
+**Linux, from the command line**:
+
+```bash
+sudo dd if=haos-isoinstall-*.iso of=/dev/sdX bs=4M status=progress conv=fsync
+```
+⚠️ Check `/dev/sdX` with `lsblk` — a mistake here erases the wrong disk.
 
 ## Step 3 — Configure the PC's BIOS/UEFI
 
